@@ -1,0 +1,37 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Flutter (default + Supabase defines)",
+      "request": "launch",
+      "type": "flutter",
+      "program": "${workspaceFolder}/lib/main.dart",
+      "flutterMode": "debug",
+      "args": [
+        "--dart-define-from-file=supabase.defines.json"
+      ]
+    },
+    {
+      "name": "Flutter (Chrome + Supabase local)",
+      "request": "launch",
+      "type": "flutter",
+      "program": "${workspaceFolder}/lib/main.dart",
+      "flutterMode": "debug",
+      "deviceId": "chrome",
+      "args": [
+        "--dart-define-from-file=supabase.defines.json"
+      ]
+    },
+    {
+      "name": "Flutter (R5CY71LYACZ + Supabase)",
+      "request": "launch",
+      "type": "flutter",
+      "program": "${workspaceFolder}/lib/main.dart",
+      "flutterMode": "debug",
+      "deviceId": "R5CY71LYACZ",
+      "args": [
+        "--dart-define-from-file=supabase.defines.json"
+      ]
+    }
+  ]
+}

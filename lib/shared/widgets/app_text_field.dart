@@ -1,0 +1,53 @@
+import 'package:flutter/material.dart';
+
+import '../../core/theme/app_colors.dart';
+
+class AppTextField extends StatelessWidget {
+  const AppTextField({
+    super.key,
+    required this.hintText,
+    this.controller,
+    this.focusNode,
+    this.keyboardType,
+    this.prefixIcon,
+    this.suffixIcon,
+    this.obscureText = false,
+    this.textInputAction = TextInputAction.done,
+    this.onSubmitted,
+    this.onEditingComplete,
+  });
+
+  final String hintText;
+  final TextEditingController? controller;
+  final FocusNode? focusNode;
+  final TextInputType? keyboardType;
+  final IconData? prefixIcon;
+  final Widget? suffixIcon;
+  final bool obscureText;
+  final TextInputAction textInputAction;
+  final ValueChanged<String>? onSubmitted;
+  final VoidCallback? onEditingComplete;
+
+  @override
+  Widget build(BuildContext context) {
+    final muted = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.darkTextMuted
+        : AppColors.textMuted;
+
+    return TextField(
+      controller: controller,
+      focusNode: focusNode,
+      keyboardType: keyboardType,
+      obscureText: obscureText,
+      textInputAction: textInputAction,
+      onSubmitted: onSubmitted,
+      onEditingComplete: onEditingComplete,
+      style: Theme.of(context).textTheme.bodyLarge,
+      decoration: InputDecoration(
+        hintText: hintText,
+        prefixIcon: prefixIcon == null ? null : Icon(prefixIcon, color: muted),
+        suffixIcon: suffixIcon,
+      ),
+    );
+  }
+}

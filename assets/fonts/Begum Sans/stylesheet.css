@@ -1,0 +1,60 @@
+@font-face {
+    font-family: 'Begum Sans';
+    src: url('BegumSans-Medium.eot');
+    src: local('Begum Sans Medium'), local('BegumSans-Medium'),
+        url('BegumSans-Medium.eot?#iefix') format('embedded-opentype'),
+        url('BegumSans-Medium.woff2') format('woff2'),
+        url('BegumSans-Medium.woff') format('woff'),
+        url('BegumSans-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Begum Sans';
+    src: url('BegumSans-Regular.eot');
+    src: local('Begum Sans'), local('BegumSans-Regular'),
+        url('BegumSans-Regular.eot?#iefix') format('embedded-opentype'),
+        url('BegumSans-Regular.woff2') format('woff2'),
+        url('BegumSans-Regular.woff') format('woff'),
+        url('BegumSans-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Begum Sans';
+    src: url('BegumSans-Light.eot');
+    src: local('Begum Sans Light'), local('BegumSans-Light'),
+        url('BegumSans-Light.eot?#iefix') format('embedded-opentype'),
+        url('BegumSans-Light.woff2') format('woff2'),
+        url('BegumSans-Light.woff') format('woff'),
+        url('BegumSans-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Begum Sans';
+    src: url('BegumSans-Bold.eot');
+    src: local('Begum Sans Bold'), local('BegumSans-Bold'),
+        url('BegumSans-Bold.eot?#iefix') format('embedded-opentype'),
+        url('BegumSans-Bold.woff2') format('woff2'),
+        url('BegumSans-Bold.woff') format('woff'),
+        url('BegumSans-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Begum Sans Semi';
+    src: url('BegumSans-SemiBold.eot');
+    src: local('Begum Sans Semi Bold'), local('BegumSans-SemiBold'),
+        url('BegumSans-SemiBold.eot?#iefix') format('embedded-opentype'),
+        url('BegumSans-SemiBold.woff2') format('woff2'),
+        url('BegumSans-SemiBold.woff') format('woff'),
+        url('BegumSans-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
