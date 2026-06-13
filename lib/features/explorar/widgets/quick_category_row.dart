@@ -5,8 +5,25 @@ import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_shadows.dart';
 import '../../../shared/widgets/app_category_chip.dart';
 
+enum QuickCategoryType { audios, meditations, courses, favorites }
+
 class QuickCategoryRow extends StatelessWidget {
-  const QuickCategoryRow({super.key});
+  const QuickCategoryRow({
+    super.key,
+    required this.audioCount,
+    required this.meditationCount,
+    required this.courseCount,
+    required this.favoriteCount,
+    this.selectedType,
+    this.onSelected,
+  });
+
+  final int audioCount;
+  final int meditationCount;
+  final int courseCount;
+  final int favoriteCount;
+  final QuickCategoryType? selectedType;
+  final ValueChanged<QuickCategoryType>? onSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -41,41 +58,74 @@ class QuickCategoryRow extends StatelessWidget {
             child: AppCategoryChip(
               icon: Icons.graphic_eq_rounded,
               label: 'Audios',
-              caption: '15 sonidos',
-              color: primaryIconColor,
+              caption: _countLabel(audioCount, 'disponible', 'disponibles'),
+              color: _chipColor(
+                QuickCategoryType.audios,
+                primaryIconColor,
+                secondaryIconColor,
+              ),
               foregroundColor: iconForeground,
+              onTap: () => onSelected?.call(QuickCategoryType.audios),
             ),
           ),
           Expanded(
             child: AppCategoryChip(
               icon: Icons.self_improvement_rounded,
               label: 'Meditaciones',
-              caption: '9 prácticas',
-              color: secondaryIconColor,
+              caption: _countLabel(meditationCount, 'práctica', 'prácticas'),
+              color: _chipColor(
+                QuickCategoryType.meditations,
+                secondaryIconColor,
+                primaryIconColor,
+              ),
               foregroundColor: iconForeground,
+              onTap: () => onSelected?.call(QuickCategoryType.meditations),
             ),
           ),
           Expanded(
             child: AppCategoryChip(
               icon: Icons.volunteer_activism_outlined,
               label: 'Cursos',
-              caption: '8 rutas',
-              color: primaryIconColor,
+              caption: _countLabel(courseCount, 'ruta', 'rutas'),
+              color: _chipColor(
+                QuickCategoryType.courses,
+                primaryIconColor,
+                secondaryIconColor,
+              ),
               foregroundColor: iconForeground,
+              onTap: () => onSelected?.call(QuickCategoryType.courses),
             ),
           ),
           Expanded(
             child: AppCategoryChip(
               icon: Icons.favorite_border_rounded,
               label: 'Favoritos',
-              caption: '6 guardados',
-              color: secondaryIconColor,
+              caption: _countLabel(favoriteCount, 'guardado', 'guardados'),
+              color: _chipColor(
+                QuickCategoryType.favorites,
+                secondaryIconColor,
+                primaryIconColor,
+              ),
               foregroundColor: iconForeground,
+              onTap: () => onSelected?.call(QuickCategoryType.favorites),
             ),
           ),
           const SizedBox(width: 8),
         ],
       ),
     );
+  }
+
+  Color _chipColor(
+    QuickCategoryType type,
+    Color selectedColor,
+    Color idleColor,
+  ) {
+    return selectedType == type ? selectedColor : idleColor;
+  }
+
+  String _countLabel(int count, String singular, String plural) {
+    final label = count == 1 ? singular : plural;
+    return '$count $label';
   }
 }

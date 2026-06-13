@@ -169,6 +169,14 @@ class _FavoriteActionIconState extends State<_FavoriteActionIcon> {
   }
 
   @override
+  void didUpdateWidget(covariant _FavoriteActionIcon oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialIcon != widget.initialIcon) {
+      _selected = widget.initialIcon == Icons.bookmark_rounded;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
     final idleColor = brightness == Brightness.dark

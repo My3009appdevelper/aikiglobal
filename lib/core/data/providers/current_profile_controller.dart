@@ -19,6 +19,8 @@ enum AppViewMode { user, admin }
 class CurrentProfileController extends ChangeNotifier {
   static const String _onboardingCompletedKey = 'aiki_onboarding_completed_v1';
   static const String _rememberMeKey = 'aiki_remember_user';
+  static const int _signupProfileRetryAttempts = 5;
+  static const Duration _signupProfileRetryDelay = Duration(milliseconds: 450);
 
   CurrentProfileController({
     required ProfilesDao? profilesDao,
@@ -137,6 +139,47 @@ class CurrentProfileController extends ChangeNotifier {
         await _setRememberPreference(true);
       }
       await loadByAuthUserId(user.id, refreshRemote: true);
+    } catch (error) {
+      _error = error;
+      rethrow;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  Future<AuthResponse> signUp({
+    required String email,
+    required String password,
+    required String nombre,
+    bool rememberMe = true,
+  }) async {
+    final authService = _authService;
+    if (authService == null) {
+      throw StateError(
+        'No hay servicio de autenticación configurado para crear la cuenta.',
+      );
+    }
+
+    _setLoading(true);
+    _error = null;
+
+    try {
+      final response = await authService.signUp(
+        email: email,
+        password: password,
+        nombre: nombre,
+      );
+
+      final user = response.user;
+      if (user == null) {
+        throw StateError('No se pudo crear la cuenta en este momento.');
+      }
+
+      await _setRememberPreference(rememberMe);
+      await loadByAuthUserId(user.id, refreshRemote: false);
+      await _waitForRemoteProfile(user.id);
+
+      return response;
     } catch (error) {
       _error = error;
       rethrow;
@@ -378,10 +421,8 @@ class CurrentProfileController extends ChangeNotifier {
     }
 
     if (remoteService != null && _authUserId != null) {
-      await remoteService.updateUserEditableOnline(current.uuidProfile, {
-        'foto_path_supabase': _cleanNullableText(fotoPathLocal),
-      });
-      await _loadProfileRemote(authUserId: _authUserId!);
+      // En web todavía no existe tabla local para persistir la ruta del archivo,
+      // y esa ruta nunca debe enviarse a Supabase.
       return;
     }
   }
@@ -495,6 +536,50 @@ class CurrentProfileController extends ChangeNotifier {
       _error = error;
     } finally {
       _setSyncing(false);
+    }
+  }
+
+  Future<void> _waitForRemoteProfile(String authUserId) async {
+    final remoteService = _remoteService;
+    final dao = _profilesDao;
+    if (remoteService == null) {
+      return;
+    }
+
+    final cleanAuthUserId = authUserId.trim();
+    Object? lastError;
+    for (var attempt = 0; attempt < _signupProfileRetryAttempts; attempt += 1) {
+      try {
+        final remoteProfile = await remoteService.getByAuthUserIdOnline(
+          cleanAuthUserId,
+        );
+
+        if (remoteProfile != null) {
+          final appProfile = profileRemoteToApp(remoteProfile);
+          if (dao != null) {
+            await dao.upsertProfile(profileRemoteToCompanion(remoteProfile));
+          } else {
+            _profile = appProfile;
+          }
+
+          _profile = appProfile;
+          if (!isAdmin && _viewMode != AppViewMode.user) {
+            _viewMode = AppViewMode.user;
+          }
+          notifyListeners();
+          return;
+        }
+      } catch (error) {
+        lastError = error;
+      }
+
+      if (attempt < _signupProfileRetryAttempts - 1) {
+        await Future<void>.delayed(_signupProfileRetryDelay);
+      }
+    }
+
+    if (lastError != null) {
+      _error = lastError;
     }
   }
 }

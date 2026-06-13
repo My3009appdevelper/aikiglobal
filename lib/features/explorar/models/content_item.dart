@@ -4,12 +4,14 @@ class ContentItem {
     required this.type,
     required this.duration,
     required this.imageAsset,
+    this.uuidContentItem,
     this.description,
     this.lessons,
     this.isNew = false,
     this.isFavorite = false,
   });
 
+  final String? uuidContentItem;
   final String title;
   final String type;
   final String duration;

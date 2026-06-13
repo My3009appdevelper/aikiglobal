@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
+import '../../core/data/providers/app_data_scope.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../shared/widgets/app_interactive.dart';
@@ -80,104 +83,172 @@ class _DetailHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profileController = AppDataScope.currentProfile(context);
+    final userContentStatesController = AppDataScope.userContentStates(context);
+
     return SizedBox(
       height: 430,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.asset(item.imageAsset, fit: BoxFit.cover),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  AppColors.black.withValues(alpha: 0.18),
-                  AppColors.black.withValues(alpha: 0.55),
-                ],
+      child: AnimatedBuilder(
+        animation: Listenable.merge([
+          profileController,
+          userContentStatesController,
+        ]),
+        builder: (context, _) {
+          final uuidProfile = profileController.profile?.uuidProfile;
+          final uuidContentItem = item.uuidContentItem;
+          final canFavorite = uuidProfile != null && uuidContentItem != null;
+          final isFavorite = uuidContentItem == null
+              ? item.isFavorite
+              : userContentStatesController.isFavorite(uuidContentItem);
+
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              Image.asset(item.imageAsset, fit: BoxFit.cover),
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      AppColors.black.withValues(alpha: 0.18),
+                      AppColors.black.withValues(alpha: 0.55),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  Row(
+              SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
                     children: [
-                      _HeroIcon(
-                        icon: Icons.arrow_back_rounded,
-                        tooltip: 'Regresar',
-                        onTap: () => Navigator.of(context).pop(),
+                      Row(
+                        children: [
+                          _HeroIcon(
+                            icon: Icons.arrow_back_rounded,
+                            tooltip: 'Regresar',
+                            onTap: () => Navigator.of(context).pop(),
+                          ),
+                          const Spacer(),
+                          _HeroIcon(
+                            icon: Icons.bookmark_border_rounded,
+                            selectedIcon: Icons.bookmark_rounded,
+                            isSelected: isFavorite,
+                            enabled: canFavorite,
+                            tooltip: isFavorite
+                                ? 'Quitar de favoritos'
+                                : 'Guardar en favoritos',
+                            onTap: canFavorite
+                                ? () {
+                                    unawaited(
+                                      _toggleFavorite(
+                                        context,
+                                        uuidProfile: uuidProfile,
+                                        uuidContentItem: uuidContentItem,
+                                        isFavorite: isFavorite,
+                                      ),
+                                    );
+                                  }
+                                : null,
+                          ),
+                        ],
                       ),
                       const Spacer(),
-                      const _HeroIcon(
-                        icon: Icons.bookmark_border_rounded,
-                        selectedIcon: Icons.bookmark_rounded,
-                        tooltip: 'Guardar contenido',
+                      Text(
+                        item.title,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.displayMedium
+                            ?.copyWith(color: AppColors.white),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        item.type.toUpperCase(),
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(color: AppColors.sand),
                       ),
                     ],
                   ),
-                  const Spacer(),
-                  Text(
-                    item.title,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.displayMedium?.copyWith(color: AppColors.white),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    item.type.toUpperCase(),
-                    style: Theme.of(
-                      context,
-                    ).textTheme.labelMedium?.copyWith(color: AppColors.sand),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ),
-        ],
+            ],
+          );
+        },
       ),
     );
   }
+
+  Future<void> _toggleFavorite(
+    BuildContext context, {
+    required String uuidProfile,
+    required String uuidContentItem,
+    required bool isFavorite,
+  }) async {
+    try {
+      await AppDataScope.userContentStates(
+        context,
+      ).toggleFavorito(uuidProfile, uuidContentItem);
+
+      if (!context.mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text(
+              isFavorite
+                  ? 'Contenido eliminado de favoritos.'
+                  : 'Contenido guardado en favoritos.',
+            ),
+          ),
+        );
+    } catch (_) {
+      if (!context.mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text('No se pudo actualizar el favorito.'),
+          ),
+        );
+    }
+  }
 }
 
-class _HeroIcon extends StatefulWidget {
+class _HeroIcon extends StatelessWidget {
   const _HeroIcon({
     required this.icon,
     required this.tooltip,
     this.selectedIcon,
+    this.isSelected = false,
+    this.enabled = true,
     this.onTap,
   });
 
   final IconData icon;
   final IconData? selectedIcon;
+  final bool isSelected;
+  final bool enabled;
   final String tooltip;
   final VoidCallback? onTap;
 
   @override
-  State<_HeroIcon> createState() => _HeroIconState();
-}
-
-class _HeroIconState extends State<_HeroIcon> {
-  bool _selected = false;
-
-  @override
   Widget build(BuildContext context) {
-    final icon = _selected ? widget.selectedIcon ?? widget.icon : widget.icon;
+    final currentIcon = isSelected ? selectedIcon ?? icon : icon;
 
     return AppInteractive(
-      tooltip: _selected ? 'Guardado' : widget.tooltip,
+      tooltip: tooltip,
       borderRadius: AppRadius.full,
+      enabled: enabled,
       hoverScale: 1.08,
       pressedScale: 0.9,
-      onTap: () {
-        widget.onTap?.call();
-        if (widget.selectedIcon != null) {
-          setState(() => _selected = !_selected);
-        }
-      },
+      onTap: onTap,
       child: Container(
         width: 48,
         height: 48,
@@ -190,7 +261,11 @@ class _HeroIconState extends State<_HeroIcon> {
           transitionBuilder: (child, animation) {
             return ScaleTransition(scale: animation, child: child);
           },
-          child: Icon(icon, key: ValueKey(icon), color: AppColors.white),
+          child: Icon(
+            currentIcon,
+            key: ValueKey(currentIcon),
+            color: AppColors.white,
+          ),
         ),
       ),
     );

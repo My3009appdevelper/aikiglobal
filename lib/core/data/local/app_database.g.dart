@@ -1769,12 +1769,821 @@ class ContentItemsTableCompanion extends UpdateCompanion<LocalContentItem> {
   }
 }
 
+class $UserContentStatesTableTable extends UserContentStatesTable
+    with TableInfo<$UserContentStatesTableTable, LocalUserContentState> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $UserContentStatesTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _uuidUserContentStateMeta =
+      const VerificationMeta('uuidUserContentState');
+  @override
+  late final GeneratedColumn<String> uuidUserContentState =
+      GeneratedColumn<String>(
+        'uuid_user_content_state',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _uuidProfileMeta = const VerificationMeta(
+    'uuidProfile',
+  );
+  @override
+  late final GeneratedColumn<String> uuidProfile = GeneratedColumn<String>(
+    'uuid_profile',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _uuidContentItemMeta = const VerificationMeta(
+    'uuidContentItem',
+  );
+  @override
+  late final GeneratedColumn<String> uuidContentItem = GeneratedColumn<String>(
+    'uuid_content_item',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _favoritoMeta = const VerificationMeta(
+    'favorito',
+  );
+  @override
+  late final GeneratedColumn<bool> favorito = GeneratedColumn<bool>(
+    'favorito',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("favorito" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _progresoPorcentajeMeta =
+      const VerificationMeta('progresoPorcentaje');
+  @override
+  late final GeneratedColumn<int> progresoPorcentaje = GeneratedColumn<int>(
+    'progreso_porcentaje',
+    aliasedName,
+    false,
+    check: () => ComparableExpr(progresoPorcentaje).isBetweenValues(0, 100),
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _ultimaPosicionSegundosMeta =
+      const VerificationMeta('ultimaPosicionSegundos');
+  @override
+  late final GeneratedColumn<int> ultimaPosicionSegundos = GeneratedColumn<int>(
+    'ultima_posicion_segundos',
+    aliasedName,
+    false,
+    check: () => ComparableExpr(ultimaPosicionSegundos).isBiggerOrEqualValue(0),
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _completadoMeta = const VerificationMeta(
+    'completado',
+  );
+  @override
+  late final GeneratedColumn<bool> completado = GeneratedColumn<bool>(
+    'completado',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("completado" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _startedAtMeta = const VerificationMeta(
+    'startedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> startedAt = GeneratedColumn<DateTime>(
+    'started_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _completedAtMeta = const VerificationMeta(
+    'completedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> completedAt = GeneratedColumn<DateTime>(
+    'completed_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    uuidUserContentState,
+    uuidProfile,
+    uuidContentItem,
+    favorito,
+    progresoPorcentaje,
+    ultimaPosicionSegundos,
+    completado,
+    startedAt,
+    completedAt,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    syncedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'local_user_content_states';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocalUserContentState> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('uuid_user_content_state')) {
+      context.handle(
+        _uuidUserContentStateMeta,
+        uuidUserContentState.isAcceptableOrUnknown(
+          data['uuid_user_content_state']!,
+          _uuidUserContentStateMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_uuidUserContentStateMeta);
+    }
+    if (data.containsKey('uuid_profile')) {
+      context.handle(
+        _uuidProfileMeta,
+        uuidProfile.isAcceptableOrUnknown(
+          data['uuid_profile']!,
+          _uuidProfileMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_uuidProfileMeta);
+    }
+    if (data.containsKey('uuid_content_item')) {
+      context.handle(
+        _uuidContentItemMeta,
+        uuidContentItem.isAcceptableOrUnknown(
+          data['uuid_content_item']!,
+          _uuidContentItemMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_uuidContentItemMeta);
+    }
+    if (data.containsKey('favorito')) {
+      context.handle(
+        _favoritoMeta,
+        favorito.isAcceptableOrUnknown(data['favorito']!, _favoritoMeta),
+      );
+    }
+    if (data.containsKey('progreso_porcentaje')) {
+      context.handle(
+        _progresoPorcentajeMeta,
+        progresoPorcentaje.isAcceptableOrUnknown(
+          data['progreso_porcentaje']!,
+          _progresoPorcentajeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('ultima_posicion_segundos')) {
+      context.handle(
+        _ultimaPosicionSegundosMeta,
+        ultimaPosicionSegundos.isAcceptableOrUnknown(
+          data['ultima_posicion_segundos']!,
+          _ultimaPosicionSegundosMeta,
+        ),
+      );
+    }
+    if (data.containsKey('completado')) {
+      context.handle(
+        _completadoMeta,
+        completado.isAcceptableOrUnknown(data['completado']!, _completadoMeta),
+      );
+    }
+    if (data.containsKey('started_at')) {
+      context.handle(
+        _startedAtMeta,
+        startedAt.isAcceptableOrUnknown(data['started_at']!, _startedAtMeta),
+      );
+    }
+    if (data.containsKey('completed_at')) {
+      context.handle(
+        _completedAtMeta,
+        completedAt.isAcceptableOrUnknown(
+          data['completed_at']!,
+          _completedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {uuidUserContentState};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {uuidProfile, uuidContentItem},
+  ];
+  @override
+  LocalUserContentState map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalUserContentState(
+      uuidUserContentState: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid_user_content_state'],
+      )!,
+      uuidProfile: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid_profile'],
+      )!,
+      uuidContentItem: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid_content_item'],
+      )!,
+      favorito: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}favorito'],
+      )!,
+      progresoPorcentaje: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}progreso_porcentaje'],
+      )!,
+      ultimaPosicionSegundos: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}ultima_posicion_segundos'],
+      )!,
+      completado: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}completado'],
+      )!,
+      startedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}started_at'],
+      ),
+      completedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}completed_at'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
+    );
+  }
+
+  @override
+  $UserContentStatesTableTable createAlias(String alias) {
+    return $UserContentStatesTableTable(attachedDatabase, alias);
+  }
+}
+
+class LocalUserContentState extends DataClass
+    implements Insertable<LocalUserContentState> {
+  final String uuidUserContentState;
+  final String uuidProfile;
+  final String uuidContentItem;
+  final bool favorito;
+  final int progresoPorcentaje;
+  final int ultimaPosicionSegundos;
+  final bool completado;
+  final DateTime? startedAt;
+  final DateTime? completedAt;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
+  final DateTime? syncedAt;
+  const LocalUserContentState({
+    required this.uuidUserContentState,
+    required this.uuidProfile,
+    required this.uuidContentItem,
+    required this.favorito,
+    required this.progresoPorcentaje,
+    required this.ultimaPosicionSegundos,
+    required this.completado,
+    this.startedAt,
+    this.completedAt,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+    this.syncedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['uuid_user_content_state'] = Variable<String>(uuidUserContentState);
+    map['uuid_profile'] = Variable<String>(uuidProfile);
+    map['uuid_content_item'] = Variable<String>(uuidContentItem);
+    map['favorito'] = Variable<bool>(favorito);
+    map['progreso_porcentaje'] = Variable<int>(progresoPorcentaje);
+    map['ultima_posicion_segundos'] = Variable<int>(ultimaPosicionSegundos);
+    map['completado'] = Variable<bool>(completado);
+    if (!nullToAbsent || startedAt != null) {
+      map['started_at'] = Variable<DateTime>(startedAt);
+    }
+    if (!nullToAbsent || completedAt != null) {
+      map['completed_at'] = Variable<DateTime>(completedAt);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
+    return map;
+  }
+
+  UserContentStatesTableCompanion toCompanion(bool nullToAbsent) {
+    return UserContentStatesTableCompanion(
+      uuidUserContentState: Value(uuidUserContentState),
+      uuidProfile: Value(uuidProfile),
+      uuidContentItem: Value(uuidContentItem),
+      favorito: Value(favorito),
+      progresoPorcentaje: Value(progresoPorcentaje),
+      ultimaPosicionSegundos: Value(ultimaPosicionSegundos),
+      completado: Value(completado),
+      startedAt: startedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(startedAt),
+      completedAt: completedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(completedAt),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
+    );
+  }
+
+  factory LocalUserContentState.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalUserContentState(
+      uuidUserContentState: serializer.fromJson<String>(
+        json['uuidUserContentState'],
+      ),
+      uuidProfile: serializer.fromJson<String>(json['uuidProfile']),
+      uuidContentItem: serializer.fromJson<String>(json['uuidContentItem']),
+      favorito: serializer.fromJson<bool>(json['favorito']),
+      progresoPorcentaje: serializer.fromJson<int>(json['progresoPorcentaje']),
+      ultimaPosicionSegundos: serializer.fromJson<int>(
+        json['ultimaPosicionSegundos'],
+      ),
+      completado: serializer.fromJson<bool>(json['completado']),
+      startedAt: serializer.fromJson<DateTime?>(json['startedAt']),
+      completedAt: serializer.fromJson<DateTime?>(json['completedAt']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'uuidUserContentState': serializer.toJson<String>(uuidUserContentState),
+      'uuidProfile': serializer.toJson<String>(uuidProfile),
+      'uuidContentItem': serializer.toJson<String>(uuidContentItem),
+      'favorito': serializer.toJson<bool>(favorito),
+      'progresoPorcentaje': serializer.toJson<int>(progresoPorcentaje),
+      'ultimaPosicionSegundos': serializer.toJson<int>(ultimaPosicionSegundos),
+      'completado': serializer.toJson<bool>(completado),
+      'startedAt': serializer.toJson<DateTime?>(startedAt),
+      'completedAt': serializer.toJson<DateTime?>(completedAt),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
+    };
+  }
+
+  LocalUserContentState copyWith({
+    String? uuidUserContentState,
+    String? uuidProfile,
+    String? uuidContentItem,
+    bool? favorito,
+    int? progresoPorcentaje,
+    int? ultimaPosicionSegundos,
+    bool? completado,
+    Value<DateTime?> startedAt = const Value.absent(),
+    Value<DateTime?> completedAt = const Value.absent(),
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
+    Value<DateTime?> syncedAt = const Value.absent(),
+  }) => LocalUserContentState(
+    uuidUserContentState: uuidUserContentState ?? this.uuidUserContentState,
+    uuidProfile: uuidProfile ?? this.uuidProfile,
+    uuidContentItem: uuidContentItem ?? this.uuidContentItem,
+    favorito: favorito ?? this.favorito,
+    progresoPorcentaje: progresoPorcentaje ?? this.progresoPorcentaje,
+    ultimaPosicionSegundos:
+        ultimaPosicionSegundos ?? this.ultimaPosicionSegundos,
+    completado: completado ?? this.completado,
+    startedAt: startedAt.present ? startedAt.value : this.startedAt,
+    completedAt: completedAt.present ? completedAt.value : this.completedAt,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+  );
+  LocalUserContentState copyWithCompanion(
+    UserContentStatesTableCompanion data,
+  ) {
+    return LocalUserContentState(
+      uuidUserContentState: data.uuidUserContentState.present
+          ? data.uuidUserContentState.value
+          : this.uuidUserContentState,
+      uuidProfile: data.uuidProfile.present
+          ? data.uuidProfile.value
+          : this.uuidProfile,
+      uuidContentItem: data.uuidContentItem.present
+          ? data.uuidContentItem.value
+          : this.uuidContentItem,
+      favorito: data.favorito.present ? data.favorito.value : this.favorito,
+      progresoPorcentaje: data.progresoPorcentaje.present
+          ? data.progresoPorcentaje.value
+          : this.progresoPorcentaje,
+      ultimaPosicionSegundos: data.ultimaPosicionSegundos.present
+          ? data.ultimaPosicionSegundos.value
+          : this.ultimaPosicionSegundos,
+      completado: data.completado.present
+          ? data.completado.value
+          : this.completado,
+      startedAt: data.startedAt.present ? data.startedAt.value : this.startedAt,
+      completedAt: data.completedAt.present
+          ? data.completedAt.value
+          : this.completedAt,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalUserContentState(')
+          ..write('uuidUserContentState: $uuidUserContentState, ')
+          ..write('uuidProfile: $uuidProfile, ')
+          ..write('uuidContentItem: $uuidContentItem, ')
+          ..write('favorito: $favorito, ')
+          ..write('progresoPorcentaje: $progresoPorcentaje, ')
+          ..write('ultimaPosicionSegundos: $ultimaPosicionSegundos, ')
+          ..write('completado: $completado, ')
+          ..write('startedAt: $startedAt, ')
+          ..write('completedAt: $completedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('syncedAt: $syncedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    uuidUserContentState,
+    uuidProfile,
+    uuidContentItem,
+    favorito,
+    progresoPorcentaje,
+    ultimaPosicionSegundos,
+    completado,
+    startedAt,
+    completedAt,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    syncedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalUserContentState &&
+          other.uuidUserContentState == this.uuidUserContentState &&
+          other.uuidProfile == this.uuidProfile &&
+          other.uuidContentItem == this.uuidContentItem &&
+          other.favorito == this.favorito &&
+          other.progresoPorcentaje == this.progresoPorcentaje &&
+          other.ultimaPosicionSegundos == this.ultimaPosicionSegundos &&
+          other.completado == this.completado &&
+          other.startedAt == this.startedAt &&
+          other.completedAt == this.completedAt &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.syncedAt == this.syncedAt);
+}
+
+class UserContentStatesTableCompanion
+    extends UpdateCompanion<LocalUserContentState> {
+  final Value<String> uuidUserContentState;
+  final Value<String> uuidProfile;
+  final Value<String> uuidContentItem;
+  final Value<bool> favorito;
+  final Value<int> progresoPorcentaje;
+  final Value<int> ultimaPosicionSegundos;
+  final Value<bool> completado;
+  final Value<DateTime?> startedAt;
+  final Value<DateTime?> completedAt;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
+  final Value<DateTime?> syncedAt;
+  final Value<int> rowid;
+  const UserContentStatesTableCompanion({
+    this.uuidUserContentState = const Value.absent(),
+    this.uuidProfile = const Value.absent(),
+    this.uuidContentItem = const Value.absent(),
+    this.favorito = const Value.absent(),
+    this.progresoPorcentaje = const Value.absent(),
+    this.ultimaPosicionSegundos = const Value.absent(),
+    this.completado = const Value.absent(),
+    this.startedAt = const Value.absent(),
+    this.completedAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  UserContentStatesTableCompanion.insert({
+    required String uuidUserContentState,
+    required String uuidProfile,
+    required String uuidContentItem,
+    this.favorito = const Value.absent(),
+    this.progresoPorcentaje = const Value.absent(),
+    this.ultimaPosicionSegundos = const Value.absent(),
+    this.completado = const Value.absent(),
+    this.startedAt = const Value.absent(),
+    this.completedAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : uuidUserContentState = Value(uuidUserContentState),
+       uuidProfile = Value(uuidProfile),
+       uuidContentItem = Value(uuidContentItem);
+  static Insertable<LocalUserContentState> custom({
+    Expression<String>? uuidUserContentState,
+    Expression<String>? uuidProfile,
+    Expression<String>? uuidContentItem,
+    Expression<bool>? favorito,
+    Expression<int>? progresoPorcentaje,
+    Expression<int>? ultimaPosicionSegundos,
+    Expression<bool>? completado,
+    Expression<DateTime>? startedAt,
+    Expression<DateTime>? completedAt,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
+    Expression<DateTime>? syncedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (uuidUserContentState != null)
+        'uuid_user_content_state': uuidUserContentState,
+      if (uuidProfile != null) 'uuid_profile': uuidProfile,
+      if (uuidContentItem != null) 'uuid_content_item': uuidContentItem,
+      if (favorito != null) 'favorito': favorito,
+      if (progresoPorcentaje != null) 'progreso_porcentaje': progresoPorcentaje,
+      if (ultimaPosicionSegundos != null)
+        'ultima_posicion_segundos': ultimaPosicionSegundos,
+      if (completado != null) 'completado': completado,
+      if (startedAt != null) 'started_at': startedAt,
+      if (completedAt != null) 'completed_at': completedAt,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (syncedAt != null) 'synced_at': syncedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  UserContentStatesTableCompanion copyWith({
+    Value<String>? uuidUserContentState,
+    Value<String>? uuidProfile,
+    Value<String>? uuidContentItem,
+    Value<bool>? favorito,
+    Value<int>? progresoPorcentaje,
+    Value<int>? ultimaPosicionSegundos,
+    Value<bool>? completado,
+    Value<DateTime?>? startedAt,
+    Value<DateTime?>? completedAt,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
+    Value<DateTime?>? syncedAt,
+    Value<int>? rowid,
+  }) {
+    return UserContentStatesTableCompanion(
+      uuidUserContentState: uuidUserContentState ?? this.uuidUserContentState,
+      uuidProfile: uuidProfile ?? this.uuidProfile,
+      uuidContentItem: uuidContentItem ?? this.uuidContentItem,
+      favorito: favorito ?? this.favorito,
+      progresoPorcentaje: progresoPorcentaje ?? this.progresoPorcentaje,
+      ultimaPosicionSegundos:
+          ultimaPosicionSegundos ?? this.ultimaPosicionSegundos,
+      completado: completado ?? this.completado,
+      startedAt: startedAt ?? this.startedAt,
+      completedAt: completedAt ?? this.completedAt,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      syncedAt: syncedAt ?? this.syncedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (uuidUserContentState.present) {
+      map['uuid_user_content_state'] = Variable<String>(
+        uuidUserContentState.value,
+      );
+    }
+    if (uuidProfile.present) {
+      map['uuid_profile'] = Variable<String>(uuidProfile.value);
+    }
+    if (uuidContentItem.present) {
+      map['uuid_content_item'] = Variable<String>(uuidContentItem.value);
+    }
+    if (favorito.present) {
+      map['favorito'] = Variable<bool>(favorito.value);
+    }
+    if (progresoPorcentaje.present) {
+      map['progreso_porcentaje'] = Variable<int>(progresoPorcentaje.value);
+    }
+    if (ultimaPosicionSegundos.present) {
+      map['ultima_posicion_segundos'] = Variable<int>(
+        ultimaPosicionSegundos.value,
+      );
+    }
+    if (completado.present) {
+      map['completado'] = Variable<bool>(completado.value);
+    }
+    if (startedAt.present) {
+      map['started_at'] = Variable<DateTime>(startedAt.value);
+    }
+    if (completedAt.present) {
+      map['completed_at'] = Variable<DateTime>(completedAt.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('UserContentStatesTableCompanion(')
+          ..write('uuidUserContentState: $uuidUserContentState, ')
+          ..write('uuidProfile: $uuidProfile, ')
+          ..write('uuidContentItem: $uuidContentItem, ')
+          ..write('favorito: $favorito, ')
+          ..write('progresoPorcentaje: $progresoPorcentaje, ')
+          ..write('ultimaPosicionSegundos: $ultimaPosicionSegundos, ')
+          ..write('completado: $completado, ')
+          ..write('startedAt: $startedAt, ')
+          ..write('completedAt: $completedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $ProfilesTableTable profilesTable = $ProfilesTableTable(this);
   late final $ContentItemsTableTable contentItemsTable =
       $ContentItemsTableTable(this);
+  late final $UserContentStatesTableTable userContentStatesTable =
+      $UserContentStatesTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1782,6 +2591,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     profilesTable,
     contentItemsTable,
+    userContentStatesTable,
   ];
 }
 
@@ -2600,6 +3410,391 @@ typedef $$ContentItemsTableTableProcessedTableManager =
       LocalContentItem,
       PrefetchHooks Function()
     >;
+typedef $$UserContentStatesTableTableCreateCompanionBuilder =
+    UserContentStatesTableCompanion Function({
+      required String uuidUserContentState,
+      required String uuidProfile,
+      required String uuidContentItem,
+      Value<bool> favorito,
+      Value<int> progresoPorcentaje,
+      Value<int> ultimaPosicionSegundos,
+      Value<bool> completado,
+      Value<DateTime?> startedAt,
+      Value<DateTime?> completedAt,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<DateTime?> syncedAt,
+      Value<int> rowid,
+    });
+typedef $$UserContentStatesTableTableUpdateCompanionBuilder =
+    UserContentStatesTableCompanion Function({
+      Value<String> uuidUserContentState,
+      Value<String> uuidProfile,
+      Value<String> uuidContentItem,
+      Value<bool> favorito,
+      Value<int> progresoPorcentaje,
+      Value<int> ultimaPosicionSegundos,
+      Value<bool> completado,
+      Value<DateTime?> startedAt,
+      Value<DateTime?> completedAt,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<DateTime?> syncedAt,
+      Value<int> rowid,
+    });
+
+class $$UserContentStatesTableTableFilterComposer
+    extends Composer<_$AppDatabase, $UserContentStatesTableTable> {
+  $$UserContentStatesTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get uuidUserContentState => $composableBuilder(
+    column: $table.uuidUserContentState,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get uuidProfile => $composableBuilder(
+    column: $table.uuidProfile,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get uuidContentItem => $composableBuilder(
+    column: $table.uuidContentItem,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get favorito => $composableBuilder(
+    column: $table.favorito,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get progresoPorcentaje => $composableBuilder(
+    column: $table.progresoPorcentaje,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get ultimaPosicionSegundos => $composableBuilder(
+    column: $table.ultimaPosicionSegundos,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get completado => $composableBuilder(
+    column: $table.completado,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get startedAt => $composableBuilder(
+    column: $table.startedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$UserContentStatesTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $UserContentStatesTableTable> {
+  $$UserContentStatesTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get uuidUserContentState => $composableBuilder(
+    column: $table.uuidUserContentState,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get uuidProfile => $composableBuilder(
+    column: $table.uuidProfile,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get uuidContentItem => $composableBuilder(
+    column: $table.uuidContentItem,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get favorito => $composableBuilder(
+    column: $table.favorito,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get progresoPorcentaje => $composableBuilder(
+    column: $table.progresoPorcentaje,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get ultimaPosicionSegundos => $composableBuilder(
+    column: $table.ultimaPosicionSegundos,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get completado => $composableBuilder(
+    column: $table.completado,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get startedAt => $composableBuilder(
+    column: $table.startedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$UserContentStatesTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $UserContentStatesTableTable> {
+  $$UserContentStatesTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get uuidUserContentState => $composableBuilder(
+    column: $table.uuidUserContentState,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get uuidProfile => $composableBuilder(
+    column: $table.uuidProfile,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get uuidContentItem => $composableBuilder(
+    column: $table.uuidContentItem,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get favorito =>
+      $composableBuilder(column: $table.favorito, builder: (column) => column);
+
+  GeneratedColumn<int> get progresoPorcentaje => $composableBuilder(
+    column: $table.progresoPorcentaje,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get ultimaPosicionSegundos => $composableBuilder(
+    column: $table.ultimaPosicionSegundos,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get completado => $composableBuilder(
+    column: $table.completado,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get startedAt =>
+      $composableBuilder(column: $table.startedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+}
+
+class $$UserContentStatesTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $UserContentStatesTableTable,
+          LocalUserContentState,
+          $$UserContentStatesTableTableFilterComposer,
+          $$UserContentStatesTableTableOrderingComposer,
+          $$UserContentStatesTableTableAnnotationComposer,
+          $$UserContentStatesTableTableCreateCompanionBuilder,
+          $$UserContentStatesTableTableUpdateCompanionBuilder,
+          (
+            LocalUserContentState,
+            BaseReferences<
+              _$AppDatabase,
+              $UserContentStatesTableTable,
+              LocalUserContentState
+            >,
+          ),
+          LocalUserContentState,
+          PrefetchHooks Function()
+        > {
+  $$UserContentStatesTableTableTableManager(
+    _$AppDatabase db,
+    $UserContentStatesTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$UserContentStatesTableTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$UserContentStatesTableTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$UserContentStatesTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> uuidUserContentState = const Value.absent(),
+                Value<String> uuidProfile = const Value.absent(),
+                Value<String> uuidContentItem = const Value.absent(),
+                Value<bool> favorito = const Value.absent(),
+                Value<int> progresoPorcentaje = const Value.absent(),
+                Value<int> ultimaPosicionSegundos = const Value.absent(),
+                Value<bool> completado = const Value.absent(),
+                Value<DateTime?> startedAt = const Value.absent(),
+                Value<DateTime?> completedAt = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => UserContentStatesTableCompanion(
+                uuidUserContentState: uuidUserContentState,
+                uuidProfile: uuidProfile,
+                uuidContentItem: uuidContentItem,
+                favorito: favorito,
+                progresoPorcentaje: progresoPorcentaje,
+                ultimaPosicionSegundos: ultimaPosicionSegundos,
+                completado: completado,
+                startedAt: startedAt,
+                completedAt: completedAt,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String uuidUserContentState,
+                required String uuidProfile,
+                required String uuidContentItem,
+                Value<bool> favorito = const Value.absent(),
+                Value<int> progresoPorcentaje = const Value.absent(),
+                Value<int> ultimaPosicionSegundos = const Value.absent(),
+                Value<bool> completado = const Value.absent(),
+                Value<DateTime?> startedAt = const Value.absent(),
+                Value<DateTime?> completedAt = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => UserContentStatesTableCompanion.insert(
+                uuidUserContentState: uuidUserContentState,
+                uuidProfile: uuidProfile,
+                uuidContentItem: uuidContentItem,
+                favorito: favorito,
+                progresoPorcentaje: progresoPorcentaje,
+                ultimaPosicionSegundos: ultimaPosicionSegundos,
+                completado: completado,
+                startedAt: startedAt,
+                completedAt: completedAt,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$UserContentStatesTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $UserContentStatesTableTable,
+      LocalUserContentState,
+      $$UserContentStatesTableTableFilterComposer,
+      $$UserContentStatesTableTableOrderingComposer,
+      $$UserContentStatesTableTableAnnotationComposer,
+      $$UserContentStatesTableTableCreateCompanionBuilder,
+      $$UserContentStatesTableTableUpdateCompanionBuilder,
+      (
+        LocalUserContentState,
+        BaseReferences<
+          _$AppDatabase,
+          $UserContentStatesTableTable,
+          LocalUserContentState
+        >,
+      ),
+      LocalUserContentState,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -2608,4 +3803,9 @@ class $AppDatabaseManager {
       $$ProfilesTableTableTableManager(_db, _db.profilesTable);
   $$ContentItemsTableTableTableManager get contentItemsTable =>
       $$ContentItemsTableTableTableManager(_db, _db.contentItemsTable);
+  $$UserContentStatesTableTableTableManager get userContentStatesTable =>
+      $$UserContentStatesTableTableTableManager(
+        _db,
+        _db.userContentStatesTable,
+      );
 }

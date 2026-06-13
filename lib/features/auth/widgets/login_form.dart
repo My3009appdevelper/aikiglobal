@@ -7,7 +7,6 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../shared/widgets/app_interactive.dart';
 import '../../../shared/widgets/app_primary_button.dart';
-import '../../../shared/widgets/app_secondary_button.dart';
 import '../../../shared/widgets/app_text_field.dart';
 
 class LoginForm extends StatefulWidget {
@@ -385,33 +384,7 @@ class _LoginFormState extends State<LoginForm> {
           label: _isSubmitting ? 'Entrando...' : 'Iniciar sesión',
           onPressed: _isSubmitting ? null : _login,
         ),
-        const SizedBox(height: 18),
-        AppSecondaryButton(
-          label: 'Continuar con Google',
-          onPressed: () {},
-          leading: Text(
-            'G',
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(color: scheme.primary),
-          ),
-        ),
         const SizedBox(height: 24),
-        Row(
-          children: [
-            Expanded(
-              child: Divider(color: AppColors.stroke.withValues(alpha: 0.9)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              child: Text('o', style: Theme.of(context).textTheme.bodyMedium),
-            ),
-            Expanded(
-              child: Divider(color: AppColors.stroke.withValues(alpha: 0.9)),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
         Center(
           child: Column(
             children: [
@@ -420,7 +393,9 @@ class _LoginFormState extends State<LoginForm> {
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).pushNamed(AppRouter.register);
+                },
                 style: TextButton.styleFrom(foregroundColor: scheme.primary),
                 child: const Text('Crear cuenta'),
               ),

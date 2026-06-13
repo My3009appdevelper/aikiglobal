@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'app_data_container.dart';
 import 'content_items_controller.dart';
 import 'current_profile_controller.dart';
+import 'user_content_states_controller.dart';
 
 class AppDataScope extends StatefulWidget {
   const AppDataScope({super.key, required this.container, required this.child});
@@ -25,6 +26,10 @@ class AppDataScope extends StatefulWidget {
 
   static ContentItemsController contentItems(BuildContext context) {
     return of(context).contentItemsController;
+  }
+
+  static UserContentStatesController userContentStates(BuildContext context) {
+    return of(context).userContentStatesController;
   }
 
   @override

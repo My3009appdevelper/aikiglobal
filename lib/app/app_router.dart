@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../features/auth/login_page.dart';
+import '../features/auth/register_page.dart';
 import '../features/home/home_shell_page.dart';
 import '../features/onboarding/onboarding_page.dart';
 import '../features/splash/splash_page.dart';
@@ -9,6 +10,7 @@ class AppRouter {
   static const splash = '/';
   static const onboarding = '/onboarding';
   static const login = '/login';
+  static const register = '/register';
   static const home = '/home';
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
@@ -26,6 +28,7 @@ class AppRouter {
           splash => const SplashPage(),
           onboarding => const OnboardingPage(),
           login => const LoginPage(),
+          register => const RegisterPage(),
           home => const HomeShellPage(),
           _ => const SplashPage(),
         };

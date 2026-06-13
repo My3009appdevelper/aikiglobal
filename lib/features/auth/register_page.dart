@@ -3,15 +3,14 @@ import 'package:flutter/material.dart';
 import '../../core/constants/app_assets.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
-import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_shadows.dart';
 import '../../shared/widgets/app_background.dart';
 import '../../shared/widgets/app_logo.dart';
 import '../../shared/widgets/app_responsive_container.dart';
-import 'widgets/login_form.dart';
+import 'widgets/register_form.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatelessWidget {
+  const RegisterPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -108,22 +107,23 @@ class LoginPage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Bienvenido a Aiki',
+                                  'Crear cuenta',
                                   style: Theme.of(
                                     context,
                                   ).textTheme.displayMedium,
                                 ),
-                                const SizedBox(height: AppSpacing.sm),
+                                const SizedBox(height: 10),
                                 Text(
-                                  'Un espacio para tu bienestar físico, mental y espiritual.',
+                                  'Comienza tu camino de paz, claridad y bienestar.',
                                   style: Theme.of(context).textTheme.bodyLarge,
                                 ),
-                                const SizedBox(height: AppSpacing.lg),
-                                const LoginForm(),
+                                const SizedBox(height: 22),
+                                const RegisterForm(),
                               ],
                             ),
                           ),
                         ),
+                        const SizedBox(height: 24),
                       ],
                     ),
                   ),

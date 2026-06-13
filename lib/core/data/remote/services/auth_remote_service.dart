@@ -16,6 +16,18 @@ class AuthRemoteService {
     );
   }
 
+  Future<AuthResponse> signUp({
+    required String email,
+    required String password,
+    required String nombre,
+  }) {
+    return _supabase.auth.signUp(
+      email: email.trim(),
+      password: password,
+      data: {'nombre': nombre.trim()},
+    );
+  }
+
   Future<void> signOut() {
     return _supabase.auth.signOut(scope: SignOutScope.local);
   }

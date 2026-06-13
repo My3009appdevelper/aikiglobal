@@ -3,6 +3,7 @@ import 'package:drift/drift.dart';
 import '../local/app_database.dart';
 import '../models/app_content_item.dart';
 import '../models/app_profile.dart';
+import '../models/app_user_content_state.dart';
 
 String _stringValue(
   Map<String, dynamic> json,
@@ -225,6 +226,63 @@ AppContentItem contentItemRemoteToApp(Map<String, dynamic> json) {
     duracionSegundos: _nullableIntValue(json, 'duracion_segundos'),
     orden: _intValue(json, 'orden'),
     createdBy: _nullableStringValue(json, 'created_by'),
+    createdAt: _dateTimeValue(json, 'created_at'),
+    updatedAt: _dateTimeValue(json, 'updated_at'),
+    deletedAt: _nullableDateTimeValue(json, 'deleted_at'),
+    syncedAt: _nullableDateTimeValue(json, 'synced_at'),
+  );
+}
+
+Map<String, dynamic> userContentStateToRemote(LocalUserContentState state) {
+  return {
+    'uuid_user_content_state': state.uuidUserContentState,
+    'uuid_profile': state.uuidProfile,
+    'uuid_content_item': state.uuidContentItem,
+    'favorito': state.favorito,
+    'progreso_porcentaje': state.progresoPorcentaje,
+    'ultima_posicion_segundos': state.ultimaPosicionSegundos,
+    'completado': state.completado,
+    'started_at': _dateToRemote(state.startedAt),
+    'completed_at': _dateToRemote(state.completedAt),
+    'created_at': _dateToRemote(state.createdAt),
+    'updated_at': _dateToRemote(state.updatedAt),
+    'deleted_at': _dateToRemote(state.deletedAt),
+    'synced_at': _dateToRemote(state.syncedAt),
+  };
+}
+
+UserContentStatesTableCompanion userContentStateRemoteToCompanion(
+  Map<String, dynamic> json,
+) {
+  final syncedAt = DateTime.now().toUtc();
+  return UserContentStatesTableCompanion.insert(
+    uuidUserContentState: _stringValue(json, 'uuid_user_content_state'),
+    uuidProfile: _stringValue(json, 'uuid_profile'),
+    uuidContentItem: _stringValue(json, 'uuid_content_item'),
+    favorito: Value(_boolValue(json, 'favorito')),
+    progresoPorcentaje: Value(_intValue(json, 'progreso_porcentaje')),
+    ultimaPosicionSegundos: Value(_intValue(json, 'ultima_posicion_segundos')),
+    completado: Value(_boolValue(json, 'completado')),
+    startedAt: Value(_nullableDateTimeValue(json, 'started_at')),
+    completedAt: Value(_nullableDateTimeValue(json, 'completed_at')),
+    createdAt: Value(_dateTimeValue(json, 'created_at')),
+    updatedAt: Value(_dateTimeValue(json, 'updated_at')),
+    deletedAt: Value(_nullableDateTimeValue(json, 'deleted_at')),
+    syncedAt: Value(syncedAt),
+  );
+}
+
+AppUserContentState userContentStateRemoteToApp(Map<String, dynamic> json) {
+  return AppUserContentState(
+    uuidUserContentState: _stringValue(json, 'uuid_user_content_state'),
+    uuidProfile: _stringValue(json, 'uuid_profile'),
+    uuidContentItem: _stringValue(json, 'uuid_content_item'),
+    favorito: _boolValue(json, 'favorito'),
+    progresoPorcentaje: _intValue(json, 'progreso_porcentaje'),
+    ultimaPosicionSegundos: _intValue(json, 'ultima_posicion_segundos'),
+    completado: _boolValue(json, 'completado'),
+    startedAt: _nullableDateTimeValue(json, 'started_at'),
+    completedAt: _nullableDateTimeValue(json, 'completed_at'),
     createdAt: _dateTimeValue(json, 'created_at'),
     updatedAt: _dateTimeValue(json, 'updated_at'),
     deletedAt: _nullableDateTimeValue(json, 'deleted_at'),

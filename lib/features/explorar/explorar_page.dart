@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_assets.dart';
@@ -10,6 +12,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../shared/widgets/app_logo.dart';
 import '../../shared/widgets/app_responsive_container.dart';
 import '../../shared/widgets/app_section_header.dart';
+import '../../shared/widgets/app_text_field.dart';
 import 'content_detail_page.dart';
 import 'data/mock_explore_data.dart';
 import 'models/content_item.dart';
@@ -26,6 +29,7 @@ class ExplorarPage extends StatefulWidget {
 
 class _ExplorarPageState extends State<ExplorarPage> {
   final _searchController = TextEditingController();
+  QuickCategoryType? _selectedCategory;
   bool _isInitialized = false;
 
   @override
@@ -60,6 +64,10 @@ class _ExplorarPageState extends State<ExplorarPage> {
 
   Future<void> _search(String query) async {
     final controller = AppDataScope.contentItems(context);
+    if (query.trim().isNotEmpty && _selectedCategory != null) {
+      setState(() => _selectedCategory = null);
+    }
+
     if (query.trim().isEmpty) {
       if (controller.adminMode) {
         controller.watchAdminAll();
@@ -76,102 +84,171 @@ class _ExplorarPageState extends State<ExplorarPage> {
     }
   }
 
+  void _selectCategory(QuickCategoryType type) {
+    final shouldClearSearch = _searchController.text.trim().isNotEmpty;
+    setState(() {
+      _selectedCategory = _selectedCategory == type ? null : type;
+    });
+
+    if (shouldClearSearch) {
+      _searchController.clear();
+      unawaited(_search(''));
+    }
+  }
+
+  Future<void> _refreshExplore() async {
+    final contentController = AppDataScope.contentItems(context);
+    final profileController = AppDataScope.currentProfile(context);
+    final userContentStatesController = AppDataScope.userContentStates(context);
+    final profile = profileController.profile;
+
+    await contentController.refreshFromRemote();
+
+    if (profile != null) {
+      await userContentStatesController.syncWithRemote(
+        uuidProfile: profile.uuidProfile,
+      );
+    }
+
+    final query = _searchController.text.trim();
+    if (query.isNotEmpty) {
+      await _search(query);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final contentController = AppDataScope.contentItems(context);
+    final userContentStatesController = AppDataScope.userContentStates(context);
 
     return SafeArea(
       bottom: false,
       child: AppResponsiveContainer(
         child: AnimatedBuilder(
-          animation: contentController,
+          animation: Listenable.merge([
+            contentController,
+            userContentStatesController,
+          ]),
           builder: (context, _) {
             final data = _ExploreViewData.fromController(
               contentController,
+              favoriteContentIds:
+                  userContentStatesController.favoriteContentIds,
               fallbackQuery: _searchController.text,
               allowMockFallback: !contentController.hasRemote,
             );
 
-            return CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: AppSpacing.md),
-                      _ExploreHeader(
-                        controller: _searchController,
-                        onSubmitted: _search,
-                      ),
-                      if (contentController.adminMode) ...[
+            return RefreshIndicator.adaptive(
+              color: Theme.of(context).colorScheme.primary,
+              onRefresh: _refreshExplore,
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         const SizedBox(height: AppSpacing.md),
-                        const _AdminViewBanner(),
+                        _ExploreHeader(
+                          controller: _searchController,
+                          onSubmitted: _search,
+                        ),
+                        if (contentController.adminMode) ...[
+                          const SizedBox(height: AppSpacing.md),
+                          const _AdminViewBanner(),
+                        ],
+                        const SizedBox(height: AppSpacing.lg),
+                        ExploreHeroCard(
+                          onTap: () => _openContent(context, data.heroItem),
+                        ),
+                        const SizedBox(height: AppSpacing.lg),
+                        QuickCategoryRow(
+                          audioCount: data.audios.length,
+                          meditationCount: data.meditations.length,
+                          courseCount: data.courses.length,
+                          favoriteCount: data.favorites.length,
+                          selectedType: _selectedCategory,
+                          onSelected: _selectCategory,
+                        ),
+                        if (contentController.hasRemote &&
+                            contentController.error != null) ...[
+                          const SizedBox(height: AppSpacing.md),
+                          _RemoteSectionError(error: contentController.error),
+                        ],
+                        if (contentController.hasRemote &&
+                            contentController.error == null &&
+                            !data.hasAnySection) ...[
+                          const SizedBox(height: AppSpacing.md),
+                          const _NoRemoteContent(),
+                        ],
+                        if (_searchController.text.trim().isNotEmpty) ...[
+                          const SizedBox(height: AppSpacing.xl),
+                          AppSectionHeader(
+                            title: 'Resultados',
+                            actionLabel: 'Limpiar',
+                            onAction: () {
+                              _searchController.clear();
+                              _search('');
+                            },
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          ContentHorizontalList(
+                            items: data.searchResults,
+                            onItemTap: (item) => _openContent(context, item),
+                          ),
+                        ] else if (_selectedCategory != null) ...[
+                          const SizedBox(height: AppSpacing.xl),
+                          AppSectionHeader(
+                            title: data.titleForCategory(_selectedCategory!),
+                            actionLabel: 'Ver todo',
+                            onAction: () {
+                              setState(() => _selectedCategory = null);
+                            },
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          if (data.itemsForCategory(_selectedCategory!).isEmpty)
+                            _EmptyCategoryResult(
+                              title: data.titleForCategory(_selectedCategory!),
+                            )
+                          else
+                            ContentHorizontalList(
+                              items: data.itemsForCategory(_selectedCategory!),
+                              onItemTap: (item) => _openContent(context, item),
+                            ),
+                        ] else ...[
+                          _Section(
+                            title: 'Cursos disponibles',
+                            items: data.courses,
+                            onItemTap: (item) => _openContent(context, item),
+                          ),
+                          _Section(
+                            title: 'Meditaciones',
+                            items: data.meditations,
+                            onItemTap: (item) => _openContent(context, item),
+                          ),
+                          _Section(
+                            title: 'Eventos',
+                            items: data.events,
+                            onItemTap: (item) => _openContent(context, item),
+                          ),
+                          _Section(
+                            title: 'Audio y sonido',
+                            items: data.audios,
+                            onItemTap: (item) => _openContent(context, item),
+                          ),
+                          _Section(
+                            title: 'Recomendados para ti',
+                            items: data.recommended,
+                            cardWidth: 172,
+                            onItemTap: (item) => _openContent(context, item),
+                          ),
+                        ],
+                        const SizedBox(height: 130),
                       ],
-                      const SizedBox(height: AppSpacing.lg),
-                      ExploreHeroCard(
-                        onTap: () => _openContent(context, data.heroItem),
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-                      const QuickCategoryRow(),
-                      if (contentController.hasRemote &&
-                          contentController.error != null) ...[
-                        const SizedBox(height: AppSpacing.md),
-                        _RemoteSectionError(error: contentController.error),
-                      ],
-                      if (contentController.hasRemote &&
-                          contentController.error == null &&
-                          !data.hasAnySection) ...[
-                        const SizedBox(height: AppSpacing.md),
-                        const _NoRemoteContent(),
-                      ],
-                      if (_searchController.text.trim().isNotEmpty) ...[
-                        const SizedBox(height: AppSpacing.xl),
-                        AppSectionHeader(
-                          title: 'Resultados',
-                          actionLabel: 'Limpiar',
-                          onAction: () {
-                            _searchController.clear();
-                            _search('');
-                          },
-                        ),
-                        const SizedBox(height: AppSpacing.md),
-                        ContentHorizontalList(
-                          items: data.searchResults,
-                          onItemTap: (item) => _openContent(context, item),
-                        ),
-                      ] else ...[
-                        _Section(
-                          title: 'Cursos disponibles',
-                          items: data.courses,
-                          onItemTap: (item) => _openContent(context, item),
-                        ),
-                        _Section(
-                          title: 'Meditaciones',
-                          items: data.meditations,
-                          onItemTap: (item) => _openContent(context, item),
-                        ),
-                        _Section(
-                          title: 'Eventos',
-                          items: data.events,
-                          onItemTap: (item) => _openContent(context, item),
-                        ),
-                        _Section(
-                          title: 'Audio y sonido',
-                          items: data.audios,
-                          onItemTap: (item) => _openContent(context, item),
-                        ),
-                        _Section(
-                          title: 'Recomendados para ti',
-                          items: data.recommended,
-                          cardWidth: 172,
-                          onItemTap: (item) => _openContent(context, item),
-                        ),
-                      ],
-                      const SizedBox(height: 130),
-                    ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             );
           },
         ),
@@ -205,7 +282,7 @@ class _Section extends StatelessWidget {
         const SizedBox(height: AppSpacing.xl),
         AppSectionHeader(
           title: title,
-          actionLabel: 'Ver todos',
+          actionLabel: 'Ver todo',
           onAction: () {},
         ),
         const SizedBox(height: AppSpacing.md),
@@ -235,7 +312,7 @@ class _RemoteSectionError extends StatelessWidget {
         border: Border.all(color: Theme.of(context).colorScheme.error),
       ),
       child: Text(
-        'No se pudieron cargar contenidos desde Supabase (${error.runtimeType}). Verifica sesion, permisos RLS o API key.',
+        'No se pudieron cargar contenidos desde Supabase (${error.runtimeType}). Verifica sesión, permisos RLS o API key.',
         style: Theme.of(context).textTheme.bodySmall,
       ),
     );
@@ -256,6 +333,29 @@ class _NoRemoteContent extends StatelessWidget {
       ),
       child: Text(
         'No hay contenidos publicados para mostrar desde Supabase.',
+        style: Theme.of(context).textTheme.bodySmall,
+      ),
+    );
+  }
+}
+
+class _EmptyCategoryResult extends StatelessWidget {
+  const _EmptyCategoryResult({required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: AppRadius.medium,
+      ),
+      child: Text(
+        'No hay contenido disponible en $title por ahora.',
+        textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.bodySmall,
       ),
     );
@@ -309,12 +409,14 @@ class _ExploreViewData {
     required this.meditations,
     required this.events,
     required this.audios,
+    required this.favorites,
     required this.recommended,
     required this.searchResults,
   });
 
   factory _ExploreViewData.fromController(
     ContentItemsController controller, {
+    required Set<String> favoriteContentIds,
     required String fallbackQuery,
     required bool allowMockFallback,
   }) {
@@ -323,29 +425,46 @@ class _ExploreViewData {
       return _ExploreViewData._fallback(fallbackQuery);
     }
     if (realItems.isEmpty) {
-      return const _ExploreViewData(
+      return _ExploreViewData(
         courses: [],
         meditations: [],
         events: [],
         audios: [],
+        favorites: [],
         recommended: [],
         searchResults: [],
       );
     }
 
     final visualItems = realItems.asMap().entries.map((entry) {
-      return _mapContentItem(entry.value, entry.key);
+      return _mapContentItem(
+        entry.value,
+        entry.key,
+        favoriteContentIds: favoriteContentIds,
+      );
     }).toList();
 
     return _ExploreViewData(
-      courses: _filterByType(visualItems, {'course', 'curso'}),
-      meditations: _filterByType(visualItems, {'meditation', 'meditacion'}),
-      events: _filterByType(visualItems, {'event', 'evento'}),
-      audios: _filterByType(visualItems, {'audio', 'sound', 'sonido'}),
+      courses: _mapContentItemsByType(realItems, {
+        'course',
+      }, favoriteContentIds: favoriteContentIds),
+      meditations: _mapContentItemsByType(realItems, {
+        'meditation',
+      }, favoriteContentIds: favoriteContentIds),
+      events: const [],
+      audios: _mapContentItemsByType(realItems, {
+        'audio',
+        'sound',
+      }, favoriteContentIds: favoriteContentIds),
+      favorites: visualItems.where((item) => item.isFavorite).toList(),
       recommended: controller.featuredItems.isEmpty
           ? visualItems.take(8).toList()
           : controller.featuredItems.asMap().entries.map((entry) {
-              return _mapContentItem(entry.value, entry.key);
+              return _mapContentItem(
+                entry.value,
+                entry.key,
+                favoriteContentIds: favoriteContentIds,
+              );
             }).toList(),
       searchResults: visualItems,
     );
@@ -354,11 +473,12 @@ class _ExploreViewData {
   factory _ExploreViewData._fallback(String query) {
     final cleanQuery = query.trim().toLowerCase();
     if (cleanQuery.isEmpty) {
-      return const _ExploreViewData(
+      return _ExploreViewData(
         courses: MockExploreData.courses,
         meditations: MockExploreData.meditations,
         events: MockExploreData.events,
         audios: MockExploreData.audios,
+        favorites: _mockFavorites,
         recommended: MockExploreData.recommended,
         searchResults: MockExploreData.recommended,
       );
@@ -381,6 +501,7 @@ class _ExploreViewData {
       meditations: const [],
       events: const [],
       audios: const [],
+      favorites: const [],
       recommended: const [],
       searchResults: results,
     );
@@ -390,6 +511,7 @@ class _ExploreViewData {
   final List<ContentItem> meditations;
   final List<ContentItem> events;
   final List<ContentItem> audios;
+  final List<ContentItem> favorites;
   final List<ContentItem> recommended;
   final List<ContentItem> searchResults;
 
@@ -398,8 +520,27 @@ class _ExploreViewData {
       meditations.isNotEmpty ||
       events.isNotEmpty ||
       audios.isNotEmpty ||
+      favorites.isNotEmpty ||
       recommended.isNotEmpty ||
       searchResults.isNotEmpty;
+
+  List<ContentItem> itemsForCategory(QuickCategoryType type) {
+    return switch (type) {
+      QuickCategoryType.audios => audios,
+      QuickCategoryType.meditations => meditations,
+      QuickCategoryType.courses => courses,
+      QuickCategoryType.favorites => favorites,
+    };
+  }
+
+  String titleForCategory(QuickCategoryType type) {
+    return switch (type) {
+      QuickCategoryType.audios => 'Audio y sonido',
+      QuickCategoryType.meditations => 'Meditaciones',
+      QuickCategoryType.courses => 'Cursos disponibles',
+      QuickCategoryType.favorites => 'Favoritos',
+    };
+  }
 
   ContentItem get heroItem {
     return courses.isNotEmpty
@@ -409,35 +550,62 @@ class _ExploreViewData {
         : MockExploreData.courses.first;
   }
 
-  static List<ContentItem> _filterByType(
-    List<ContentItem> items,
-    Set<String> acceptedTypes,
-  ) {
-    return items.where((item) {
-      return acceptedTypes.contains(_normalizeType(item.type));
-    }).toList();
+  static List<ContentItem> _mapContentItemsByType(
+    List<AppContentItem> items,
+    Set<String> acceptedTypes, {
+    required Set<String> favoriteContentIds,
+  }) {
+    return items
+        .asMap()
+        .entries
+        .where((entry) {
+          return acceptedTypes.contains(_normalizeType(entry.value.tipo));
+        })
+        .map((entry) {
+          return _mapContentItem(
+            entry.value,
+            entry.key,
+            favoriteContentIds: favoriteContentIds,
+          );
+        })
+        .toList();
   }
 
-  static ContentItem _mapContentItem(AppContentItem item, int index) {
+  static ContentItem _mapContentItem(
+    AppContentItem item,
+    int index, {
+    required Set<String> favoriteContentIds,
+  }) {
     return ContentItem(
+      uuidContentItem: item.uuidContentItem,
       title: item.titulo,
       type: _displayType(item.tipo),
       duration: _formatDuration(item.duracionSegundos),
       imageAsset: _fallbackAssetForType(item.tipo, index),
       description: item.descripcion ?? item.subtitulo,
       isNew: item.destacado,
-      isFavorite: item.destacado,
+      isFavorite: favoriteContentIds.contains(item.uuidContentItem),
     );
+  }
+
+  static List<ContentItem> get _mockFavorites {
+    return [
+      ...MockExploreData.courses,
+      ...MockExploreData.meditations,
+      ...MockExploreData.events,
+      ...MockExploreData.audios,
+      ...MockExploreData.recommended,
+    ].where((item) => item.isFavorite).toList();
   }
 
   static String _displayType(String value) {
     return switch (_normalizeType(value)) {
-      'course' || 'curso' => 'Curso',
-      'meditation' || 'meditacion' => 'Meditación',
-      'event' || 'evento' => 'Evento',
-      'sound' || 'sonido' => 'Sonido',
+      'course' => 'Curso',
+      'meditation' => 'Meditación',
+      'event' => 'Evento',
+      'sound' => 'Sonido',
       'audio' => 'Audio',
-      'session' || 'sesion' => 'Sesión',
+      'session' => 'Sesión',
       _ => value,
     };
   }
@@ -464,7 +632,7 @@ class _ExploreViewData {
   static String _fallbackAssetForType(String tipo, int index) {
     final normalized = _normalizeType(tipo);
     final assets = switch (normalized) {
-      'course' || 'curso' => const [
+      'course' => const [
         AppAssets.curso1,
         AppAssets.curso2,
         AppAssets.curso3,
@@ -474,7 +642,7 @@ class _ExploreViewData {
         AppAssets.curso7,
         AppAssets.curso8,
       ],
-      'meditation' || 'meditacion' => const [
+      'meditation' => const [
         AppAssets.meditacion1,
         AppAssets.meditacion2,
         AppAssets.meditacion3,
@@ -485,7 +653,7 @@ class _ExploreViewData {
         AppAssets.meditacion8,
         AppAssets.meditacion9,
       ],
-      'event' || 'evento' => const [
+      'event' => const [
         AppAssets.evento1,
         AppAssets.evento2,
         AppAssets.evento3,
@@ -519,73 +687,38 @@ class _ExploreHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final stroke = brightness == Brightness.dark
-        ? AppColors.darkStroke
-        : AppColors.stroke;
-    final surface = brightness == Brightness.dark
-        ? AppColors.darkSurface
-        : AppColors.white;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const AppLogo(width: 148),
         const SizedBox(height: AppSpacing.md),
-        Container(
-          width: double.infinity,
-          height: 48,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            color: surface.withValues(alpha: 0.72),
-            borderRadius: AppRadius.full,
-            border: Border.all(color: stroke),
-          ),
-          child: Row(
-            children: [
-              Icon(
-                Icons.search_rounded,
-                color: brightness == Brightness.dark
-                    ? AppColors.darkTextMuted
-                    : AppColors.textMuted,
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: TextField(
-                  controller: controller,
-                  textInputAction: TextInputAction.search,
-                  onSubmitted: onSubmitted,
-                  onChanged: (value) {
-                    if (value.trim().isEmpty) {
-                      onSubmitted(value);
-                    }
-                  },
-                  decoration: const InputDecoration(
-                    hintText: 'Buscar',
-                    border: InputBorder.none,
-                    isCollapsed: true,
-                  ),
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ),
-              ValueListenableBuilder<TextEditingValue>(
-                valueListenable: controller,
-                builder: (context, value, _) {
-                  if (value.text.isEmpty) {
-                    return const SizedBox.shrink();
-                  }
+        AppTextField(
+          hintText: 'Buscar',
+          controller: controller,
+          prefixIcon: Icons.search_rounded,
+          textInputAction: TextInputAction.search,
+          onSubmitted: onSubmitted,
+          onChanged: (value) {
+            if (value.trim().isEmpty) {
+              onSubmitted(value);
+            }
+          },
+          suffixIcon: ValueListenableBuilder<TextEditingValue>(
+            valueListenable: controller,
+            builder: (context, value, _) {
+              if (value.text.isEmpty) {
+                return const SizedBox.shrink();
+              }
 
-                  return IconButton(
-                    tooltip: 'Limpiar búsqueda',
-                    onPressed: () {
-                      controller.clear();
-                      onSubmitted('');
-                    },
-                    icon: const Icon(Icons.close_rounded),
-                  );
+              return IconButton(
+                tooltip: 'Limpiar búsqueda',
+                onPressed: () {
+                  controller.clear();
+                  onSubmitted('');
                 },
-              ),
-            ],
+                icon: const Icon(Icons.close_rounded),
+              );
+            },
           ),
         ),
       ],
