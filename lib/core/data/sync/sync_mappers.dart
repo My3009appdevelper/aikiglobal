@@ -4,6 +4,8 @@ import '../local/app_database.dart';
 import '../models/app_content_item.dart';
 import '../models/app_profile.dart';
 import '../models/app_user_content_state.dart';
+import '../models/app_wellness_daily_log.dart';
+import '../models/app_wellness_profile_stats.dart';
 
 String _stringValue(
   Map<String, dynamic> json,
@@ -105,6 +107,43 @@ DateTime? _nullableDateTimeValue(Map<String, dynamic> json, String key) {
 }
 
 String? _dateToRemote(DateTime? date) => date?.toUtc().toIso8601String();
+
+String _dateOnlyValue(
+  Map<String, dynamic> json,
+  String key, {
+  String? fallback,
+}) {
+  final value = json[key];
+  if (value is DateTime) {
+    return _dateOnlyFromDateTime(value);
+  }
+  if (value is String && value.isNotEmpty) {
+    return value.length >= 10 ? value.substring(0, 10) : value;
+  }
+  return fallback ?? _dateOnlyFromDateTime(DateTime.now());
+}
+
+String? _nullableDateOnlyValue(Map<String, dynamic> json, String key) {
+  final value = json[key];
+  if (value == null) {
+    return null;
+  }
+  if (value is DateTime) {
+    return _dateOnlyFromDateTime(value);
+  }
+  if (value is String && value.isNotEmpty) {
+    return value.length >= 10 ? value.substring(0, 10) : value;
+  }
+  return null;
+}
+
+String _dateOnlyFromDateTime(DateTime date) {
+  final local = date.toLocal();
+  final month = local.month.toString().padLeft(2, '0');
+  final day = local.day.toString().padLeft(2, '0');
+
+  return '${local.year}-$month-$day';
+}
 
 Map<String, dynamic> profileToRemote(LocalProfile profile) {
   return {
@@ -286,6 +325,112 @@ AppUserContentState userContentStateRemoteToApp(Map<String, dynamic> json) {
     createdAt: _dateTimeValue(json, 'created_at'),
     updatedAt: _dateTimeValue(json, 'updated_at'),
     deletedAt: _nullableDateTimeValue(json, 'deleted_at'),
+    syncedAt: _nullableDateTimeValue(json, 'synced_at'),
+  );
+}
+
+Map<String, dynamic> wellnessDailyLogToRemote(LocalWellnessDailyLog log) {
+  return {
+    'uuid_daily_log': log.uuidDailyLog,
+    'uuid_profile': log.uuidProfile,
+    'fecha': log.fecha,
+    'mood': log.mood,
+    'energia': log.energia,
+    'calma': log.calma,
+    'descanso': log.descanso,
+    'conexion': log.conexion,
+    'meditacion_completada': log.meditacionCompletada,
+    'minutos_bienestar': log.minutosBienestar,
+    'nota': log.nota,
+    'created_at': _dateToRemote(log.createdAt),
+    'updated_at': _dateToRemote(log.updatedAt),
+    'deleted_at': _dateToRemote(log.deletedAt),
+    'synced_at': _dateToRemote(log.syncedAt),
+  };
+}
+
+WellnessDailyLogsTableCompanion wellnessDailyLogRemoteToCompanion(
+  Map<String, dynamic> json,
+) {
+  final syncedAt = DateTime.now().toUtc();
+  return WellnessDailyLogsTableCompanion.insert(
+    uuidDailyLog: _stringValue(json, 'uuid_daily_log'),
+    uuidProfile: _stringValue(json, 'uuid_profile'),
+    fecha: _dateOnlyValue(json, 'fecha'),
+    mood: Value(_nullableStringValue(json, 'mood')),
+    energia: Value(_intValue(json, 'energia')),
+    calma: Value(_intValue(json, 'calma')),
+    descanso: Value(_intValue(json, 'descanso')),
+    conexion: Value(_intValue(json, 'conexion')),
+    meditacionCompletada: Value(_boolValue(json, 'meditacion_completada')),
+    minutosBienestar: Value(_intValue(json, 'minutos_bienestar')),
+    nota: Value(_nullableStringValue(json, 'nota')),
+    createdAt: Value(_dateTimeValue(json, 'created_at')),
+    updatedAt: Value(_dateTimeValue(json, 'updated_at')),
+    deletedAt: Value(_nullableDateTimeValue(json, 'deleted_at')),
+    syncedAt: Value(syncedAt),
+  );
+}
+
+AppWellnessDailyLog wellnessDailyLogRemoteToApp(Map<String, dynamic> json) {
+  return AppWellnessDailyLog(
+    uuidDailyLog: _stringValue(json, 'uuid_daily_log'),
+    uuidProfile: _stringValue(json, 'uuid_profile'),
+    fecha: _dateOnlyValue(json, 'fecha'),
+    mood: _nullableStringValue(json, 'mood'),
+    energia: _intValue(json, 'energia'),
+    calma: _intValue(json, 'calma'),
+    descanso: _intValue(json, 'descanso'),
+    conexion: _intValue(json, 'conexion'),
+    meditacionCompletada: _boolValue(json, 'meditacion_completada'),
+    minutosBienestar: _intValue(json, 'minutos_bienestar'),
+    nota: _nullableStringValue(json, 'nota'),
+    createdAt: _dateTimeValue(json, 'created_at'),
+    updatedAt: _dateTimeValue(json, 'updated_at'),
+    deletedAt: _nullableDateTimeValue(json, 'deleted_at'),
+    syncedAt: _nullableDateTimeValue(json, 'synced_at'),
+  );
+}
+
+Map<String, dynamic> wellnessProfileStatsToRemote(
+  LocalWellnessProfileStats stats,
+) {
+  return {
+    'uuid_profile': stats.uuidProfile,
+    'current_streak': stats.currentStreak,
+    'longest_streak': stats.longestStreak,
+    'last_activity_date': stats.lastActivityDate,
+    'total_active_days': stats.totalActiveDays,
+    'updated_at': _dateToRemote(stats.updatedAt),
+    'synced_at': _dateToRemote(stats.syncedAt),
+  };
+}
+
+WellnessProfileStatsTableCompanion wellnessProfileStatsRemoteToCompanion(
+  Map<String, dynamic> json,
+) {
+  final syncedAt = DateTime.now().toUtc();
+  return WellnessProfileStatsTableCompanion.insert(
+    uuidProfile: _stringValue(json, 'uuid_profile'),
+    currentStreak: Value(_intValue(json, 'current_streak')),
+    longestStreak: Value(_intValue(json, 'longest_streak')),
+    lastActivityDate: Value(_nullableDateOnlyValue(json, 'last_activity_date')),
+    totalActiveDays: Value(_intValue(json, 'total_active_days')),
+    updatedAt: Value(_dateTimeValue(json, 'updated_at')),
+    syncedAt: Value(syncedAt),
+  );
+}
+
+AppWellnessProfileStats wellnessProfileStatsRemoteToApp(
+  Map<String, dynamic> json,
+) {
+  return AppWellnessProfileStats(
+    uuidProfile: _stringValue(json, 'uuid_profile'),
+    currentStreak: _intValue(json, 'current_streak'),
+    longestStreak: _intValue(json, 'longest_streak'),
+    lastActivityDate: _nullableDateOnlyValue(json, 'last_activity_date'),
+    totalActiveDays: _intValue(json, 'total_active_days'),
+    updatedAt: _dateTimeValue(json, 'updated_at'),
     syncedAt: _nullableDateTimeValue(json, 'synced_at'),
   );
 }

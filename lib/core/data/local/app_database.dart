@@ -5,11 +5,19 @@ import 'app_database_file.dart';
 import 'tables/content_items_table.dart';
 import 'tables/profiles_table.dart';
 import 'tables/user_content_states_table.dart';
+import 'tables/wellness_daily_logs_table.dart';
+import 'tables/wellness_profile_stats_table.dart';
 
 part 'app_database.g.dart';
 
 @DriftDatabase(
-  tables: [ProfilesTable, ContentItemsTable, UserContentStatesTable],
+  tables: [
+    ProfilesTable,
+    ContentItemsTable,
+    UserContentStatesTable,
+    WellnessDailyLogsTable,
+    WellnessProfileStatsTable,
+  ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase({QueryExecutor? executor, bool resetLocalDatabaseOnOpen = false})

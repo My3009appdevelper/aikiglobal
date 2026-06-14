@@ -5,4 +5,6 @@ abstract final class SupabaseTables {
     defaultValue: 'content_items',
   );
   static const userContentStates = 'user_content_states';
+  static const wellnessDailyLogs = 'wellness_daily_logs';
+  static const wellnessProfileStats = 'wellness_profile_stats';
 }

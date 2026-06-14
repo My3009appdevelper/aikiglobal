@@ -2576,6 +2576,1373 @@ class UserContentStatesTableCompanion
   }
 }
 
+class $WellnessDailyLogsTableTable extends WellnessDailyLogsTable
+    with TableInfo<$WellnessDailyLogsTableTable, LocalWellnessDailyLog> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $WellnessDailyLogsTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _uuidDailyLogMeta = const VerificationMeta(
+    'uuidDailyLog',
+  );
+  @override
+  late final GeneratedColumn<String> uuidDailyLog = GeneratedColumn<String>(
+    'uuid_daily_log',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _uuidProfileMeta = const VerificationMeta(
+    'uuidProfile',
+  );
+  @override
+  late final GeneratedColumn<String> uuidProfile = GeneratedColumn<String>(
+    'uuid_profile',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _fechaMeta = const VerificationMeta('fecha');
+  @override
+  late final GeneratedColumn<String> fecha = GeneratedColumn<String>(
+    'fecha',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _moodMeta = const VerificationMeta('mood');
+  @override
+  late final GeneratedColumn<String> mood = GeneratedColumn<String>(
+    'mood',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _energiaMeta = const VerificationMeta(
+    'energia',
+  );
+  @override
+  late final GeneratedColumn<int> energia = GeneratedColumn<int>(
+    'energia',
+    aliasedName,
+    false,
+    check: () => ComparableExpr(energia).isBetweenValues(0, 5),
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _calmaMeta = const VerificationMeta('calma');
+  @override
+  late final GeneratedColumn<int> calma = GeneratedColumn<int>(
+    'calma',
+    aliasedName,
+    false,
+    check: () => ComparableExpr(calma).isBetweenValues(0, 5),
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _descansoMeta = const VerificationMeta(
+    'descanso',
+  );
+  @override
+  late final GeneratedColumn<int> descanso = GeneratedColumn<int>(
+    'descanso',
+    aliasedName,
+    false,
+    check: () => ComparableExpr(descanso).isBetweenValues(0, 5),
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _conexionMeta = const VerificationMeta(
+    'conexion',
+  );
+  @override
+  late final GeneratedColumn<int> conexion = GeneratedColumn<int>(
+    'conexion',
+    aliasedName,
+    false,
+    check: () => ComparableExpr(conexion).isBetweenValues(0, 5),
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _meditacionCompletadaMeta =
+      const VerificationMeta('meditacionCompletada');
+  @override
+  late final GeneratedColumn<bool> meditacionCompletada = GeneratedColumn<bool>(
+    'meditacion_completada',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("meditacion_completada" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _minutosBienestarMeta = const VerificationMeta(
+    'minutosBienestar',
+  );
+  @override
+  late final GeneratedColumn<int> minutosBienestar = GeneratedColumn<int>(
+    'minutos_bienestar',
+    aliasedName,
+    false,
+    check: () => ComparableExpr(minutosBienestar).isBiggerOrEqualValue(0),
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _notaMeta = const VerificationMeta('nota');
+  @override
+  late final GeneratedColumn<String> nota = GeneratedColumn<String>(
+    'nota',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    uuidDailyLog,
+    uuidProfile,
+    fecha,
+    mood,
+    energia,
+    calma,
+    descanso,
+    conexion,
+    meditacionCompletada,
+    minutosBienestar,
+    nota,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    syncedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'local_wellness_daily_logs';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocalWellnessDailyLog> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('uuid_daily_log')) {
+      context.handle(
+        _uuidDailyLogMeta,
+        uuidDailyLog.isAcceptableOrUnknown(
+          data['uuid_daily_log']!,
+          _uuidDailyLogMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_uuidDailyLogMeta);
+    }
+    if (data.containsKey('uuid_profile')) {
+      context.handle(
+        _uuidProfileMeta,
+        uuidProfile.isAcceptableOrUnknown(
+          data['uuid_profile']!,
+          _uuidProfileMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_uuidProfileMeta);
+    }
+    if (data.containsKey('fecha')) {
+      context.handle(
+        _fechaMeta,
+        fecha.isAcceptableOrUnknown(data['fecha']!, _fechaMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_fechaMeta);
+    }
+    if (data.containsKey('mood')) {
+      context.handle(
+        _moodMeta,
+        mood.isAcceptableOrUnknown(data['mood']!, _moodMeta),
+      );
+    }
+    if (data.containsKey('energia')) {
+      context.handle(
+        _energiaMeta,
+        energia.isAcceptableOrUnknown(data['energia']!, _energiaMeta),
+      );
+    }
+    if (data.containsKey('calma')) {
+      context.handle(
+        _calmaMeta,
+        calma.isAcceptableOrUnknown(data['calma']!, _calmaMeta),
+      );
+    }
+    if (data.containsKey('descanso')) {
+      context.handle(
+        _descansoMeta,
+        descanso.isAcceptableOrUnknown(data['descanso']!, _descansoMeta),
+      );
+    }
+    if (data.containsKey('conexion')) {
+      context.handle(
+        _conexionMeta,
+        conexion.isAcceptableOrUnknown(data['conexion']!, _conexionMeta),
+      );
+    }
+    if (data.containsKey('meditacion_completada')) {
+      context.handle(
+        _meditacionCompletadaMeta,
+        meditacionCompletada.isAcceptableOrUnknown(
+          data['meditacion_completada']!,
+          _meditacionCompletadaMeta,
+        ),
+      );
+    }
+    if (data.containsKey('minutos_bienestar')) {
+      context.handle(
+        _minutosBienestarMeta,
+        minutosBienestar.isAcceptableOrUnknown(
+          data['minutos_bienestar']!,
+          _minutosBienestarMeta,
+        ),
+      );
+    }
+    if (data.containsKey('nota')) {
+      context.handle(
+        _notaMeta,
+        nota.isAcceptableOrUnknown(data['nota']!, _notaMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {uuidDailyLog};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {uuidProfile, fecha},
+  ];
+  @override
+  LocalWellnessDailyLog map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalWellnessDailyLog(
+      uuidDailyLog: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid_daily_log'],
+      )!,
+      uuidProfile: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid_profile'],
+      )!,
+      fecha: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}fecha'],
+      )!,
+      mood: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mood'],
+      ),
+      energia: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}energia'],
+      )!,
+      calma: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}calma'],
+      )!,
+      descanso: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}descanso'],
+      )!,
+      conexion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}conexion'],
+      )!,
+      meditacionCompletada: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}meditacion_completada'],
+      )!,
+      minutosBienestar: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}minutos_bienestar'],
+      )!,
+      nota: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}nota'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
+    );
+  }
+
+  @override
+  $WellnessDailyLogsTableTable createAlias(String alias) {
+    return $WellnessDailyLogsTableTable(attachedDatabase, alias);
+  }
+}
+
+class LocalWellnessDailyLog extends DataClass
+    implements Insertable<LocalWellnessDailyLog> {
+  final String uuidDailyLog;
+  final String uuidProfile;
+  final String fecha;
+  final String? mood;
+  final int energia;
+  final int calma;
+  final int descanso;
+  final int conexion;
+  final bool meditacionCompletada;
+  final int minutosBienestar;
+  final String? nota;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
+  final DateTime? syncedAt;
+  const LocalWellnessDailyLog({
+    required this.uuidDailyLog,
+    required this.uuidProfile,
+    required this.fecha,
+    this.mood,
+    required this.energia,
+    required this.calma,
+    required this.descanso,
+    required this.conexion,
+    required this.meditacionCompletada,
+    required this.minutosBienestar,
+    this.nota,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+    this.syncedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['uuid_daily_log'] = Variable<String>(uuidDailyLog);
+    map['uuid_profile'] = Variable<String>(uuidProfile);
+    map['fecha'] = Variable<String>(fecha);
+    if (!nullToAbsent || mood != null) {
+      map['mood'] = Variable<String>(mood);
+    }
+    map['energia'] = Variable<int>(energia);
+    map['calma'] = Variable<int>(calma);
+    map['descanso'] = Variable<int>(descanso);
+    map['conexion'] = Variable<int>(conexion);
+    map['meditacion_completada'] = Variable<bool>(meditacionCompletada);
+    map['minutos_bienestar'] = Variable<int>(minutosBienestar);
+    if (!nullToAbsent || nota != null) {
+      map['nota'] = Variable<String>(nota);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
+    return map;
+  }
+
+  WellnessDailyLogsTableCompanion toCompanion(bool nullToAbsent) {
+    return WellnessDailyLogsTableCompanion(
+      uuidDailyLog: Value(uuidDailyLog),
+      uuidProfile: Value(uuidProfile),
+      fecha: Value(fecha),
+      mood: mood == null && nullToAbsent ? const Value.absent() : Value(mood),
+      energia: Value(energia),
+      calma: Value(calma),
+      descanso: Value(descanso),
+      conexion: Value(conexion),
+      meditacionCompletada: Value(meditacionCompletada),
+      minutosBienestar: Value(minutosBienestar),
+      nota: nota == null && nullToAbsent ? const Value.absent() : Value(nota),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
+    );
+  }
+
+  factory LocalWellnessDailyLog.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalWellnessDailyLog(
+      uuidDailyLog: serializer.fromJson<String>(json['uuidDailyLog']),
+      uuidProfile: serializer.fromJson<String>(json['uuidProfile']),
+      fecha: serializer.fromJson<String>(json['fecha']),
+      mood: serializer.fromJson<String?>(json['mood']),
+      energia: serializer.fromJson<int>(json['energia']),
+      calma: serializer.fromJson<int>(json['calma']),
+      descanso: serializer.fromJson<int>(json['descanso']),
+      conexion: serializer.fromJson<int>(json['conexion']),
+      meditacionCompletada: serializer.fromJson<bool>(
+        json['meditacionCompletada'],
+      ),
+      minutosBienestar: serializer.fromJson<int>(json['minutosBienestar']),
+      nota: serializer.fromJson<String?>(json['nota']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'uuidDailyLog': serializer.toJson<String>(uuidDailyLog),
+      'uuidProfile': serializer.toJson<String>(uuidProfile),
+      'fecha': serializer.toJson<String>(fecha),
+      'mood': serializer.toJson<String?>(mood),
+      'energia': serializer.toJson<int>(energia),
+      'calma': serializer.toJson<int>(calma),
+      'descanso': serializer.toJson<int>(descanso),
+      'conexion': serializer.toJson<int>(conexion),
+      'meditacionCompletada': serializer.toJson<bool>(meditacionCompletada),
+      'minutosBienestar': serializer.toJson<int>(minutosBienestar),
+      'nota': serializer.toJson<String?>(nota),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
+    };
+  }
+
+  LocalWellnessDailyLog copyWith({
+    String? uuidDailyLog,
+    String? uuidProfile,
+    String? fecha,
+    Value<String?> mood = const Value.absent(),
+    int? energia,
+    int? calma,
+    int? descanso,
+    int? conexion,
+    bool? meditacionCompletada,
+    int? minutosBienestar,
+    Value<String?> nota = const Value.absent(),
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
+    Value<DateTime?> syncedAt = const Value.absent(),
+  }) => LocalWellnessDailyLog(
+    uuidDailyLog: uuidDailyLog ?? this.uuidDailyLog,
+    uuidProfile: uuidProfile ?? this.uuidProfile,
+    fecha: fecha ?? this.fecha,
+    mood: mood.present ? mood.value : this.mood,
+    energia: energia ?? this.energia,
+    calma: calma ?? this.calma,
+    descanso: descanso ?? this.descanso,
+    conexion: conexion ?? this.conexion,
+    meditacionCompletada: meditacionCompletada ?? this.meditacionCompletada,
+    minutosBienestar: minutosBienestar ?? this.minutosBienestar,
+    nota: nota.present ? nota.value : this.nota,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+  );
+  LocalWellnessDailyLog copyWithCompanion(
+    WellnessDailyLogsTableCompanion data,
+  ) {
+    return LocalWellnessDailyLog(
+      uuidDailyLog: data.uuidDailyLog.present
+          ? data.uuidDailyLog.value
+          : this.uuidDailyLog,
+      uuidProfile: data.uuidProfile.present
+          ? data.uuidProfile.value
+          : this.uuidProfile,
+      fecha: data.fecha.present ? data.fecha.value : this.fecha,
+      mood: data.mood.present ? data.mood.value : this.mood,
+      energia: data.energia.present ? data.energia.value : this.energia,
+      calma: data.calma.present ? data.calma.value : this.calma,
+      descanso: data.descanso.present ? data.descanso.value : this.descanso,
+      conexion: data.conexion.present ? data.conexion.value : this.conexion,
+      meditacionCompletada: data.meditacionCompletada.present
+          ? data.meditacionCompletada.value
+          : this.meditacionCompletada,
+      minutosBienestar: data.minutosBienestar.present
+          ? data.minutosBienestar.value
+          : this.minutosBienestar,
+      nota: data.nota.present ? data.nota.value : this.nota,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalWellnessDailyLog(')
+          ..write('uuidDailyLog: $uuidDailyLog, ')
+          ..write('uuidProfile: $uuidProfile, ')
+          ..write('fecha: $fecha, ')
+          ..write('mood: $mood, ')
+          ..write('energia: $energia, ')
+          ..write('calma: $calma, ')
+          ..write('descanso: $descanso, ')
+          ..write('conexion: $conexion, ')
+          ..write('meditacionCompletada: $meditacionCompletada, ')
+          ..write('minutosBienestar: $minutosBienestar, ')
+          ..write('nota: $nota, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('syncedAt: $syncedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    uuidDailyLog,
+    uuidProfile,
+    fecha,
+    mood,
+    energia,
+    calma,
+    descanso,
+    conexion,
+    meditacionCompletada,
+    minutosBienestar,
+    nota,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    syncedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalWellnessDailyLog &&
+          other.uuidDailyLog == this.uuidDailyLog &&
+          other.uuidProfile == this.uuidProfile &&
+          other.fecha == this.fecha &&
+          other.mood == this.mood &&
+          other.energia == this.energia &&
+          other.calma == this.calma &&
+          other.descanso == this.descanso &&
+          other.conexion == this.conexion &&
+          other.meditacionCompletada == this.meditacionCompletada &&
+          other.minutosBienestar == this.minutosBienestar &&
+          other.nota == this.nota &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.syncedAt == this.syncedAt);
+}
+
+class WellnessDailyLogsTableCompanion
+    extends UpdateCompanion<LocalWellnessDailyLog> {
+  final Value<String> uuidDailyLog;
+  final Value<String> uuidProfile;
+  final Value<String> fecha;
+  final Value<String?> mood;
+  final Value<int> energia;
+  final Value<int> calma;
+  final Value<int> descanso;
+  final Value<int> conexion;
+  final Value<bool> meditacionCompletada;
+  final Value<int> minutosBienestar;
+  final Value<String?> nota;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
+  final Value<DateTime?> syncedAt;
+  final Value<int> rowid;
+  const WellnessDailyLogsTableCompanion({
+    this.uuidDailyLog = const Value.absent(),
+    this.uuidProfile = const Value.absent(),
+    this.fecha = const Value.absent(),
+    this.mood = const Value.absent(),
+    this.energia = const Value.absent(),
+    this.calma = const Value.absent(),
+    this.descanso = const Value.absent(),
+    this.conexion = const Value.absent(),
+    this.meditacionCompletada = const Value.absent(),
+    this.minutosBienestar = const Value.absent(),
+    this.nota = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  WellnessDailyLogsTableCompanion.insert({
+    required String uuidDailyLog,
+    required String uuidProfile,
+    required String fecha,
+    this.mood = const Value.absent(),
+    this.energia = const Value.absent(),
+    this.calma = const Value.absent(),
+    this.descanso = const Value.absent(),
+    this.conexion = const Value.absent(),
+    this.meditacionCompletada = const Value.absent(),
+    this.minutosBienestar = const Value.absent(),
+    this.nota = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : uuidDailyLog = Value(uuidDailyLog),
+       uuidProfile = Value(uuidProfile),
+       fecha = Value(fecha);
+  static Insertable<LocalWellnessDailyLog> custom({
+    Expression<String>? uuidDailyLog,
+    Expression<String>? uuidProfile,
+    Expression<String>? fecha,
+    Expression<String>? mood,
+    Expression<int>? energia,
+    Expression<int>? calma,
+    Expression<int>? descanso,
+    Expression<int>? conexion,
+    Expression<bool>? meditacionCompletada,
+    Expression<int>? minutosBienestar,
+    Expression<String>? nota,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
+    Expression<DateTime>? syncedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (uuidDailyLog != null) 'uuid_daily_log': uuidDailyLog,
+      if (uuidProfile != null) 'uuid_profile': uuidProfile,
+      if (fecha != null) 'fecha': fecha,
+      if (mood != null) 'mood': mood,
+      if (energia != null) 'energia': energia,
+      if (calma != null) 'calma': calma,
+      if (descanso != null) 'descanso': descanso,
+      if (conexion != null) 'conexion': conexion,
+      if (meditacionCompletada != null)
+        'meditacion_completada': meditacionCompletada,
+      if (minutosBienestar != null) 'minutos_bienestar': minutosBienestar,
+      if (nota != null) 'nota': nota,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (syncedAt != null) 'synced_at': syncedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  WellnessDailyLogsTableCompanion copyWith({
+    Value<String>? uuidDailyLog,
+    Value<String>? uuidProfile,
+    Value<String>? fecha,
+    Value<String?>? mood,
+    Value<int>? energia,
+    Value<int>? calma,
+    Value<int>? descanso,
+    Value<int>? conexion,
+    Value<bool>? meditacionCompletada,
+    Value<int>? minutosBienestar,
+    Value<String?>? nota,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
+    Value<DateTime?>? syncedAt,
+    Value<int>? rowid,
+  }) {
+    return WellnessDailyLogsTableCompanion(
+      uuidDailyLog: uuidDailyLog ?? this.uuidDailyLog,
+      uuidProfile: uuidProfile ?? this.uuidProfile,
+      fecha: fecha ?? this.fecha,
+      mood: mood ?? this.mood,
+      energia: energia ?? this.energia,
+      calma: calma ?? this.calma,
+      descanso: descanso ?? this.descanso,
+      conexion: conexion ?? this.conexion,
+      meditacionCompletada: meditacionCompletada ?? this.meditacionCompletada,
+      minutosBienestar: minutosBienestar ?? this.minutosBienestar,
+      nota: nota ?? this.nota,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      syncedAt: syncedAt ?? this.syncedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (uuidDailyLog.present) {
+      map['uuid_daily_log'] = Variable<String>(uuidDailyLog.value);
+    }
+    if (uuidProfile.present) {
+      map['uuid_profile'] = Variable<String>(uuidProfile.value);
+    }
+    if (fecha.present) {
+      map['fecha'] = Variable<String>(fecha.value);
+    }
+    if (mood.present) {
+      map['mood'] = Variable<String>(mood.value);
+    }
+    if (energia.present) {
+      map['energia'] = Variable<int>(energia.value);
+    }
+    if (calma.present) {
+      map['calma'] = Variable<int>(calma.value);
+    }
+    if (descanso.present) {
+      map['descanso'] = Variable<int>(descanso.value);
+    }
+    if (conexion.present) {
+      map['conexion'] = Variable<int>(conexion.value);
+    }
+    if (meditacionCompletada.present) {
+      map['meditacion_completada'] = Variable<bool>(meditacionCompletada.value);
+    }
+    if (minutosBienestar.present) {
+      map['minutos_bienestar'] = Variable<int>(minutosBienestar.value);
+    }
+    if (nota.present) {
+      map['nota'] = Variable<String>(nota.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('WellnessDailyLogsTableCompanion(')
+          ..write('uuidDailyLog: $uuidDailyLog, ')
+          ..write('uuidProfile: $uuidProfile, ')
+          ..write('fecha: $fecha, ')
+          ..write('mood: $mood, ')
+          ..write('energia: $energia, ')
+          ..write('calma: $calma, ')
+          ..write('descanso: $descanso, ')
+          ..write('conexion: $conexion, ')
+          ..write('meditacionCompletada: $meditacionCompletada, ')
+          ..write('minutosBienestar: $minutosBienestar, ')
+          ..write('nota: $nota, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $WellnessProfileStatsTableTable extends WellnessProfileStatsTable
+    with TableInfo<$WellnessProfileStatsTableTable, LocalWellnessProfileStats> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $WellnessProfileStatsTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _uuidProfileMeta = const VerificationMeta(
+    'uuidProfile',
+  );
+  @override
+  late final GeneratedColumn<String> uuidProfile = GeneratedColumn<String>(
+    'uuid_profile',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _currentStreakMeta = const VerificationMeta(
+    'currentStreak',
+  );
+  @override
+  late final GeneratedColumn<int> currentStreak = GeneratedColumn<int>(
+    'current_streak',
+    aliasedName,
+    false,
+    check: () => ComparableExpr(currentStreak).isBiggerOrEqualValue(0),
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _longestStreakMeta = const VerificationMeta(
+    'longestStreak',
+  );
+  @override
+  late final GeneratedColumn<int> longestStreak = GeneratedColumn<int>(
+    'longest_streak',
+    aliasedName,
+    false,
+    check: () => ComparableExpr(longestStreak).isBiggerOrEqualValue(0),
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _lastActivityDateMeta = const VerificationMeta(
+    'lastActivityDate',
+  );
+  @override
+  late final GeneratedColumn<String> lastActivityDate = GeneratedColumn<String>(
+    'last_activity_date',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _totalActiveDaysMeta = const VerificationMeta(
+    'totalActiveDays',
+  );
+  @override
+  late final GeneratedColumn<int> totalActiveDays = GeneratedColumn<int>(
+    'total_active_days',
+    aliasedName,
+    false,
+    check: () => ComparableExpr(totalActiveDays).isBiggerOrEqualValue(0),
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    uuidProfile,
+    currentStreak,
+    longestStreak,
+    lastActivityDate,
+    totalActiveDays,
+    updatedAt,
+    syncedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'local_wellness_profile_stats';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocalWellnessProfileStats> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('uuid_profile')) {
+      context.handle(
+        _uuidProfileMeta,
+        uuidProfile.isAcceptableOrUnknown(
+          data['uuid_profile']!,
+          _uuidProfileMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_uuidProfileMeta);
+    }
+    if (data.containsKey('current_streak')) {
+      context.handle(
+        _currentStreakMeta,
+        currentStreak.isAcceptableOrUnknown(
+          data['current_streak']!,
+          _currentStreakMeta,
+        ),
+      );
+    }
+    if (data.containsKey('longest_streak')) {
+      context.handle(
+        _longestStreakMeta,
+        longestStreak.isAcceptableOrUnknown(
+          data['longest_streak']!,
+          _longestStreakMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_activity_date')) {
+      context.handle(
+        _lastActivityDateMeta,
+        lastActivityDate.isAcceptableOrUnknown(
+          data['last_activity_date']!,
+          _lastActivityDateMeta,
+        ),
+      );
+    }
+    if (data.containsKey('total_active_days')) {
+      context.handle(
+        _totalActiveDaysMeta,
+        totalActiveDays.isAcceptableOrUnknown(
+          data['total_active_days']!,
+          _totalActiveDaysMeta,
+        ),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {uuidProfile};
+  @override
+  LocalWellnessProfileStats map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalWellnessProfileStats(
+      uuidProfile: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid_profile'],
+      )!,
+      currentStreak: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}current_streak'],
+      )!,
+      longestStreak: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}longest_streak'],
+      )!,
+      lastActivityDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_activity_date'],
+      ),
+      totalActiveDays: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}total_active_days'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
+    );
+  }
+
+  @override
+  $WellnessProfileStatsTableTable createAlias(String alias) {
+    return $WellnessProfileStatsTableTable(attachedDatabase, alias);
+  }
+}
+
+class LocalWellnessProfileStats extends DataClass
+    implements Insertable<LocalWellnessProfileStats> {
+  final String uuidProfile;
+  final int currentStreak;
+  final int longestStreak;
+  final String? lastActivityDate;
+  final int totalActiveDays;
+  final DateTime updatedAt;
+  final DateTime? syncedAt;
+  const LocalWellnessProfileStats({
+    required this.uuidProfile,
+    required this.currentStreak,
+    required this.longestStreak,
+    this.lastActivityDate,
+    required this.totalActiveDays,
+    required this.updatedAt,
+    this.syncedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['uuid_profile'] = Variable<String>(uuidProfile);
+    map['current_streak'] = Variable<int>(currentStreak);
+    map['longest_streak'] = Variable<int>(longestStreak);
+    if (!nullToAbsent || lastActivityDate != null) {
+      map['last_activity_date'] = Variable<String>(lastActivityDate);
+    }
+    map['total_active_days'] = Variable<int>(totalActiveDays);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
+    return map;
+  }
+
+  WellnessProfileStatsTableCompanion toCompanion(bool nullToAbsent) {
+    return WellnessProfileStatsTableCompanion(
+      uuidProfile: Value(uuidProfile),
+      currentStreak: Value(currentStreak),
+      longestStreak: Value(longestStreak),
+      lastActivityDate: lastActivityDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastActivityDate),
+      totalActiveDays: Value(totalActiveDays),
+      updatedAt: Value(updatedAt),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
+    );
+  }
+
+  factory LocalWellnessProfileStats.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalWellnessProfileStats(
+      uuidProfile: serializer.fromJson<String>(json['uuidProfile']),
+      currentStreak: serializer.fromJson<int>(json['currentStreak']),
+      longestStreak: serializer.fromJson<int>(json['longestStreak']),
+      lastActivityDate: serializer.fromJson<String?>(json['lastActivityDate']),
+      totalActiveDays: serializer.fromJson<int>(json['totalActiveDays']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'uuidProfile': serializer.toJson<String>(uuidProfile),
+      'currentStreak': serializer.toJson<int>(currentStreak),
+      'longestStreak': serializer.toJson<int>(longestStreak),
+      'lastActivityDate': serializer.toJson<String?>(lastActivityDate),
+      'totalActiveDays': serializer.toJson<int>(totalActiveDays),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
+    };
+  }
+
+  LocalWellnessProfileStats copyWith({
+    String? uuidProfile,
+    int? currentStreak,
+    int? longestStreak,
+    Value<String?> lastActivityDate = const Value.absent(),
+    int? totalActiveDays,
+    DateTime? updatedAt,
+    Value<DateTime?> syncedAt = const Value.absent(),
+  }) => LocalWellnessProfileStats(
+    uuidProfile: uuidProfile ?? this.uuidProfile,
+    currentStreak: currentStreak ?? this.currentStreak,
+    longestStreak: longestStreak ?? this.longestStreak,
+    lastActivityDate: lastActivityDate.present
+        ? lastActivityDate.value
+        : this.lastActivityDate,
+    totalActiveDays: totalActiveDays ?? this.totalActiveDays,
+    updatedAt: updatedAt ?? this.updatedAt,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+  );
+  LocalWellnessProfileStats copyWithCompanion(
+    WellnessProfileStatsTableCompanion data,
+  ) {
+    return LocalWellnessProfileStats(
+      uuidProfile: data.uuidProfile.present
+          ? data.uuidProfile.value
+          : this.uuidProfile,
+      currentStreak: data.currentStreak.present
+          ? data.currentStreak.value
+          : this.currentStreak,
+      longestStreak: data.longestStreak.present
+          ? data.longestStreak.value
+          : this.longestStreak,
+      lastActivityDate: data.lastActivityDate.present
+          ? data.lastActivityDate.value
+          : this.lastActivityDate,
+      totalActiveDays: data.totalActiveDays.present
+          ? data.totalActiveDays.value
+          : this.totalActiveDays,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalWellnessProfileStats(')
+          ..write('uuidProfile: $uuidProfile, ')
+          ..write('currentStreak: $currentStreak, ')
+          ..write('longestStreak: $longestStreak, ')
+          ..write('lastActivityDate: $lastActivityDate, ')
+          ..write('totalActiveDays: $totalActiveDays, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('syncedAt: $syncedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    uuidProfile,
+    currentStreak,
+    longestStreak,
+    lastActivityDate,
+    totalActiveDays,
+    updatedAt,
+    syncedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalWellnessProfileStats &&
+          other.uuidProfile == this.uuidProfile &&
+          other.currentStreak == this.currentStreak &&
+          other.longestStreak == this.longestStreak &&
+          other.lastActivityDate == this.lastActivityDate &&
+          other.totalActiveDays == this.totalActiveDays &&
+          other.updatedAt == this.updatedAt &&
+          other.syncedAt == this.syncedAt);
+}
+
+class WellnessProfileStatsTableCompanion
+    extends UpdateCompanion<LocalWellnessProfileStats> {
+  final Value<String> uuidProfile;
+  final Value<int> currentStreak;
+  final Value<int> longestStreak;
+  final Value<String?> lastActivityDate;
+  final Value<int> totalActiveDays;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> syncedAt;
+  final Value<int> rowid;
+  const WellnessProfileStatsTableCompanion({
+    this.uuidProfile = const Value.absent(),
+    this.currentStreak = const Value.absent(),
+    this.longestStreak = const Value.absent(),
+    this.lastActivityDate = const Value.absent(),
+    this.totalActiveDays = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  WellnessProfileStatsTableCompanion.insert({
+    required String uuidProfile,
+    this.currentStreak = const Value.absent(),
+    this.longestStreak = const Value.absent(),
+    this.lastActivityDate = const Value.absent(),
+    this.totalActiveDays = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : uuidProfile = Value(uuidProfile);
+  static Insertable<LocalWellnessProfileStats> custom({
+    Expression<String>? uuidProfile,
+    Expression<int>? currentStreak,
+    Expression<int>? longestStreak,
+    Expression<String>? lastActivityDate,
+    Expression<int>? totalActiveDays,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? syncedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (uuidProfile != null) 'uuid_profile': uuidProfile,
+      if (currentStreak != null) 'current_streak': currentStreak,
+      if (longestStreak != null) 'longest_streak': longestStreak,
+      if (lastActivityDate != null) 'last_activity_date': lastActivityDate,
+      if (totalActiveDays != null) 'total_active_days': totalActiveDays,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (syncedAt != null) 'synced_at': syncedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  WellnessProfileStatsTableCompanion copyWith({
+    Value<String>? uuidProfile,
+    Value<int>? currentStreak,
+    Value<int>? longestStreak,
+    Value<String?>? lastActivityDate,
+    Value<int>? totalActiveDays,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? syncedAt,
+    Value<int>? rowid,
+  }) {
+    return WellnessProfileStatsTableCompanion(
+      uuidProfile: uuidProfile ?? this.uuidProfile,
+      currentStreak: currentStreak ?? this.currentStreak,
+      longestStreak: longestStreak ?? this.longestStreak,
+      lastActivityDate: lastActivityDate ?? this.lastActivityDate,
+      totalActiveDays: totalActiveDays ?? this.totalActiveDays,
+      updatedAt: updatedAt ?? this.updatedAt,
+      syncedAt: syncedAt ?? this.syncedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (uuidProfile.present) {
+      map['uuid_profile'] = Variable<String>(uuidProfile.value);
+    }
+    if (currentStreak.present) {
+      map['current_streak'] = Variable<int>(currentStreak.value);
+    }
+    if (longestStreak.present) {
+      map['longest_streak'] = Variable<int>(longestStreak.value);
+    }
+    if (lastActivityDate.present) {
+      map['last_activity_date'] = Variable<String>(lastActivityDate.value);
+    }
+    if (totalActiveDays.present) {
+      map['total_active_days'] = Variable<int>(totalActiveDays.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('WellnessProfileStatsTableCompanion(')
+          ..write('uuidProfile: $uuidProfile, ')
+          ..write('currentStreak: $currentStreak, ')
+          ..write('longestStreak: $longestStreak, ')
+          ..write('lastActivityDate: $lastActivityDate, ')
+          ..write('totalActiveDays: $totalActiveDays, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2584,6 +3951,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $ContentItemsTableTable(this);
   late final $UserContentStatesTableTable userContentStatesTable =
       $UserContentStatesTableTable(this);
+  late final $WellnessDailyLogsTableTable wellnessDailyLogsTable =
+      $WellnessDailyLogsTableTable(this);
+  late final $WellnessProfileStatsTableTable wellnessProfileStatsTable =
+      $WellnessProfileStatsTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2592,6 +3963,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     profilesTable,
     contentItemsTable,
     userContentStatesTable,
+    wellnessDailyLogsTable,
+    wellnessProfileStatsTable,
   ];
 }
 
@@ -3795,6 +5168,690 @@ typedef $$UserContentStatesTableTableProcessedTableManager =
       LocalUserContentState,
       PrefetchHooks Function()
     >;
+typedef $$WellnessDailyLogsTableTableCreateCompanionBuilder =
+    WellnessDailyLogsTableCompanion Function({
+      required String uuidDailyLog,
+      required String uuidProfile,
+      required String fecha,
+      Value<String?> mood,
+      Value<int> energia,
+      Value<int> calma,
+      Value<int> descanso,
+      Value<int> conexion,
+      Value<bool> meditacionCompletada,
+      Value<int> minutosBienestar,
+      Value<String?> nota,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<DateTime?> syncedAt,
+      Value<int> rowid,
+    });
+typedef $$WellnessDailyLogsTableTableUpdateCompanionBuilder =
+    WellnessDailyLogsTableCompanion Function({
+      Value<String> uuidDailyLog,
+      Value<String> uuidProfile,
+      Value<String> fecha,
+      Value<String?> mood,
+      Value<int> energia,
+      Value<int> calma,
+      Value<int> descanso,
+      Value<int> conexion,
+      Value<bool> meditacionCompletada,
+      Value<int> minutosBienestar,
+      Value<String?> nota,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<DateTime?> syncedAt,
+      Value<int> rowid,
+    });
+
+class $$WellnessDailyLogsTableTableFilterComposer
+    extends Composer<_$AppDatabase, $WellnessDailyLogsTableTable> {
+  $$WellnessDailyLogsTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get uuidDailyLog => $composableBuilder(
+    column: $table.uuidDailyLog,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get uuidProfile => $composableBuilder(
+    column: $table.uuidProfile,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get fecha => $composableBuilder(
+    column: $table.fecha,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get mood => $composableBuilder(
+    column: $table.mood,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get energia => $composableBuilder(
+    column: $table.energia,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get calma => $composableBuilder(
+    column: $table.calma,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get descanso => $composableBuilder(
+    column: $table.descanso,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get conexion => $composableBuilder(
+    column: $table.conexion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get meditacionCompletada => $composableBuilder(
+    column: $table.meditacionCompletada,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get minutosBienestar => $composableBuilder(
+    column: $table.minutosBienestar,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get nota => $composableBuilder(
+    column: $table.nota,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$WellnessDailyLogsTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $WellnessDailyLogsTableTable> {
+  $$WellnessDailyLogsTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get uuidDailyLog => $composableBuilder(
+    column: $table.uuidDailyLog,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get uuidProfile => $composableBuilder(
+    column: $table.uuidProfile,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get fecha => $composableBuilder(
+    column: $table.fecha,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get mood => $composableBuilder(
+    column: $table.mood,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get energia => $composableBuilder(
+    column: $table.energia,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get calma => $composableBuilder(
+    column: $table.calma,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get descanso => $composableBuilder(
+    column: $table.descanso,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get conexion => $composableBuilder(
+    column: $table.conexion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get meditacionCompletada => $composableBuilder(
+    column: $table.meditacionCompletada,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get minutosBienestar => $composableBuilder(
+    column: $table.minutosBienestar,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get nota => $composableBuilder(
+    column: $table.nota,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$WellnessDailyLogsTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $WellnessDailyLogsTableTable> {
+  $$WellnessDailyLogsTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get uuidDailyLog => $composableBuilder(
+    column: $table.uuidDailyLog,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get uuidProfile => $composableBuilder(
+    column: $table.uuidProfile,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get fecha =>
+      $composableBuilder(column: $table.fecha, builder: (column) => column);
+
+  GeneratedColumn<String> get mood =>
+      $composableBuilder(column: $table.mood, builder: (column) => column);
+
+  GeneratedColumn<int> get energia =>
+      $composableBuilder(column: $table.energia, builder: (column) => column);
+
+  GeneratedColumn<int> get calma =>
+      $composableBuilder(column: $table.calma, builder: (column) => column);
+
+  GeneratedColumn<int> get descanso =>
+      $composableBuilder(column: $table.descanso, builder: (column) => column);
+
+  GeneratedColumn<int> get conexion =>
+      $composableBuilder(column: $table.conexion, builder: (column) => column);
+
+  GeneratedColumn<bool> get meditacionCompletada => $composableBuilder(
+    column: $table.meditacionCompletada,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get minutosBienestar => $composableBuilder(
+    column: $table.minutosBienestar,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get nota =>
+      $composableBuilder(column: $table.nota, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+}
+
+class $$WellnessDailyLogsTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $WellnessDailyLogsTableTable,
+          LocalWellnessDailyLog,
+          $$WellnessDailyLogsTableTableFilterComposer,
+          $$WellnessDailyLogsTableTableOrderingComposer,
+          $$WellnessDailyLogsTableTableAnnotationComposer,
+          $$WellnessDailyLogsTableTableCreateCompanionBuilder,
+          $$WellnessDailyLogsTableTableUpdateCompanionBuilder,
+          (
+            LocalWellnessDailyLog,
+            BaseReferences<
+              _$AppDatabase,
+              $WellnessDailyLogsTableTable,
+              LocalWellnessDailyLog
+            >,
+          ),
+          LocalWellnessDailyLog,
+          PrefetchHooks Function()
+        > {
+  $$WellnessDailyLogsTableTableTableManager(
+    _$AppDatabase db,
+    $WellnessDailyLogsTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$WellnessDailyLogsTableTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$WellnessDailyLogsTableTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$WellnessDailyLogsTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> uuidDailyLog = const Value.absent(),
+                Value<String> uuidProfile = const Value.absent(),
+                Value<String> fecha = const Value.absent(),
+                Value<String?> mood = const Value.absent(),
+                Value<int> energia = const Value.absent(),
+                Value<int> calma = const Value.absent(),
+                Value<int> descanso = const Value.absent(),
+                Value<int> conexion = const Value.absent(),
+                Value<bool> meditacionCompletada = const Value.absent(),
+                Value<int> minutosBienestar = const Value.absent(),
+                Value<String?> nota = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => WellnessDailyLogsTableCompanion(
+                uuidDailyLog: uuidDailyLog,
+                uuidProfile: uuidProfile,
+                fecha: fecha,
+                mood: mood,
+                energia: energia,
+                calma: calma,
+                descanso: descanso,
+                conexion: conexion,
+                meditacionCompletada: meditacionCompletada,
+                minutosBienestar: minutosBienestar,
+                nota: nota,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String uuidDailyLog,
+                required String uuidProfile,
+                required String fecha,
+                Value<String?> mood = const Value.absent(),
+                Value<int> energia = const Value.absent(),
+                Value<int> calma = const Value.absent(),
+                Value<int> descanso = const Value.absent(),
+                Value<int> conexion = const Value.absent(),
+                Value<bool> meditacionCompletada = const Value.absent(),
+                Value<int> minutosBienestar = const Value.absent(),
+                Value<String?> nota = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => WellnessDailyLogsTableCompanion.insert(
+                uuidDailyLog: uuidDailyLog,
+                uuidProfile: uuidProfile,
+                fecha: fecha,
+                mood: mood,
+                energia: energia,
+                calma: calma,
+                descanso: descanso,
+                conexion: conexion,
+                meditacionCompletada: meditacionCompletada,
+                minutosBienestar: minutosBienestar,
+                nota: nota,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$WellnessDailyLogsTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $WellnessDailyLogsTableTable,
+      LocalWellnessDailyLog,
+      $$WellnessDailyLogsTableTableFilterComposer,
+      $$WellnessDailyLogsTableTableOrderingComposer,
+      $$WellnessDailyLogsTableTableAnnotationComposer,
+      $$WellnessDailyLogsTableTableCreateCompanionBuilder,
+      $$WellnessDailyLogsTableTableUpdateCompanionBuilder,
+      (
+        LocalWellnessDailyLog,
+        BaseReferences<
+          _$AppDatabase,
+          $WellnessDailyLogsTableTable,
+          LocalWellnessDailyLog
+        >,
+      ),
+      LocalWellnessDailyLog,
+      PrefetchHooks Function()
+    >;
+typedef $$WellnessProfileStatsTableTableCreateCompanionBuilder =
+    WellnessProfileStatsTableCompanion Function({
+      required String uuidProfile,
+      Value<int> currentStreak,
+      Value<int> longestStreak,
+      Value<String?> lastActivityDate,
+      Value<int> totalActiveDays,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> syncedAt,
+      Value<int> rowid,
+    });
+typedef $$WellnessProfileStatsTableTableUpdateCompanionBuilder =
+    WellnessProfileStatsTableCompanion Function({
+      Value<String> uuidProfile,
+      Value<int> currentStreak,
+      Value<int> longestStreak,
+      Value<String?> lastActivityDate,
+      Value<int> totalActiveDays,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> syncedAt,
+      Value<int> rowid,
+    });
+
+class $$WellnessProfileStatsTableTableFilterComposer
+    extends Composer<_$AppDatabase, $WellnessProfileStatsTableTable> {
+  $$WellnessProfileStatsTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get uuidProfile => $composableBuilder(
+    column: $table.uuidProfile,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get currentStreak => $composableBuilder(
+    column: $table.currentStreak,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get longestStreak => $composableBuilder(
+    column: $table.longestStreak,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastActivityDate => $composableBuilder(
+    column: $table.lastActivityDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get totalActiveDays => $composableBuilder(
+    column: $table.totalActiveDays,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$WellnessProfileStatsTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $WellnessProfileStatsTableTable> {
+  $$WellnessProfileStatsTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get uuidProfile => $composableBuilder(
+    column: $table.uuidProfile,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get currentStreak => $composableBuilder(
+    column: $table.currentStreak,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get longestStreak => $composableBuilder(
+    column: $table.longestStreak,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lastActivityDate => $composableBuilder(
+    column: $table.lastActivityDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get totalActiveDays => $composableBuilder(
+    column: $table.totalActiveDays,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$WellnessProfileStatsTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $WellnessProfileStatsTableTable> {
+  $$WellnessProfileStatsTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get uuidProfile => $composableBuilder(
+    column: $table.uuidProfile,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get currentStreak => $composableBuilder(
+    column: $table.currentStreak,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get longestStreak => $composableBuilder(
+    column: $table.longestStreak,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get lastActivityDate => $composableBuilder(
+    column: $table.lastActivityDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get totalActiveDays => $composableBuilder(
+    column: $table.totalActiveDays,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+}
+
+class $$WellnessProfileStatsTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $WellnessProfileStatsTableTable,
+          LocalWellnessProfileStats,
+          $$WellnessProfileStatsTableTableFilterComposer,
+          $$WellnessProfileStatsTableTableOrderingComposer,
+          $$WellnessProfileStatsTableTableAnnotationComposer,
+          $$WellnessProfileStatsTableTableCreateCompanionBuilder,
+          $$WellnessProfileStatsTableTableUpdateCompanionBuilder,
+          (
+            LocalWellnessProfileStats,
+            BaseReferences<
+              _$AppDatabase,
+              $WellnessProfileStatsTableTable,
+              LocalWellnessProfileStats
+            >,
+          ),
+          LocalWellnessProfileStats,
+          PrefetchHooks Function()
+        > {
+  $$WellnessProfileStatsTableTableTableManager(
+    _$AppDatabase db,
+    $WellnessProfileStatsTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$WellnessProfileStatsTableTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$WellnessProfileStatsTableTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$WellnessProfileStatsTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> uuidProfile = const Value.absent(),
+                Value<int> currentStreak = const Value.absent(),
+                Value<int> longestStreak = const Value.absent(),
+                Value<String?> lastActivityDate = const Value.absent(),
+                Value<int> totalActiveDays = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => WellnessProfileStatsTableCompanion(
+                uuidProfile: uuidProfile,
+                currentStreak: currentStreak,
+                longestStreak: longestStreak,
+                lastActivityDate: lastActivityDate,
+                totalActiveDays: totalActiveDays,
+                updatedAt: updatedAt,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String uuidProfile,
+                Value<int> currentStreak = const Value.absent(),
+                Value<int> longestStreak = const Value.absent(),
+                Value<String?> lastActivityDate = const Value.absent(),
+                Value<int> totalActiveDays = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => WellnessProfileStatsTableCompanion.insert(
+                uuidProfile: uuidProfile,
+                currentStreak: currentStreak,
+                longestStreak: longestStreak,
+                lastActivityDate: lastActivityDate,
+                totalActiveDays: totalActiveDays,
+                updatedAt: updatedAt,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$WellnessProfileStatsTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $WellnessProfileStatsTableTable,
+      LocalWellnessProfileStats,
+      $$WellnessProfileStatsTableTableFilterComposer,
+      $$WellnessProfileStatsTableTableOrderingComposer,
+      $$WellnessProfileStatsTableTableAnnotationComposer,
+      $$WellnessProfileStatsTableTableCreateCompanionBuilder,
+      $$WellnessProfileStatsTableTableUpdateCompanionBuilder,
+      (
+        LocalWellnessProfileStats,
+        BaseReferences<
+          _$AppDatabase,
+          $WellnessProfileStatsTableTable,
+          LocalWellnessProfileStats
+        >,
+      ),
+      LocalWellnessProfileStats,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3807,5 +5864,15 @@ class $AppDatabaseManager {
       $$UserContentStatesTableTableTableManager(
         _db,
         _db.userContentStatesTable,
+      );
+  $$WellnessDailyLogsTableTableTableManager get wellnessDailyLogsTable =>
+      $$WellnessDailyLogsTableTableTableManager(
+        _db,
+        _db.wellnessDailyLogsTable,
+      );
+  $$WellnessProfileStatsTableTableTableManager get wellnessProfileStatsTable =>
+      $$WellnessProfileStatsTableTableTableManager(
+        _db,
+        _db.wellnessProfileStatsTable,
       );
 }

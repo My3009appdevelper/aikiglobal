@@ -11,6 +11,7 @@ import '../notificaciones/notifications_page.dart';
 import 'widgets/calendar_preview_card.dart';
 import 'widgets/daily_streak_card.dart';
 import 'widgets/meditation_today_card.dart';
+import 'widgets/weekly_wellness_timeline_card.dart';
 
 class EspacioSeguroPage extends StatelessWidget {
   const EspacioSeguroPage({super.key});
@@ -32,6 +33,8 @@ class EspacioSeguroPage extends StatelessWidget {
                   const _SafeSpaceIntro(),
                   const SizedBox(height: AppSpacing.lg),
                   const DailyStreakCard(),
+                  const SizedBox(height: AppSpacing.lg),
+                  const WeeklyWellnessTimelineCard(),
                   const SizedBox(height: AppSpacing.lg),
                   const CalendarPreviewCard(),
                   const SizedBox(height: AppSpacing.lg),

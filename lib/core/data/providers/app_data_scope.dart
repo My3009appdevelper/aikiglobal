@@ -6,6 +6,8 @@ import 'app_data_container.dart';
 import 'content_items_controller.dart';
 import 'current_profile_controller.dart';
 import 'user_content_states_controller.dart';
+import 'wellness_daily_logs_controller.dart';
+import 'wellness_profile_stats_controller.dart';
 
 class AppDataScope extends StatefulWidget {
   const AppDataScope({super.key, required this.container, required this.child});
@@ -30,6 +32,16 @@ class AppDataScope extends StatefulWidget {
 
   static UserContentStatesController userContentStates(BuildContext context) {
     return of(context).userContentStatesController;
+  }
+
+  static WellnessDailyLogsController wellnessDailyLogs(BuildContext context) {
+    return of(context).wellnessDailyLogsController;
+  }
+
+  static WellnessProfileStatsController wellnessProfileStats(
+    BuildContext context,
+  ) {
+    return of(context).wellnessProfileStatsController;
   }
 
   @override
