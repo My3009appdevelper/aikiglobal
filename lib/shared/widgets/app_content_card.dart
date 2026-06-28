@@ -48,7 +48,8 @@ class AppContentCard extends StatelessWidget {
       child: AppInteractive(
         tooltip: 'Abrir $title',
         borderRadius: AppRadius.medium,
-        hoverScale: 1.025,
+        hoverScale: 1,
+        pressedScale: 1,
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(

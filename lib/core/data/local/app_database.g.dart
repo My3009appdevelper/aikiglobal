@@ -1769,6 +1769,740 @@ class ContentItemsTableCompanion extends UpdateCompanion<LocalContentItem> {
   }
 }
 
+class $ContentMediaTableTable extends ContentMediaTable
+    with TableInfo<$ContentMediaTableTable, LocalContentMedia> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ContentMediaTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _uuidContentMediaMeta = const VerificationMeta(
+    'uuidContentMedia',
+  );
+  @override
+  late final GeneratedColumn<String> uuidContentMedia = GeneratedColumn<String>(
+    'uuid_content_media',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _uuidContentItemMeta = const VerificationMeta(
+    'uuidContentItem',
+  );
+  @override
+  late final GeneratedColumn<String> uuidContentItem = GeneratedColumn<String>(
+    'uuid_content_item',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _tipoMeta = const VerificationMeta('tipo');
+  @override
+  late final GeneratedColumn<String> tipo = GeneratedColumn<String>(
+    'type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _tituloMeta = const VerificationMeta('titulo');
+  @override
+  late final GeneratedColumn<String> titulo = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _storagePathSupabaseMeta =
+      const VerificationMeta('storagePathSupabase');
+  @override
+  late final GeneratedColumn<String> storagePathSupabase =
+      GeneratedColumn<String>(
+        'storage_path',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _storagePathLocalMeta = const VerificationMeta(
+    'storagePathLocal',
+  );
+  @override
+  late final GeneratedColumn<String> storagePathLocal = GeneratedColumn<String>(
+    'storage_path_local',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _duracionSegundosMeta = const VerificationMeta(
+    'duracionSegundos',
+  );
+  @override
+  late final GeneratedColumn<int> duracionSegundos = GeneratedColumn<int>(
+    'duration_seconds',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _ordenMeta = const VerificationMeta('orden');
+  @override
+  late final GeneratedColumn<int> orden = GeneratedColumn<int>(
+    'sort_order',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    uuidContentMedia,
+    uuidContentItem,
+    tipo,
+    titulo,
+    storagePathSupabase,
+    storagePathLocal,
+    duracionSegundos,
+    orden,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    syncedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'local_content_media';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocalContentMedia> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('uuid_content_media')) {
+      context.handle(
+        _uuidContentMediaMeta,
+        uuidContentMedia.isAcceptableOrUnknown(
+          data['uuid_content_media']!,
+          _uuidContentMediaMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_uuidContentMediaMeta);
+    }
+    if (data.containsKey('uuid_content_item')) {
+      context.handle(
+        _uuidContentItemMeta,
+        uuidContentItem.isAcceptableOrUnknown(
+          data['uuid_content_item']!,
+          _uuidContentItemMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_uuidContentItemMeta);
+    }
+    if (data.containsKey('type')) {
+      context.handle(
+        _tipoMeta,
+        tipo.isAcceptableOrUnknown(data['type']!, _tipoMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_tipoMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _tituloMeta,
+        titulo.isAcceptableOrUnknown(data['title']!, _tituloMeta),
+      );
+    }
+    if (data.containsKey('storage_path')) {
+      context.handle(
+        _storagePathSupabaseMeta,
+        storagePathSupabase.isAcceptableOrUnknown(
+          data['storage_path']!,
+          _storagePathSupabaseMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_storagePathSupabaseMeta);
+    }
+    if (data.containsKey('storage_path_local')) {
+      context.handle(
+        _storagePathLocalMeta,
+        storagePathLocal.isAcceptableOrUnknown(
+          data['storage_path_local']!,
+          _storagePathLocalMeta,
+        ),
+      );
+    }
+    if (data.containsKey('duration_seconds')) {
+      context.handle(
+        _duracionSegundosMeta,
+        duracionSegundos.isAcceptableOrUnknown(
+          data['duration_seconds']!,
+          _duracionSegundosMeta,
+        ),
+      );
+    }
+    if (data.containsKey('sort_order')) {
+      context.handle(
+        _ordenMeta,
+        orden.isAcceptableOrUnknown(data['sort_order']!, _ordenMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {uuidContentMedia};
+  @override
+  LocalContentMedia map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalContentMedia(
+      uuidContentMedia: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid_content_media'],
+      )!,
+      uuidContentItem: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid_content_item'],
+      )!,
+      tipo: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}type'],
+      )!,
+      titulo: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      ),
+      storagePathSupabase: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}storage_path'],
+      )!,
+      storagePathLocal: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}storage_path_local'],
+      ),
+      duracionSegundos: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}duration_seconds'],
+      ),
+      orden: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sort_order'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
+    );
+  }
+
+  @override
+  $ContentMediaTableTable createAlias(String alias) {
+    return $ContentMediaTableTable(attachedDatabase, alias);
+  }
+}
+
+class LocalContentMedia extends DataClass
+    implements Insertable<LocalContentMedia> {
+  final String uuidContentMedia;
+  final String uuidContentItem;
+  final String tipo;
+  final String? titulo;
+  final String storagePathSupabase;
+  final String? storagePathLocal;
+  final int? duracionSegundos;
+  final int orden;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
+  final DateTime? syncedAt;
+  const LocalContentMedia({
+    required this.uuidContentMedia,
+    required this.uuidContentItem,
+    required this.tipo,
+    this.titulo,
+    required this.storagePathSupabase,
+    this.storagePathLocal,
+    this.duracionSegundos,
+    required this.orden,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+    this.syncedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['uuid_content_media'] = Variable<String>(uuidContentMedia);
+    map['uuid_content_item'] = Variable<String>(uuidContentItem);
+    map['type'] = Variable<String>(tipo);
+    if (!nullToAbsent || titulo != null) {
+      map['title'] = Variable<String>(titulo);
+    }
+    map['storage_path'] = Variable<String>(storagePathSupabase);
+    if (!nullToAbsent || storagePathLocal != null) {
+      map['storage_path_local'] = Variable<String>(storagePathLocal);
+    }
+    if (!nullToAbsent || duracionSegundos != null) {
+      map['duration_seconds'] = Variable<int>(duracionSegundos);
+    }
+    map['sort_order'] = Variable<int>(orden);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
+    return map;
+  }
+
+  ContentMediaTableCompanion toCompanion(bool nullToAbsent) {
+    return ContentMediaTableCompanion(
+      uuidContentMedia: Value(uuidContentMedia),
+      uuidContentItem: Value(uuidContentItem),
+      tipo: Value(tipo),
+      titulo: titulo == null && nullToAbsent
+          ? const Value.absent()
+          : Value(titulo),
+      storagePathSupabase: Value(storagePathSupabase),
+      storagePathLocal: storagePathLocal == null && nullToAbsent
+          ? const Value.absent()
+          : Value(storagePathLocal),
+      duracionSegundos: duracionSegundos == null && nullToAbsent
+          ? const Value.absent()
+          : Value(duracionSegundos),
+      orden: Value(orden),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
+    );
+  }
+
+  factory LocalContentMedia.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalContentMedia(
+      uuidContentMedia: serializer.fromJson<String>(json['uuidContentMedia']),
+      uuidContentItem: serializer.fromJson<String>(json['uuidContentItem']),
+      tipo: serializer.fromJson<String>(json['tipo']),
+      titulo: serializer.fromJson<String?>(json['titulo']),
+      storagePathSupabase: serializer.fromJson<String>(
+        json['storagePathSupabase'],
+      ),
+      storagePathLocal: serializer.fromJson<String?>(json['storagePathLocal']),
+      duracionSegundos: serializer.fromJson<int?>(json['duracionSegundos']),
+      orden: serializer.fromJson<int>(json['orden']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'uuidContentMedia': serializer.toJson<String>(uuidContentMedia),
+      'uuidContentItem': serializer.toJson<String>(uuidContentItem),
+      'tipo': serializer.toJson<String>(tipo),
+      'titulo': serializer.toJson<String?>(titulo),
+      'storagePathSupabase': serializer.toJson<String>(storagePathSupabase),
+      'storagePathLocal': serializer.toJson<String?>(storagePathLocal),
+      'duracionSegundos': serializer.toJson<int?>(duracionSegundos),
+      'orden': serializer.toJson<int>(orden),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
+    };
+  }
+
+  LocalContentMedia copyWith({
+    String? uuidContentMedia,
+    String? uuidContentItem,
+    String? tipo,
+    Value<String?> titulo = const Value.absent(),
+    String? storagePathSupabase,
+    Value<String?> storagePathLocal = const Value.absent(),
+    Value<int?> duracionSegundos = const Value.absent(),
+    int? orden,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
+    Value<DateTime?> syncedAt = const Value.absent(),
+  }) => LocalContentMedia(
+    uuidContentMedia: uuidContentMedia ?? this.uuidContentMedia,
+    uuidContentItem: uuidContentItem ?? this.uuidContentItem,
+    tipo: tipo ?? this.tipo,
+    titulo: titulo.present ? titulo.value : this.titulo,
+    storagePathSupabase: storagePathSupabase ?? this.storagePathSupabase,
+    storagePathLocal: storagePathLocal.present
+        ? storagePathLocal.value
+        : this.storagePathLocal,
+    duracionSegundos: duracionSegundos.present
+        ? duracionSegundos.value
+        : this.duracionSegundos,
+    orden: orden ?? this.orden,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+  );
+  LocalContentMedia copyWithCompanion(ContentMediaTableCompanion data) {
+    return LocalContentMedia(
+      uuidContentMedia: data.uuidContentMedia.present
+          ? data.uuidContentMedia.value
+          : this.uuidContentMedia,
+      uuidContentItem: data.uuidContentItem.present
+          ? data.uuidContentItem.value
+          : this.uuidContentItem,
+      tipo: data.tipo.present ? data.tipo.value : this.tipo,
+      titulo: data.titulo.present ? data.titulo.value : this.titulo,
+      storagePathSupabase: data.storagePathSupabase.present
+          ? data.storagePathSupabase.value
+          : this.storagePathSupabase,
+      storagePathLocal: data.storagePathLocal.present
+          ? data.storagePathLocal.value
+          : this.storagePathLocal,
+      duracionSegundos: data.duracionSegundos.present
+          ? data.duracionSegundos.value
+          : this.duracionSegundos,
+      orden: data.orden.present ? data.orden.value : this.orden,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalContentMedia(')
+          ..write('uuidContentMedia: $uuidContentMedia, ')
+          ..write('uuidContentItem: $uuidContentItem, ')
+          ..write('tipo: $tipo, ')
+          ..write('titulo: $titulo, ')
+          ..write('storagePathSupabase: $storagePathSupabase, ')
+          ..write('storagePathLocal: $storagePathLocal, ')
+          ..write('duracionSegundos: $duracionSegundos, ')
+          ..write('orden: $orden, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('syncedAt: $syncedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    uuidContentMedia,
+    uuidContentItem,
+    tipo,
+    titulo,
+    storagePathSupabase,
+    storagePathLocal,
+    duracionSegundos,
+    orden,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    syncedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalContentMedia &&
+          other.uuidContentMedia == this.uuidContentMedia &&
+          other.uuidContentItem == this.uuidContentItem &&
+          other.tipo == this.tipo &&
+          other.titulo == this.titulo &&
+          other.storagePathSupabase == this.storagePathSupabase &&
+          other.storagePathLocal == this.storagePathLocal &&
+          other.duracionSegundos == this.duracionSegundos &&
+          other.orden == this.orden &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.syncedAt == this.syncedAt);
+}
+
+class ContentMediaTableCompanion extends UpdateCompanion<LocalContentMedia> {
+  final Value<String> uuidContentMedia;
+  final Value<String> uuidContentItem;
+  final Value<String> tipo;
+  final Value<String?> titulo;
+  final Value<String> storagePathSupabase;
+  final Value<String?> storagePathLocal;
+  final Value<int?> duracionSegundos;
+  final Value<int> orden;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
+  final Value<DateTime?> syncedAt;
+  final Value<int> rowid;
+  const ContentMediaTableCompanion({
+    this.uuidContentMedia = const Value.absent(),
+    this.uuidContentItem = const Value.absent(),
+    this.tipo = const Value.absent(),
+    this.titulo = const Value.absent(),
+    this.storagePathSupabase = const Value.absent(),
+    this.storagePathLocal = const Value.absent(),
+    this.duracionSegundos = const Value.absent(),
+    this.orden = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ContentMediaTableCompanion.insert({
+    required String uuidContentMedia,
+    required String uuidContentItem,
+    required String tipo,
+    this.titulo = const Value.absent(),
+    required String storagePathSupabase,
+    this.storagePathLocal = const Value.absent(),
+    this.duracionSegundos = const Value.absent(),
+    this.orden = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : uuidContentMedia = Value(uuidContentMedia),
+       uuidContentItem = Value(uuidContentItem),
+       tipo = Value(tipo),
+       storagePathSupabase = Value(storagePathSupabase);
+  static Insertable<LocalContentMedia> custom({
+    Expression<String>? uuidContentMedia,
+    Expression<String>? uuidContentItem,
+    Expression<String>? tipo,
+    Expression<String>? titulo,
+    Expression<String>? storagePathSupabase,
+    Expression<String>? storagePathLocal,
+    Expression<int>? duracionSegundos,
+    Expression<int>? orden,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
+    Expression<DateTime>? syncedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (uuidContentMedia != null) 'uuid_content_media': uuidContentMedia,
+      if (uuidContentItem != null) 'uuid_content_item': uuidContentItem,
+      if (tipo != null) 'type': tipo,
+      if (titulo != null) 'title': titulo,
+      if (storagePathSupabase != null) 'storage_path': storagePathSupabase,
+      if (storagePathLocal != null) 'storage_path_local': storagePathLocal,
+      if (duracionSegundos != null) 'duration_seconds': duracionSegundos,
+      if (orden != null) 'sort_order': orden,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (syncedAt != null) 'synced_at': syncedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ContentMediaTableCompanion copyWith({
+    Value<String>? uuidContentMedia,
+    Value<String>? uuidContentItem,
+    Value<String>? tipo,
+    Value<String?>? titulo,
+    Value<String>? storagePathSupabase,
+    Value<String?>? storagePathLocal,
+    Value<int?>? duracionSegundos,
+    Value<int>? orden,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
+    Value<DateTime?>? syncedAt,
+    Value<int>? rowid,
+  }) {
+    return ContentMediaTableCompanion(
+      uuidContentMedia: uuidContentMedia ?? this.uuidContentMedia,
+      uuidContentItem: uuidContentItem ?? this.uuidContentItem,
+      tipo: tipo ?? this.tipo,
+      titulo: titulo ?? this.titulo,
+      storagePathSupabase: storagePathSupabase ?? this.storagePathSupabase,
+      storagePathLocal: storagePathLocal ?? this.storagePathLocal,
+      duracionSegundos: duracionSegundos ?? this.duracionSegundos,
+      orden: orden ?? this.orden,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      syncedAt: syncedAt ?? this.syncedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (uuidContentMedia.present) {
+      map['uuid_content_media'] = Variable<String>(uuidContentMedia.value);
+    }
+    if (uuidContentItem.present) {
+      map['uuid_content_item'] = Variable<String>(uuidContentItem.value);
+    }
+    if (tipo.present) {
+      map['type'] = Variable<String>(tipo.value);
+    }
+    if (titulo.present) {
+      map['title'] = Variable<String>(titulo.value);
+    }
+    if (storagePathSupabase.present) {
+      map['storage_path'] = Variable<String>(storagePathSupabase.value);
+    }
+    if (storagePathLocal.present) {
+      map['storage_path_local'] = Variable<String>(storagePathLocal.value);
+    }
+    if (duracionSegundos.present) {
+      map['duration_seconds'] = Variable<int>(duracionSegundos.value);
+    }
+    if (orden.present) {
+      map['sort_order'] = Variable<int>(orden.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ContentMediaTableCompanion(')
+          ..write('uuidContentMedia: $uuidContentMedia, ')
+          ..write('uuidContentItem: $uuidContentItem, ')
+          ..write('tipo: $tipo, ')
+          ..write('titulo: $titulo, ')
+          ..write('storagePathSupabase: $storagePathSupabase, ')
+          ..write('storagePathLocal: $storagePathLocal, ')
+          ..write('duracionSegundos: $duracionSegundos, ')
+          ..write('orden: $orden, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $UserContentStatesTableTable extends UserContentStatesTable
     with TableInfo<$UserContentStatesTableTable, LocalUserContentState> {
   @override
@@ -3949,6 +4683,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $ProfilesTableTable profilesTable = $ProfilesTableTable(this);
   late final $ContentItemsTableTable contentItemsTable =
       $ContentItemsTableTable(this);
+  late final $ContentMediaTableTable contentMediaTable =
+      $ContentMediaTableTable(this);
   late final $UserContentStatesTableTable userContentStatesTable =
       $UserContentStatesTableTable(this);
   late final $WellnessDailyLogsTableTable wellnessDailyLogsTable =
@@ -3962,6 +4698,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     profilesTable,
     contentItemsTable,
+    contentMediaTable,
     userContentStatesTable,
     wellnessDailyLogsTable,
     wellnessProfileStatsTable,
@@ -4781,6 +5518,362 @@ typedef $$ContentItemsTableTableProcessedTableManager =
         >,
       ),
       LocalContentItem,
+      PrefetchHooks Function()
+    >;
+typedef $$ContentMediaTableTableCreateCompanionBuilder =
+    ContentMediaTableCompanion Function({
+      required String uuidContentMedia,
+      required String uuidContentItem,
+      required String tipo,
+      Value<String?> titulo,
+      required String storagePathSupabase,
+      Value<String?> storagePathLocal,
+      Value<int?> duracionSegundos,
+      Value<int> orden,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<DateTime?> syncedAt,
+      Value<int> rowid,
+    });
+typedef $$ContentMediaTableTableUpdateCompanionBuilder =
+    ContentMediaTableCompanion Function({
+      Value<String> uuidContentMedia,
+      Value<String> uuidContentItem,
+      Value<String> tipo,
+      Value<String?> titulo,
+      Value<String> storagePathSupabase,
+      Value<String?> storagePathLocal,
+      Value<int?> duracionSegundos,
+      Value<int> orden,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<DateTime?> syncedAt,
+      Value<int> rowid,
+    });
+
+class $$ContentMediaTableTableFilterComposer
+    extends Composer<_$AppDatabase, $ContentMediaTableTable> {
+  $$ContentMediaTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get uuidContentMedia => $composableBuilder(
+    column: $table.uuidContentMedia,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get uuidContentItem => $composableBuilder(
+    column: $table.uuidContentItem,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get tipo => $composableBuilder(
+    column: $table.tipo,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get titulo => $composableBuilder(
+    column: $table.titulo,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get storagePathSupabase => $composableBuilder(
+    column: $table.storagePathSupabase,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get storagePathLocal => $composableBuilder(
+    column: $table.storagePathLocal,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get duracionSegundos => $composableBuilder(
+    column: $table.duracionSegundos,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get orden => $composableBuilder(
+    column: $table.orden,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ContentMediaTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $ContentMediaTableTable> {
+  $$ContentMediaTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get uuidContentMedia => $composableBuilder(
+    column: $table.uuidContentMedia,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get uuidContentItem => $composableBuilder(
+    column: $table.uuidContentItem,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get tipo => $composableBuilder(
+    column: $table.tipo,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get titulo => $composableBuilder(
+    column: $table.titulo,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get storagePathSupabase => $composableBuilder(
+    column: $table.storagePathSupabase,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get storagePathLocal => $composableBuilder(
+    column: $table.storagePathLocal,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get duracionSegundos => $composableBuilder(
+    column: $table.duracionSegundos,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get orden => $composableBuilder(
+    column: $table.orden,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ContentMediaTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ContentMediaTableTable> {
+  $$ContentMediaTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get uuidContentMedia => $composableBuilder(
+    column: $table.uuidContentMedia,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get uuidContentItem => $composableBuilder(
+    column: $table.uuidContentItem,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get tipo =>
+      $composableBuilder(column: $table.tipo, builder: (column) => column);
+
+  GeneratedColumn<String> get titulo =>
+      $composableBuilder(column: $table.titulo, builder: (column) => column);
+
+  GeneratedColumn<String> get storagePathSupabase => $composableBuilder(
+    column: $table.storagePathSupabase,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get storagePathLocal => $composableBuilder(
+    column: $table.storagePathLocal,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get duracionSegundos => $composableBuilder(
+    column: $table.duracionSegundos,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get orden =>
+      $composableBuilder(column: $table.orden, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+}
+
+class $$ContentMediaTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ContentMediaTableTable,
+          LocalContentMedia,
+          $$ContentMediaTableTableFilterComposer,
+          $$ContentMediaTableTableOrderingComposer,
+          $$ContentMediaTableTableAnnotationComposer,
+          $$ContentMediaTableTableCreateCompanionBuilder,
+          $$ContentMediaTableTableUpdateCompanionBuilder,
+          (
+            LocalContentMedia,
+            BaseReferences<
+              _$AppDatabase,
+              $ContentMediaTableTable,
+              LocalContentMedia
+            >,
+          ),
+          LocalContentMedia,
+          PrefetchHooks Function()
+        > {
+  $$ContentMediaTableTableTableManager(
+    _$AppDatabase db,
+    $ContentMediaTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ContentMediaTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ContentMediaTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ContentMediaTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> uuidContentMedia = const Value.absent(),
+                Value<String> uuidContentItem = const Value.absent(),
+                Value<String> tipo = const Value.absent(),
+                Value<String?> titulo = const Value.absent(),
+                Value<String> storagePathSupabase = const Value.absent(),
+                Value<String?> storagePathLocal = const Value.absent(),
+                Value<int?> duracionSegundos = const Value.absent(),
+                Value<int> orden = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ContentMediaTableCompanion(
+                uuidContentMedia: uuidContentMedia,
+                uuidContentItem: uuidContentItem,
+                tipo: tipo,
+                titulo: titulo,
+                storagePathSupabase: storagePathSupabase,
+                storagePathLocal: storagePathLocal,
+                duracionSegundos: duracionSegundos,
+                orden: orden,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String uuidContentMedia,
+                required String uuidContentItem,
+                required String tipo,
+                Value<String?> titulo = const Value.absent(),
+                required String storagePathSupabase,
+                Value<String?> storagePathLocal = const Value.absent(),
+                Value<int?> duracionSegundos = const Value.absent(),
+                Value<int> orden = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ContentMediaTableCompanion.insert(
+                uuidContentMedia: uuidContentMedia,
+                uuidContentItem: uuidContentItem,
+                tipo: tipo,
+                titulo: titulo,
+                storagePathSupabase: storagePathSupabase,
+                storagePathLocal: storagePathLocal,
+                duracionSegundos: duracionSegundos,
+                orden: orden,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ContentMediaTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ContentMediaTableTable,
+      LocalContentMedia,
+      $$ContentMediaTableTableFilterComposer,
+      $$ContentMediaTableTableOrderingComposer,
+      $$ContentMediaTableTableAnnotationComposer,
+      $$ContentMediaTableTableCreateCompanionBuilder,
+      $$ContentMediaTableTableUpdateCompanionBuilder,
+      (
+        LocalContentMedia,
+        BaseReferences<
+          _$AppDatabase,
+          $ContentMediaTableTable,
+          LocalContentMedia
+        >,
+      ),
+      LocalContentMedia,
       PrefetchHooks Function()
     >;
 typedef $$UserContentStatesTableTableCreateCompanionBuilder =
@@ -5860,6 +6953,8 @@ class $AppDatabaseManager {
       $$ProfilesTableTableTableManager(_db, _db.profilesTable);
   $$ContentItemsTableTableTableManager get contentItemsTable =>
       $$ContentItemsTableTableTableManager(_db, _db.contentItemsTable);
+  $$ContentMediaTableTableTableManager get contentMediaTable =>
+      $$ContentMediaTableTableTableManager(_db, _db.contentMediaTable);
   $$UserContentStatesTableTableTableManager get userContentStatesTable =>
       $$UserContentStatesTableTableTableManager(
         _db,

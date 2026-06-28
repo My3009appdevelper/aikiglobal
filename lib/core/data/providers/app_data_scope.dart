@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 
 import 'app_data_container.dart';
+import 'admin_profiles_controller.dart';
+import 'content_media_controller.dart';
 import 'content_items_controller.dart';
 import 'current_profile_controller.dart';
 import 'user_content_states_controller.dart';
@@ -26,8 +28,16 @@ class AppDataScope extends StatefulWidget {
     return of(context).currentProfileController;
   }
 
+  static AdminProfilesController adminProfiles(BuildContext context) {
+    return of(context).adminProfilesController;
+  }
+
   static ContentItemsController contentItems(BuildContext context) {
     return of(context).contentItemsController;
+  }
+
+  static ContentMediaController contentMedia(BuildContext context) {
+    return of(context).contentMediaController;
   }
 
   static UserContentStatesController userContentStates(BuildContext context) {

@@ -39,6 +39,14 @@ class ProfilesRemoteService extends BaseService {
     );
   }
 
+  Future<List<Map<String, dynamic>>> getAllProfilesNotDeletedOnline() {
+    return selectPaginated(
+      '*',
+      apply: (query) => query.isFilter('deleted_at', null),
+      orderByColumn: 'nombre',
+    );
+  }
+
   Future<void> updateUserEditableOnline(
     String uuidProfile,
     Map<String, dynamic> patch,

@@ -17,7 +17,8 @@ import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/my_image.dart';
 import 'admin_content_form_page.dart';
 
-enum AdminContentFilter { published, draft, archived, all }
+enum AdminContentFilter { all, published, draft, archived }
+
 enum AdminContentTypeFilter {
   all,
   course,
@@ -37,7 +38,7 @@ class AdminContentPage extends StatefulWidget {
 
 class _AdminContentPageState extends State<AdminContentPage> {
   final _searchController = TextEditingController();
-  AdminContentFilter _filter = AdminContentFilter.published;
+  AdminContentFilter _filter = AdminContentFilter.all;
   AdminContentTypeFilter _typeFilter = AdminContentTypeFilter.all;
   bool _initialized = false;
 
@@ -219,7 +220,8 @@ class _AdminContentPageState extends State<AdminContentPage> {
         AdminContentTypeFilter.audio => _normalizedType(item.tipo) == 'audio',
         AdminContentTypeFilter.sound => _normalizedType(item.tipo) == 'sound',
         AdminContentTypeFilter.event => _normalizedType(item.tipo) == 'event',
-        AdminContentTypeFilter.session => _normalizedType(item.tipo) == 'session',
+        AdminContentTypeFilter.session =>
+          _normalizedType(item.tipo) == 'session',
       };
 
       if (!matchesType) {
@@ -287,17 +289,25 @@ class _AdminContentHeader extends StatelessWidget {
           const SizedBox(height: 16),
           Row(
             children: [
-              Expanded(child: _AdminContentStat(label: 'Total', value: total)),
+              Expanded(
+                child: _AdminContentStat(label: 'Total', value: total),
+              ),
               const SizedBox(width: 10),
-              Expanded(child: _AdminContentStat(label: 'Publicado', value: published)),
+              Expanded(
+                child: _AdminContentStat(label: 'Publicado', value: published),
+              ),
             ],
           ),
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: _AdminContentStat(label: 'Borradores', value: drafts)),
+              Expanded(
+                child: _AdminContentStat(label: 'Borradores', value: drafts),
+              ),
               const SizedBox(width: 10),
-              Expanded(child: _AdminContentStat(label: 'Archivado', value: archived)),
+              Expanded(
+                child: _AdminContentStat(label: 'Archivado', value: archived),
+              ),
             ],
           ),
         ],
@@ -674,10 +684,10 @@ int _countByStatus(List<AppContentItem> items, String status) {
 
 String _filterLabel(AdminContentFilter filter) {
   return switch (filter) {
+    AdminContentFilter.all => 'Todo',
     AdminContentFilter.published => 'Publicado',
     AdminContentFilter.draft => 'Borradores',
     AdminContentFilter.archived => 'Archivado',
-    AdminContentFilter.all => 'Todo',
   };
 }
 

@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import '../local/app_database.dart';
+import '../models/app_content_media.dart';
 import '../models/app_content_item.dart';
 import '../models/app_profile.dart';
 import '../models/app_user_content_state.dart';
@@ -269,6 +270,57 @@ AppContentItem contentItemRemoteToApp(Map<String, dynamic> json) {
     updatedAt: _dateTimeValue(json, 'updated_at'),
     deletedAt: _nullableDateTimeValue(json, 'deleted_at'),
     syncedAt: _nullableDateTimeValue(json, 'synced_at'),
+  );
+}
+
+AppContentMedia contentMediaRemoteToApp(Map<String, dynamic> json) {
+  return AppContentMedia(
+    uuidContentMedia: _stringValue(json, 'uuid_content_media'),
+    uuidContentItem: _stringValue(json, 'uuid_content_item'),
+    tipo: _stringValue(json, 'type'),
+    titulo: _nullableStringValue(json, 'title'),
+    storagePathSupabase: _stringValue(json, 'storage_path'),
+    storagePathLocal: _nullableStringValue(json, 'storage_path_local'),
+    duracionSegundos: _nullableIntValue(json, 'duration_seconds'),
+    orden: _intValue(json, 'sort_order'),
+    createdAt: _dateTimeValue(json, 'created_at'),
+    updatedAt: _dateTimeValue(json, 'updated_at'),
+    deletedAt: _nullableDateTimeValue(json, 'deleted_at'),
+    syncedAt: _nullableDateTimeValue(json, 'synced_at'),
+  );
+}
+
+Map<String, dynamic> contentMediaToRemote(LocalContentMedia media) {
+  return {
+    'uuid_content_media': media.uuidContentMedia,
+    'uuid_content_item': media.uuidContentItem,
+    'type': media.tipo,
+    'title': media.titulo,
+    'storage_path': media.storagePathSupabase,
+    'duration_seconds': media.duracionSegundos,
+    'sort_order': media.orden,
+    'created_at': _dateToRemote(media.createdAt),
+    'updated_at': _dateToRemote(media.updatedAt),
+    'deleted_at': _dateToRemote(media.deletedAt),
+  };
+}
+
+ContentMediaTableCompanion contentMediaRemoteToCompanion(
+  Map<String, dynamic> json,
+) {
+  final syncedAt = DateTime.now().toUtc();
+  return ContentMediaTableCompanion.insert(
+    uuidContentMedia: _stringValue(json, 'uuid_content_media'),
+    uuidContentItem: _stringValue(json, 'uuid_content_item'),
+    tipo: _stringValue(json, 'type'),
+    titulo: Value(_nullableStringValue(json, 'title')),
+    storagePathSupabase: _stringValue(json, 'storage_path'),
+    duracionSegundos: Value(_nullableIntValue(json, 'duration_seconds')),
+    orden: Value(_intValue(json, 'sort_order')),
+    createdAt: Value(_dateTimeValue(json, 'created_at')),
+    updatedAt: Value(_dateTimeValue(json, 'updated_at')),
+    deletedAt: Value(_nullableDateTimeValue(json, 'deleted_at')),
+    syncedAt: Value(syncedAt),
   );
 }
 

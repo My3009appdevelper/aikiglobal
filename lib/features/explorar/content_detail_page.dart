@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../../core/data/models/app_content_media.dart';
+import '../../core/data/models/content_media_file_metadata.dart';
 import '../../core/data/providers/app_data_scope.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
@@ -9,6 +11,7 @@ import '../../shared/widgets/app_cover_image.dart';
 import '../../shared/widgets/app_interactive.dart';
 import '../../shared/widgets/app_primary_button.dart';
 import '../../shared/widgets/app_logo.dart';
+import 'content_media_playback_selection.dart';
 import 'lesson_player_page.dart';
 import 'models/content_item.dart';
 
@@ -45,9 +48,12 @@ class ContentDetailPage extends StatelessWidget {
                           _StatsRow(item: item),
                           const SizedBox(height: 28),
                           _AboutCard(item: item),
-                          if (isCourse) ...[
+                          if (item.uuidContentItem != null || isCourse) ...[
                             const SizedBox(height: 18),
-                            _LessonList(item: item),
+                            _ContentMediaList(
+                              item: item,
+                              showFallbackLessons: isCourse,
+                            ),
                           ],
                         ],
                       ),
@@ -408,8 +414,88 @@ class _AboutCard extends StatelessWidget {
   }
 }
 
-class _LessonList extends StatelessWidget {
-  const _LessonList({required this.item});
+class _ContentMediaList extends StatefulWidget {
+  const _ContentMediaList({
+    required this.item,
+    required this.showFallbackLessons,
+  });
+
+  final ContentItem item;
+  final bool showFallbackLessons;
+
+  @override
+  State<_ContentMediaList> createState() => _ContentMediaListState();
+}
+
+class _ContentMediaListState extends State<_ContentMediaList> {
+  bool _initialized = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_initialized) {
+      return;
+    }
+
+    _initialized = true;
+    final uuidContentItem = widget.item.uuidContentItem;
+    if (uuidContentItem != null && uuidContentItem.trim().isNotEmpty) {
+      final mediaController = AppDataScope.contentMedia(context);
+      mediaController.watchForContent(uuidContentItem);
+      unawaited(mediaController.pullFromRemote());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final mediaController = AppDataScope.contentMedia(context);
+
+    return AnimatedBuilder(
+      animation: mediaController,
+      builder: (context, _) {
+        final media = playableContentMediaItems(mediaController.items);
+        if (media.isNotEmpty) {
+          return Column(
+            children: [
+              for (final item in media)
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => LessonPlayerPage(
+                        item: widget.item,
+                        initialMediaUuid: item.uuidContentMedia,
+                      ),
+                    ),
+                  ),
+                  leading: CircleAvatar(
+                    backgroundColor: Theme.of(
+                      context,
+                    ).colorScheme.primary.withValues(alpha: 0.12),
+                    child: Icon(
+                      _mediaIcon(item),
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  title: Text(_mediaTitle(item)),
+                  subtitle: Text(_mediaSubtitle(item)),
+                ),
+            ],
+          );
+        }
+
+        if (!widget.showFallbackLessons) {
+          return const SizedBox.shrink();
+        }
+
+        return _FallbackLessonList(item: widget.item);
+      },
+    );
+  }
+}
+
+class _FallbackLessonList extends StatelessWidget {
+  const _FallbackLessonList({required this.item});
 
   final ContentItem item;
 
@@ -437,45 +523,63 @@ class _LessonList extends StatelessWidget {
             ),
             title: Text(lessons[i]),
             subtitle: Text('${8 + i * 4}:30 min'),
-            trailing: const _DownloadActionButton(),
           ),
       ],
     );
   }
 }
 
-class _DownloadActionButton extends StatefulWidget {
-  const _DownloadActionButton();
-
-  @override
-  State<_DownloadActionButton> createState() => _DownloadActionButtonState();
-}
-
-class _DownloadActionButtonState extends State<_DownloadActionButton> {
-  bool _downloaded = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme.primary;
-
-    return AppInteractive(
-      tooltip: _downloaded ? 'Descargado' : 'Descargar lección',
-      borderRadius: AppRadius.full,
-      hoverScale: 1,
-      pressedScale: 1,
-      onTap: () => setState(() => _downloaded = !_downloaded),
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 180),
-        transitionBuilder: (child, animation) {
-          return FadeTransition(opacity: animation, child: child);
-        },
-        child: Icon(
-          _downloaded ? Icons.check_circle_rounded : Icons.download_outlined,
-          key: ValueKey(_downloaded),
-          color: _downloaded ? color : null,
-        ),
-      ),
-    );
+String _mediaTitle(AppContentMedia item) {
+  final title = item.titulo?.trim();
+  if (title != null && title.isNotEmpty) {
+    return title;
   }
+
+  return _mediaTypeLabel(item.tipo);
 }
 
+String _mediaSubtitle(AppContentMedia item) {
+  return '${_mediaTypeLabel(item.tipo)} · ${_formatMediaDuration(item.duracionSegundos)}';
+}
+
+String _mediaTypeLabel(String tipo) {
+  final cleanType = tipo.trim().toLowerCase();
+  if (ContentMediaFileMetadata.isSupportedType(cleanType)) {
+    return cleanType.toUpperCase();
+  }
+
+  return switch (cleanType) {
+    'video' => 'Video',
+    'audio' => 'Audio',
+    'ambient_sound' => 'Sonido ambiental',
+    _ => tipo,
+  };
+}
+
+IconData _mediaIcon(AppContentMedia item) {
+  final cleanType = item.tipo.trim().toLowerCase();
+  if (ContentMediaFileMetadata.isVideoType(cleanType)) {
+    return Icons.videocam_outlined;
+  }
+
+  return switch (cleanType) {
+    'video' => Icons.videocam_outlined,
+    'ambient_sound' => Icons.graphic_eq_rounded,
+    _ => Icons.mic_none_rounded,
+  };
+}
+
+String _formatMediaDuration(int? seconds) {
+  if (seconds == null || seconds <= 0) {
+    return 'Duración pendiente';
+  }
+
+  final totalMinutes = (seconds / 60).round();
+  if (totalMinutes < 60) {
+    return '$totalMinutes min';
+  }
+
+  final hours = totalMinutes ~/ 60;
+  final minutes = totalMinutes % 60;
+  return minutes == 0 ? '${hours}h' : '${hours}h ${minutes}m';
+}

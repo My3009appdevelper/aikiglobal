@@ -20,7 +20,7 @@ class DailyStreakCard extends StatelessWidget {
       animation: statsController,
       builder: (context, _) {
         return Container(
-          height: 190,
+          constraints: const BoxConstraints(minHeight: 190),
           decoration: BoxDecoration(
             borderRadius: AppRadius.large,
             boxShadow: AppShadows.elevated(brightness),
@@ -102,7 +102,7 @@ class _DailyStreakContent extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               color: foreground,
-              fontSize: 25,
+              fontSize: hasStreak ? 23 : 24,
               height: 1.05,
             ),
           ),

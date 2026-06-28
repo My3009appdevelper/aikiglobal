@@ -63,12 +63,14 @@ class _AppInteractiveState extends State<AppInteractive> {
         onTapDown: _canInteract ? (_) => _setPressed(true) : null,
         onTapUp: _canInteract ? (_) => _setPressed(false) : null,
         onTapCancel: _canInteract ? () => _setPressed(false) : null,
-        child: AnimatedScale(
-          duration: const Duration(milliseconds: 150),
-          curve: Curves.easeOutCubic,
-          scale: scale,
-          child: widget.child,
-        ),
+        child: scale == 1.0
+            ? widget.child
+            : AnimatedScale(
+                duration: const Duration(milliseconds: 150),
+                curve: Curves.easeOutCubic,
+                scale: scale,
+                child: widget.child,
+              ),
       ),
     );
 

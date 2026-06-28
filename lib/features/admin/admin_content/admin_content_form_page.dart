@@ -1,8 +1,16 @@
+import 'dart:async';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
+import '../../../core/data/common/supabase_error_messages.dart';
+import '../../../core/data/media/content_media_duration_reader.dart';
 import '../../../core/data/models/app_content_item.dart';
+import '../../../core/data/models/app_content_media.dart';
+import '../../../core/data/models/content_media_file_metadata.dart';
+import '../../../core/data/models/pending_content_media_upload.dart';
 import '../../../core/data/providers/app_data_scope.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
@@ -17,6 +25,8 @@ import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/app_cover_image.dart';
 import '../../../shared/widgets/app_logo.dart';
 import '../../../shared/widgets/my_image_picker.dart';
+import 'content_media_duration_text.dart';
+import 'content_media_form_draft.dart';
 
 class AdminContentFormPage extends StatefulWidget {
   const AdminContentFormPage({super.key, this.item});
@@ -33,6 +43,7 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
   final _descriptionController = TextEditingController();
   final _durationController = TextEditingController();
   final _orderController = TextEditingController();
+  final _mediaDurationReader = const ContentMediaDurationReader();
 
   String _type = 'course';
   bool _featured = false;
@@ -44,20 +55,32 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
   Uint8List? _coverPreviewBytes;
   String? _coverFileName;
   String? _coverContentType;
+  late String _uuidContentItem;
   late _ContentFormSnapshot _initialSnapshot;
+  bool _mediaWatchInitialized = false;
+  final List<PendingContentMediaUpload> _pendingMedia = [];
+  final Set<String> _pendingRemovedMediaIds = <String>{};
+  final Map<String, ContentMediaMetadataEdit> _mediaEdits = {};
 
   bool get _isEditing => widget.item != null;
-  bool get _hasChanges => _currentSnapshot() != _initialSnapshot;
+  bool get _hasChanges =>
+      _currentSnapshot() != _initialSnapshot || _hasMediaChanges;
+  bool get _hasMediaChanges =>
+      _pendingMedia.isNotEmpty ||
+      _pendingRemovedMediaIds.isNotEmpty ||
+      _mediaEdits.isNotEmpty;
   bool get _canPublish =>
       _hasChanges || (widget.item?.status.trim().toLowerCase() != 'published');
   bool get _isPublished =>
       widget.item?.status.trim().toLowerCase() == 'published';
-  bool get _isArchived => widget.item?.status.trim().toLowerCase() == 'archived';
+  bool get _isArchived =>
+      widget.item?.status.trim().toLowerCase() == 'archived';
 
   @override
   void initState() {
     super.initState();
     final item = widget.item;
+    _uuidContentItem = item?.uuidContentItem ?? _generateUuidV4();
     if (item == null) {
       _orderController.text = '0';
       _initialSnapshot = _currentSnapshot();
@@ -79,6 +102,21 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
     _orderController.text = item.orden.toString();
     _initialSnapshot = _currentSnapshot();
     _addChangeListeners();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_mediaWatchInitialized) {
+      return;
+    }
+
+    _mediaWatchInitialized = true;
+    final mediaController = AppDataScope.contentMedia(context);
+    mediaController.watchForContent(_uuidContentItem);
+    if (_isEditing) {
+      unawaited(mediaController.pullFromRemote());
+    }
   }
 
   @override
@@ -179,8 +217,23 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
     );
   }
 
+  ContentMediaFormDraft _mediaDraft(List<AppContentMedia> media) {
+    return ContentMediaFormDraft(
+      persistedMedia: media,
+      pendingUploads: _pendingMedia,
+      removedMediaIds: _pendingRemovedMediaIds,
+    );
+  }
+
+  int _nextMediaOrder() {
+    final draft = _mediaDraft(AppDataScope.contentMedia(context).items);
+    return draft.nextSortOrder;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final contentMediaController = AppDataScope.contentMedia(context);
+
     return Scaffold(
       body: AppBackground(
         imageOpacity: 0.035,
@@ -295,6 +348,40 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
                             ],
                           ),
                         ),
+                        const SizedBox(height: AppSpacing.lg),
+                        AnimatedBuilder(
+                          animation: contentMediaController,
+                          builder: (context, _) {
+                            final mediaDraft = _mediaDraft(
+                              contentMediaController.items,
+                            );
+                            return _MediaFilesCard(
+                              items: mediaDraft.visiblePersistedMedia,
+                              pendingItems: mediaDraft.visiblePendingUploads,
+                              mediaEdits: _mediaEdits,
+                              isLoading:
+                                  contentMediaController.isLoading ||
+                                  contentMediaController.isSyncing,
+                              onAdd: _isSaving ? null : _addMedia,
+                              onRemove: _isSaving ? null : _markMediaForRemoval,
+                              onMediaTitleChanged: _isSaving
+                                  ? null
+                                  : _updateExistingMediaTitle,
+                              onMediaDurationChanged: _isSaving
+                                  ? null
+                                  : _updateExistingMediaDuration,
+                              onRemovePending: _isSaving
+                                  ? null
+                                  : _removePendingMedia,
+                              onPendingTitleChanged: _isSaving
+                                  ? null
+                                  : _updatePendingMediaTitle,
+                              onPendingDurationChanged: _isSaving
+                                  ? null
+                                  : _updatePendingMediaDuration,
+                            );
+                          },
+                        ),
                         if (_errorMessage != null) ...[
                           const SizedBox(height: AppSpacing.md),
                           Text(
@@ -329,7 +416,9 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
                           AppSecondaryButton(
                             label: 'Archivar',
                             icon: Icons.archive_rounded,
-                            onPressed: _isSaving ? null : () => _save('archived'),
+                            onPressed: _isSaving
+                                ? null
+                                : () => _save('archived'),
                           ),
                         ] else ...[
                           AppSecondaryButton(
@@ -344,7 +433,9 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
                             AppSecondaryButton(
                               label: 'Archivar',
                               icon: Icons.archive_rounded,
-                              onPressed: _isSaving ? null : () => _save('archived'),
+                              onPressed: _isSaving
+                                  ? null
+                                  : () => _save('archived'),
                             ),
                           ],
                         ],
@@ -360,26 +451,223 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
     );
   }
 
-  Future<void> _save(String status) async {
+  Future<void> _addMedia() async {
+    if (_isSaving) {
+      return;
+    }
+
+    final picked = await FilePicker.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: const [
+        'mp4',
+        'mov',
+        'm4v',
+        'mp3',
+        'm4a',
+        'aac',
+        'wav',
+        'ogg',
+      ],
+      withData: false,
+    );
+    if (picked == null || picked.files.isEmpty || !mounted) {
+      return;
+    }
+
+    final file = picked.files.single;
+    final metadata = ContentMediaFileMetadata.tryParse(file.name);
+    if (metadata == null) {
+      setState(
+        () => _errorMessage =
+            'Selecciona un archivo de video o audio compatible.',
+      );
+      return;
+    }
+
+    final localPath = file.path?.trim();
+    final bytes = file.bytes;
+    if ((localPath == null || localPath.isEmpty) &&
+        (bytes == null || bytes.isEmpty)) {
+      setState(
+        () => _errorMessage =
+            'No se pudo leer el archivo seleccionado. Inténtalo de nuevo.',
+      );
+      return;
+    }
+
+    final order = _nextMediaOrder();
+    final durationSeconds = await _mediaDurationReader.readDurationSeconds(
+      localPath,
+    );
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _pendingMedia.add(
+        PendingContentMediaUpload(
+          uuidContentMedia: _generateUuidV4(),
+          tipo: metadata.tipo,
+          titulo: metadata.titulo,
+          fileName: file.name,
+          contentType: metadata.contentType,
+          orden: order,
+          duracionSegundos: durationSeconds,
+          localPath: localPath,
+          bytes: bytes,
+        ),
+      );
+      _errorMessage = null;
+    });
+  }
+
+  void _removePendingMedia(PendingContentMediaUpload media) {
+    setState(() {
+      _pendingMedia.removeWhere(
+        (item) => item.uuidContentMedia == media.uuidContentMedia,
+      );
+      _errorMessage = null;
+    });
+  }
+
+  void _updatePendingMediaTitle(PendingContentMediaUpload media, String title) {
+    final index = _pendingMedia.indexWhere(
+      (item) => item.uuidContentMedia == media.uuidContentMedia,
+    );
+    if (index < 0) {
+      return;
+    }
+
+    setState(() {
+      _pendingMedia[index] = _pendingMedia[index].copyWith(titulo: title);
+      _errorMessage = null;
+    });
+  }
+
+  void _updatePendingMediaDuration(
+    PendingContentMediaUpload media,
+    String minutesText,
+  ) {
+    final index = _pendingMedia.indexWhere(
+      (item) => item.uuidContentMedia == media.uuidContentMedia,
+    );
+    if (index < 0) {
+      return;
+    }
+
+    setState(() {
+      _pendingMedia[index] = _pendingMedia[index].copyWith(
+        duracionSegundos: contentMediaDurationMinutesTextToSeconds(minutesText),
+      );
+      _errorMessage = null;
+    });
+  }
+
+  ContentMediaMetadataEdit _mediaEditFor(AppContentMedia media) {
+    return _mediaEdits[media.uuidContentMedia] ??
+        ContentMediaMetadataEdit.fromMedia(media);
+  }
+
+  void _setMediaEdit(AppContentMedia media, ContentMediaMetadataEdit edit) {
+    if (_isSaving) {
+      return;
+    }
+
+    setState(() {
+      if (edit.hasChangesFrom(media)) {
+        _mediaEdits[media.uuidContentMedia] = edit;
+      } else {
+        _mediaEdits.remove(media.uuidContentMedia);
+      }
+      _errorMessage = null;
+    });
+  }
+
+  void _updateExistingMediaTitle(AppContentMedia media, String title) {
+    _setMediaEdit(media, _mediaEditFor(media).copyWith(titulo: title));
+  }
+
+  void _updateExistingMediaDuration(AppContentMedia media, String minutesText) {
+    _setMediaEdit(
+      media,
+      _mediaEditFor(media).copyWith(
+        duracionSegundos: contentMediaDurationMinutesTextToSeconds(minutesText),
+      ),
+    );
+  }
+
+  void _markMediaForRemoval(AppContentMedia media) {
+    if (_isSaving) {
+      return;
+    }
+
+    setState(() {
+      _pendingRemovedMediaIds.add(media.uuidContentMedia);
+      _mediaEdits.remove(media.uuidContentMedia);
+      _errorMessage = null;
+    });
+  }
+
+  Future<bool> _save(
+    String status, {
+    bool popOnSuccess = true,
+    bool validateMediaForPublish = true,
+    bool showSavingState = true,
+  }) async {
     final title = _titleController.text.trim();
     if (title.isEmpty) {
       setState(() => _errorMessage = 'Escribe un título para continuar.');
-      return;
+      return false;
+    }
+
+    final mediaController = AppDataScope.contentMedia(context);
+    final mediaDraft = _mediaDraft(mediaController.items);
+    final hasUntitledMedia =
+        mediaDraft.visiblePersistedMedia.any(
+          (media) => _mediaEditFor(media).titulo.trim().isEmpty,
+        ) ||
+        mediaDraft.visiblePendingUploads.any(
+          (media) => media.titulo.trim().isEmpty,
+        );
+    if (hasUntitledMedia) {
+      setState(() => _errorMessage = 'Escribe un título para cada archivo.');
+      return false;
     }
 
     final controller = AppDataScope.contentItems(context);
     final profile = AppDataScope.currentProfile(context).profile;
+    final cleanStatus = status.trim().toLowerCase();
+    final hasPendingMedia = mediaDraft.visiblePendingUploads.isNotEmpty;
+    final hasExistingMedia = mediaDraft.hasVisiblePublishablePersistedMedia;
+    if (validateMediaForPublish && cleanStatus == 'published') {
+      if (!mediaDraft.hasPublishableMediaAfterChanges) {
+        if (!mounted) return false;
+        setState(
+          () => _errorMessage = 'Agrega al menos un archivo antes de publicar.',
+        );
+        return false;
+      }
+    }
+
     final durationMinutes = int.tryParse(_durationController.text.trim());
     final order = int.tryParse(_orderController.text.trim()) ?? 0;
+    final delayPublishUntilMediaUpload =
+        cleanStatus == 'published' && hasPendingMedia && !hasExistingMedia;
+    final initialStatus = delayPublishUntilMediaUpload ? 'draft' : cleanStatus;
+    var isApplyingMediaMetadata = false;
+    var isUploadingPendingMedia = false;
+    var isApplyingMediaRemovals = false;
 
     setState(() {
-      _isSaving = true;
+      if (showSavingState) {
+        _isSaving = true;
+      }
       _errorMessage = null;
     });
 
     try {
       await controller.saveContentItem(
-        uuidContentItem: widget.item?.uuidContentItem,
+        uuidContentItem: _uuidContentItem,
         tipo: _type,
         titulo: title,
         subtitulo: _subtitleController.text,
@@ -389,7 +677,7 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
         coverBytes: _coverPreviewBytes,
         coverFileName: _coverFileName,
         coverContentType: _coverContentType,
-        status: status,
+        status: initialStatus,
         destacado: _featured,
         descargable: _downloadable,
         duracionSegundos: durationMinutes == null || durationMinutes <= 0
@@ -400,22 +688,174 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
         syncAfterSave: true,
       );
 
-      if (!mounted) return;
+      if (!mounted) return false;
       _coverPreviewBytes = null;
       _coverFileName = null;
       _coverContentType = null;
+
+      isApplyingMediaMetadata = _mediaEdits.isNotEmpty;
+      await _applyPendingMediaMetadataEdits();
+      isApplyingMediaMetadata = false;
+
+      isUploadingPendingMedia = _pendingMedia.isNotEmpty;
+      await _uploadPendingMedia();
+      isUploadingPendingMedia = false;
+
+      isApplyingMediaRemovals = _pendingRemovedMediaIds.isNotEmpty;
+      await _applyPendingMediaRemovals();
+      isApplyingMediaRemovals = false;
+
+      if (delayPublishUntilMediaUpload) {
+        await controller.updateStatus(
+          _uuidContentItem,
+          status: cleanStatus,
+          syncAfterUpdate: true,
+        );
+      }
+
+      if (!mounted) return false;
+      _pendingRemovedMediaIds.clear();
       _initialSnapshot = _currentSnapshot();
-      Navigator.of(context).pop();
-    } catch (_) {
-      if (!mounted) return;
-      setState(
-        () => _errorMessage =
-            'No se pudo guardar el contenido. Revisa tus permisos o conexión.',
+      if (popOnSuccess) {
+        Navigator.of(context).pop();
+      } else {
+        setState(() {});
+      }
+      return true;
+    } catch (error) {
+      if (!mounted) return false;
+      debugPrint(
+        'AdminContentFormPage.save error: ${supabaseErrorDebugLabel(error)}',
       );
+      setState(
+        () => _errorMessage = isUploadingPendingMedia
+            ? contentMediaUploadErrorMessage(error)
+            : isApplyingMediaMetadata
+            ? 'No se pudieron guardar los datos de los archivos. Revisa tus permisos o conexión.'
+            : isApplyingMediaRemovals
+            ? 'No se pudieron quitar los archivos. Revisa tus permisos o conexión.'
+            : 'No se pudo guardar el contenido. Revisa tus permisos o conexión.',
+      );
+      return false;
     } finally {
       if (mounted) {
-        setState(() => _isSaving = false);
+        setState(() {
+          if (showSavingState) {
+            _isSaving = false;
+          }
+        });
       }
+    }
+  }
+
+  Future<void> _applyPendingMediaMetadataEdits() async {
+    if (_mediaEdits.isEmpty) {
+      return;
+    }
+
+    final mediaController = AppDataScope.contentMedia(context);
+    final visibleMediaById = {
+      for (final media in _mediaDraft(
+        mediaController.items,
+      ).visiblePersistedMedia)
+        media.uuidContentMedia: media,
+    };
+    final edits = Map<String, ContentMediaMetadataEdit>.of(_mediaEdits);
+
+    for (final entry in edits.entries) {
+      final media = visibleMediaById[entry.key];
+      if (media == null) {
+        if (!mounted) {
+          return;
+        }
+        setState(() => _mediaEdits.remove(entry.key));
+        continue;
+      }
+
+      final edit = entry.value;
+      if (!edit.hasChangesFrom(media)) {
+        if (!mounted) {
+          return;
+        }
+        setState(() => _mediaEdits.remove(entry.key));
+        continue;
+      }
+
+      await mediaController.updateMediaMetadata(
+        uuidContentMedia: media.uuidContentMedia,
+        tipo: media.tipo,
+        titulo: edit.titulo,
+        duracionSegundos: edit.duracionSegundos,
+        orden: media.orden,
+        syncAfterUpdate: true,
+      );
+
+      if (!mounted) {
+        return;
+      }
+      setState(() => _mediaEdits.remove(entry.key));
+    }
+  }
+
+  Future<void> _uploadPendingMedia() async {
+    if (_pendingMedia.isEmpty) {
+      return;
+    }
+
+    final pendingMedia = List<PendingContentMediaUpload>.of(_pendingMedia);
+    final mediaController = AppDataScope.contentMedia(context);
+
+    for (final item in pendingMedia) {
+      final bytes = await item.readBytes();
+      if (bytes.isEmpty) {
+        throw StateError('El archivo seleccionado está vacío.');
+      }
+
+      await mediaController.addMedia(
+        uuidContentMedia: item.uuidContentMedia,
+        uuidContentItem: _uuidContentItem,
+        tipo: item.tipo,
+        titulo: item.titulo,
+        bytes: bytes,
+        fileName: item.fileName,
+        contentType: item.contentType,
+        duracionSegundos: item.duracionSegundos,
+        orden: item.orden,
+        syncAfterSave: true,
+      );
+
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _pendingMedia.removeWhere(
+          (pending) => pending.uuidContentMedia == item.uuidContentMedia,
+        );
+      });
+    }
+  }
+
+  Future<void> _applyPendingMediaRemovals() async {
+    if (_pendingRemovedMediaIds.isEmpty) {
+      return;
+    }
+
+    final mediaController = AppDataScope.contentMedia(context);
+    final pendingIds = Set<String>.of(_pendingRemovedMediaIds);
+
+    for (final uuidContentMedia in pendingIds) {
+      await mediaController.archiveMedia(
+        uuidContentMedia,
+        syncAfterUpdate: true,
+      );
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _pendingRemovedMediaIds.remove(uuidContentMedia);
+      });
     }
   }
 }
@@ -617,6 +1057,453 @@ class _FormCard extends StatelessWidget {
   }
 }
 
+class _MediaFilesCard extends StatelessWidget {
+  const _MediaFilesCard({
+    required this.items,
+    required this.pendingItems,
+    required this.mediaEdits,
+    required this.isLoading,
+    required this.onAdd,
+    required this.onRemove,
+    required this.onMediaTitleChanged,
+    required this.onMediaDurationChanged,
+    required this.onRemovePending,
+    required this.onPendingTitleChanged,
+    required this.onPendingDurationChanged,
+  });
+
+  final List<AppContentMedia> items;
+  final List<PendingContentMediaUpload> pendingItems;
+  final Map<String, ContentMediaMetadataEdit> mediaEdits;
+  final bool isLoading;
+  final VoidCallback? onAdd;
+  final ValueChanged<AppContentMedia>? onRemove;
+  final void Function(AppContentMedia item, String title)? onMediaTitleChanged;
+  final void Function(AppContentMedia item, String minutesText)?
+  onMediaDurationChanged;
+  final ValueChanged<PendingContentMediaUpload>? onRemovePending;
+  final void Function(PendingContentMediaUpload item, String title)?
+  onPendingTitleChanged;
+  final void Function(PendingContentMediaUpload item, String minutesText)?
+  onPendingDurationChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final rows = <Widget>[
+      for (final item in items)
+        _MediaRow(
+          key: ValueKey(item.uuidContentMedia),
+          item: item,
+          edit: mediaEdits[item.uuidContentMedia],
+          onRemove: onRemove,
+          onTitleChanged: onMediaTitleChanged == null
+              ? null
+              : (title) => onMediaTitleChanged!(item, title),
+          onDurationChanged: onMediaDurationChanged == null
+              ? null
+              : (minutesText) => onMediaDurationChanged!(item, minutesText),
+        ),
+      for (final item in pendingItems)
+        _PendingMediaRow(
+          key: ValueKey(item.uuidContentMedia),
+          item: item,
+          onRemove: onRemovePending,
+          onTitleChanged: onPendingTitleChanged == null
+              ? null
+              : (title) => onPendingTitleChanged!(item, title),
+          onDurationChanged: onPendingDurationChanged == null
+              ? null
+              : (minutesText) => onPendingDurationChanged!(item, minutesText),
+        ),
+    ];
+
+    return _FormCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Archivos del contenido',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ),
+              if (isLoading)
+                const SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Agrega video, audio o sonido ambiental para poder publicar.',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          const SizedBox(height: AppSpacing.md),
+          if (rows.isEmpty)
+            _EmptyMediaMessage(onAdd: onAdd)
+          else
+            Column(
+              children: [
+                for (var index = 0; index < rows.length; index++) ...[
+                  rows[index],
+                  if (index < rows.length - 1)
+                    const Divider(height: AppSpacing.lg),
+                ],
+              ],
+            ),
+          const SizedBox(height: AppSpacing.md),
+          AppSecondaryButton(
+            label: 'Agregar archivo',
+            icon: Icons.upload_file_rounded,
+            onPressed: onAdd,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _EmptyMediaMessage extends StatelessWidget {
+  const _EmptyMediaMessage({required this.onAdd});
+
+  final VoidCallback? onAdd;
+
+  @override
+  Widget build(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    final background = brightness == Brightness.dark
+        ? AppColors.darkSurfaceSoft
+        : AppColors.sandLight;
+
+    return AppInteractive(
+      tooltip: 'Agregar archivo',
+      borderRadius: AppRadius.medium,
+      onTap: onAdd,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: background,
+          borderRadius: AppRadius.medium,
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.perm_media_outlined,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'Aún no hay archivos para este contenido.',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PendingMediaRow extends StatefulWidget {
+  const _PendingMediaRow({
+    super.key,
+    required this.item,
+    required this.onRemove,
+    required this.onTitleChanged,
+    required this.onDurationChanged,
+  });
+
+  final PendingContentMediaUpload item;
+  final ValueChanged<PendingContentMediaUpload>? onRemove;
+  final ValueChanged<String>? onTitleChanged;
+  final ValueChanged<String>? onDurationChanged;
+
+  @override
+  State<_PendingMediaRow> createState() => _PendingMediaRowState();
+}
+
+class _PendingMediaRowState extends State<_PendingMediaRow> {
+  late final TextEditingController _titleController;
+  late final TextEditingController _durationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: widget.item.titulo);
+    _durationController = TextEditingController(
+      text: contentMediaDurationSecondsToMinutesText(
+        widget.item.duracionSegundos,
+      ),
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant _PendingMediaRow oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.item.uuidContentMedia != widget.item.uuidContentMedia) {
+      _durationController.text = contentMediaDurationSecondsToMinutesText(
+        widget.item.duracionSegundos,
+      );
+      _durationController.selection = TextSelection.collapsed(
+        offset: _durationController.text.length,
+      );
+    }
+    if (widget.item.titulo != _titleController.text) {
+      _titleController.text = widget.item.titulo;
+      _titleController.selection = TextSelection.collapsed(
+        offset: _titleController.text.length,
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _durationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            color: Theme.of(
+              context,
+            ).colorScheme.primary.withValues(alpha: 0.12),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            _mediaTypeIcon(widget.item.tipo),
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: _titleController,
+                enabled: widget.onTitleChanged != null,
+                onChanged: widget.onTitleChanged,
+                textInputAction: TextInputAction.next,
+                style: Theme.of(context).textTheme.titleMedium,
+                decoration: const InputDecoration(
+                  hintText: 'Título del archivo',
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 8),
+                ),
+              ),
+              const SizedBox(height: 8),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 180),
+                child: TextField(
+                  controller: _durationController,
+                  enabled: widget.onDurationChanged != null,
+                  onChanged: widget.onDurationChanged,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  textInputAction: TextInputAction.done,
+                  decoration: const InputDecoration(
+                    hintText: 'Duración (min)',
+                    isDense: true,
+                    contentPadding: EdgeInsets.symmetric(vertical: 8),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '${_mediaTypeLabel(widget.item.tipo)} · ${_formatMediaDuration(widget.item.duracionSegundos)} · Pendiente de guardar · Orden ${widget.item.orden}',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
+          ),
+        ),
+        IconButton(
+          tooltip: 'Quitar archivo pendiente',
+          onPressed: widget.onRemove == null
+              ? null
+              : () => widget.onRemove!(widget.item),
+          icon: const Icon(Icons.delete_outline_rounded),
+        ),
+      ],
+    );
+  }
+}
+
+class _MediaRow extends StatefulWidget {
+  const _MediaRow({
+    super.key,
+    required this.item,
+    required this.edit,
+    required this.onRemove,
+    required this.onTitleChanged,
+    required this.onDurationChanged,
+  });
+
+  final AppContentMedia item;
+  final ContentMediaMetadataEdit? edit;
+  final ValueChanged<AppContentMedia>? onRemove;
+  final ValueChanged<String>? onTitleChanged;
+  final ValueChanged<String>? onDurationChanged;
+
+  @override
+  State<_MediaRow> createState() => _MediaRowState();
+}
+
+class _MediaRowState extends State<_MediaRow> {
+  late final TextEditingController _titleController;
+  late final TextEditingController _durationController;
+
+  String get _effectiveTitle => widget.edit?.titulo ?? widget.item.titulo ?? '';
+
+  int? get _effectiveDurationSeconds =>
+      widget.edit?.duracionSegundos ?? widget.item.duracionSegundos;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: _effectiveTitle);
+    _durationController = TextEditingController(
+      text: contentMediaDurationSecondsToMinutesText(_effectiveDurationSeconds),
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant _MediaRow oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final mediaChanged =
+        oldWidget.item.uuidContentMedia != widget.item.uuidContentMedia;
+    final shouldSyncDuration =
+        mediaChanged ||
+        (widget.edit == null &&
+            oldWidget.item.duracionSegundos != widget.item.duracionSegundos);
+
+    if (mediaChanged) {
+      _titleController.text = _effectiveTitle;
+      _titleController.selection = TextSelection.collapsed(
+        offset: _titleController.text.length,
+      );
+    } else if (_effectiveTitle != _titleController.text) {
+      _titleController.text = _effectiveTitle;
+      _titleController.selection = TextSelection.collapsed(
+        offset: _titleController.text.length,
+      );
+    }
+
+    if (shouldSyncDuration) {
+      _durationController.text = contentMediaDurationSecondsToMinutesText(
+        _effectiveDurationSeconds,
+      );
+      _durationController.selection = TextSelection.collapsed(
+        offset: _durationController.text.length,
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _durationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            color: Theme.of(
+              context,
+            ).colorScheme.primary.withValues(alpha: 0.12),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            _mediaTypeIcon(widget.item.tipo),
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: _titleController,
+                enabled: widget.onTitleChanged != null,
+                onChanged: widget.onTitleChanged,
+                textInputAction: TextInputAction.next,
+                style: Theme.of(context).textTheme.titleMedium,
+                decoration: const InputDecoration(
+                  hintText: 'Título del archivo',
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 8),
+                ),
+              ),
+              const SizedBox(height: 8),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 180),
+                child: TextField(
+                  controller: _durationController,
+                  enabled: widget.onDurationChanged != null,
+                  onChanged: widget.onDurationChanged,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  textInputAction: TextInputAction.done,
+                  decoration: const InputDecoration(
+                    hintText: 'Duración (min)',
+                    isDense: true,
+                    contentPadding: EdgeInsets.symmetric(vertical: 8),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '${_mediaTypeLabel(widget.item.tipo)} · ${_formatMediaDuration(_effectiveDurationSeconds)} · Orden ${widget.item.orden}',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              if (widget.item.hasPendingSync) ...[
+                const SizedBox(height: 4),
+                Text(
+                  'Pendiente de sincronizar',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+        IconButton(
+          tooltip: 'Quitar archivo',
+          onPressed: widget.onRemove == null
+              ? null
+              : () => widget.onRemove!(widget.item),
+          icon: const Icon(Icons.delete_outline_rounded),
+        ),
+      ],
+    );
+  }
+}
+
 class _DropdownField extends StatelessWidget {
   const _DropdownField({
     required this.label,
@@ -694,6 +1581,65 @@ String _typeLabel(String tipo) {
     'session' => 'Sesión',
     _ => tipo,
   };
+}
+
+IconData _mediaTypeIcon(String tipo) {
+  final cleanType = tipo.trim().toLowerCase();
+  if (ContentMediaFileMetadata.isVideoType(cleanType)) {
+    return Icons.videocam_outlined;
+  }
+
+  return switch (cleanType) {
+    'video' => Icons.videocam_outlined,
+    'ambient_sound' => Icons.graphic_eq_rounded,
+    _ => Icons.mic_none_rounded,
+  };
+}
+
+String _mediaTypeLabel(String tipo) {
+  final cleanType = tipo.trim().toLowerCase();
+  if (ContentMediaFileMetadata.isSupportedType(cleanType)) {
+    return cleanType.toUpperCase();
+  }
+
+  return switch (cleanType) {
+    'video' => 'Video',
+    'audio' => 'Audio',
+    'ambient_sound' => 'Sonido ambiental',
+    _ => tipo,
+  };
+}
+
+String _formatMediaDuration(int? seconds) {
+  if (seconds == null || seconds <= 0) {
+    return 'Duración pendiente';
+  }
+
+  final totalMinutes = (seconds / 60).round();
+  if (totalMinutes < 60) {
+    return '$totalMinutes min';
+  }
+
+  final hours = totalMinutes ~/ 60;
+  final minutes = totalMinutes % 60;
+  return minutes == 0 ? '${hours}h' : '${hours}h ${minutes}m';
+}
+
+String _generateUuidV4() {
+  final random = math.Random.secure();
+  final bytes = List<int>.generate(16, (_) => random.nextInt(256));
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+
+  String byteToHex(int value) => value.toRadixString(16).padLeft(2, '0');
+  final hex = bytes.map(byteToHex).join();
+  return [
+    hex.substring(0, 8),
+    hex.substring(8, 12),
+    hex.substring(12, 16),
+    hex.substring(16, 20),
+    hex.substring(20),
+  ].join('-');
 }
 
 class _ContentFormSnapshot {
