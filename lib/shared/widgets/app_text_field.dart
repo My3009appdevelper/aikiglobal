@@ -16,6 +16,8 @@ class AppTextField extends StatelessWidget {
     this.onChanged,
     this.onSubmitted,
     this.onEditingComplete,
+    this.minLines,
+    this.maxLines = 1,
   });
 
   final String hintText;
@@ -29,6 +31,8 @@ class AppTextField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted;
   final VoidCallback? onEditingComplete;
+  final int? minLines;
+  final int? maxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +45,8 @@ class AppTextField extends StatelessWidget {
       focusNode: focusNode,
       keyboardType: keyboardType,
       obscureText: obscureText,
+      minLines: obscureText ? 1 : minLines,
+      maxLines: obscureText ? 1 : maxLines,
       textInputAction: textInputAction,
       onChanged: onChanged,
       onSubmitted: onSubmitted,

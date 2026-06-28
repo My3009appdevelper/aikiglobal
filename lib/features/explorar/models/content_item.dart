@@ -5,6 +5,7 @@ class ContentItem {
     required this.duration,
     required this.imageAsset,
     this.uuidContentItem,
+    this.imagePath,
     this.description,
     this.lessons,
     this.isNew = false,
@@ -16,6 +17,7 @@ class ContentItem {
   final String type;
   final String duration;
   final String imageAsset;
+  final String? imagePath;
   final String? description;
   final int? lessons;
   final bool isNew;

@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import '../../core/data/providers/app_data_scope.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
+import '../../shared/widgets/app_cover_image.dart';
 import '../../shared/widgets/app_interactive.dart';
 import '../../shared/widgets/app_primary_button.dart';
+import '../../shared/widgets/app_logo.dart';
 import 'lesson_player_page.dart';
 import 'models/content_item.dart';
 
@@ -104,7 +106,23 @@ class _DetailHero extends StatelessWidget {
           return Stack(
             fit: StackFit.expand,
             children: [
-              Image.asset(item.imageAsset, fit: BoxFit.cover),
+              AppCoverImage(
+                fallbackAsset: null,
+                imagePath: item.imagePath,
+                resolveImageUrl: AppDataScope.contentItems(
+                  context,
+                ).resolveCoverImageUrl,
+                fallback: Container(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColors.darkSurface
+                      : AppColors.sandLight,
+                  alignment: Alignment.center,
+                  child: AppLogo(
+                    width: 168,
+                    light: Theme.of(context).brightness == Brightness.dark,
+                  ),
+                ),
+              ),
               DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -246,8 +264,8 @@ class _HeroIcon extends StatelessWidget {
       tooltip: tooltip,
       borderRadius: AppRadius.full,
       enabled: enabled,
-      hoverScale: 1.08,
-      pressedScale: 0.9,
+      hoverScale: 1,
+      pressedScale: 1,
       onTap: onTap,
       child: Container(
         width: 48,
@@ -259,7 +277,7 @@ class _HeroIcon extends StatelessWidget {
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 180),
           transitionBuilder: (child, animation) {
-            return ScaleTransition(scale: animation, child: child);
+            return FadeTransition(opacity: animation, child: child);
           },
           child: Icon(
             currentIcon,
@@ -443,13 +461,13 @@ class _DownloadActionButtonState extends State<_DownloadActionButton> {
     return AppInteractive(
       tooltip: _downloaded ? 'Descargado' : 'Descargar lección',
       borderRadius: AppRadius.full,
-      hoverScale: 1.12,
-      pressedScale: 0.88,
+      hoverScale: 1,
+      pressedScale: 1,
       onTap: () => setState(() => _downloaded = !_downloaded),
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 180),
         transitionBuilder: (child, animation) {
-          return ScaleTransition(scale: animation, child: child);
+          return FadeTransition(opacity: animation, child: child);
         },
         child: Icon(
           _downloaded ? Icons.check_circle_rounded : Icons.download_outlined,
@@ -460,3 +478,4 @@ class _DownloadActionButtonState extends State<_DownloadActionButton> {
     );
   }
 }
+

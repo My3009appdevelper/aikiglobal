@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_shadows.dart';
+import 'app_cover_image.dart';
 import 'app_interactive.dart';
+import 'app_logo.dart';
 
 class AppContentCard extends StatelessWidget {
   const AppContentCard({
@@ -11,6 +13,8 @@ class AppContentCard extends StatelessWidget {
     required this.imageAsset,
     required this.title,
     required this.subtitle,
+    this.imagePath,
+    this.resolveImageUrl,
     this.badge,
     this.isNew = false,
     this.favoriteIcon = Icons.bookmark_border_rounded,
@@ -19,6 +23,8 @@ class AppContentCard extends StatelessWidget {
   });
 
   final String imageAsset;
+  final String? imagePath;
+  final Future<String?> Function(String imagePath)? resolveImageUrl;
   final String title;
   final String subtitle;
   final String? badge;
@@ -60,23 +66,17 @@ class AppContentCard extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Image.asset(
-                      imageAsset,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return DecoratedBox(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: brightness == Brightness.dark
-                                  ? const [
-                                      AppColors.darkSurfaceSoft,
-                                      AppColors.primaryDeep,
-                                    ]
-                                  : const [AppColors.sandLight, AppColors.sand],
-                            ),
-                          ),
-                        );
-                      },
+                    AppCoverImage(
+                      fallbackAsset: null,
+                      imagePath: imagePath,
+                      resolveImageUrl: resolveImageUrl,
+                      fallback: Container(
+                        color: brightness == Brightness.dark
+                            ? AppColors.darkSurface
+                            : AppColors.sandLight,
+                        alignment: Alignment.center,
+                        child: AppLogo(width: 96, light: brightness == Brightness.dark),
+                      ),
                     ),
                     DecoratedBox(
                       decoration: BoxDecoration(
@@ -186,13 +186,13 @@ class _FavoriteActionIconState extends State<_FavoriteActionIcon> {
     return AppInteractive(
       tooltip: _selected ? 'Quitar de favoritos' : 'Guardar en favoritos',
       borderRadius: AppRadius.full,
-      hoverScale: 1.16,
-      pressedScale: 0.86,
+      hoverScale: 1,
+      pressedScale: 1,
       onTap: () => setState(() => _selected = !_selected),
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 180),
         transitionBuilder: (child, animation) {
-          return ScaleTransition(scale: animation, child: child);
+          return FadeTransition(opacity: animation, child: child);
         },
         child: Icon(
           _selected ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,

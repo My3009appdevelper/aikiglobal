@@ -1,12 +1,14 @@
 import 'package:flutter/foundation.dart';
 
 import '../local/app_database.dart';
+import '../local/cache/local_media_cache.dart';
 import '../local/daos/content_items_dao.dart';
 import '../local/daos/profiles_dao.dart';
 import '../local/daos/user_content_states_dao.dart';
 import '../local/daos/wellness_daily_logs_dao.dart';
 import '../local/daos/wellness_profile_stats_dao.dart';
 import '../remote/services/auth_remote_service.dart';
+import '../remote/services/content_media_storage_service.dart';
 import '../remote/services/content_items_remote_service.dart';
 import '../remote/services/profile_photo_storage_service.dart';
 import '../remote/services/profiles_remote_service.dart';
@@ -40,6 +42,7 @@ class AppDataContainer {
     required this.wellnessProfileStatsController,
     this.profilesRemoteService,
     this.profilePhotoStorageService,
+    this.contentMediaStorageService,
     this.contentItemsRemoteService,
     this.userContentStatesRemoteService,
     this.wellnessDailyLogsRemoteService,
@@ -60,6 +63,7 @@ class AppDataContainer {
   final WellnessProfileStatsDao? wellnessProfileStatsDao;
   final ProfilesRemoteService? profilesRemoteService;
   final ProfilePhotoStorageService? profilePhotoStorageService;
+  final ContentMediaStorageService? contentMediaStorageService;
   final ContentItemsRemoteService? contentItemsRemoteService;
   final UserContentStatesRemoteService? userContentStatesRemoteService;
   final WellnessDailyLogsRemoteService? wellnessDailyLogsRemoteService;
@@ -108,6 +112,7 @@ class AppDataContainer {
 
     ProfilesRemoteService? profilesRemoteService;
     ProfilePhotoStorageService? profilePhotoStorageService;
+    ContentMediaStorageService? contentMediaStorageService;
     ContentItemsRemoteService? contentItemsRemoteService;
     UserContentStatesRemoteService? userContentStatesRemoteService;
     WellnessDailyLogsRemoteService? wellnessDailyLogsRemoteService;
@@ -118,12 +123,16 @@ class AppDataContainer {
     WellnessDailyLogsSyncService? wellnessDailyLogsSyncService;
     WellnessProfileStatsSyncService? wellnessProfileStatsSyncService;
     AuthRemoteService? authRemoteService;
+    final localMediaCache = kIsWeb ? null : const LocalMediaCache();
 
     final supabase = SupabaseConfig.clientOrNull;
     if (supabase != null) {
       authRemoteService = AuthRemoteService(supabase: supabase);
       profilesRemoteService = ProfilesRemoteService(supabase: supabase);
       profilePhotoStorageService = ProfilePhotoStorageService(
+        supabase: supabase,
+      );
+      contentMediaStorageService = ContentMediaStorageService(
         supabase: supabase,
       );
       contentItemsRemoteService = ContentItemsRemoteService(supabase: supabase);
@@ -179,12 +188,15 @@ class AppDataContainer {
       syncService: profilesSyncService,
       authService: authRemoteService,
       profilePhotoStorageService: profilePhotoStorageService,
+      localMediaCache: localMediaCache,
     );
 
     final contentItemsController = ContentItemsController(
       contentItemsDao: contentItemsDao,
       contentItemsRemoteService: contentItemsRemoteService,
       syncService: contentItemsSyncService,
+      contentMediaStorageService: contentMediaStorageService,
+      localMediaCache: localMediaCache,
     );
 
     final userContentStatesController = UserContentStatesController(
@@ -254,6 +266,7 @@ class AppDataContainer {
       wellnessProfileStatsController: wellnessProfileStatsController,
       profilesRemoteService: profilesRemoteService,
       profilePhotoStorageService: profilePhotoStorageService,
+      contentMediaStorageService: contentMediaStorageService,
       contentItemsRemoteService: contentItemsRemoteService,
       userContentStatesRemoteService: userContentStatesRemoteService,
       wellnessDailyLogsRemoteService: wellnessDailyLogsRemoteService,

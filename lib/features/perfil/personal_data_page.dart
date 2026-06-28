@@ -98,10 +98,6 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
                                           ? null
                                           : () =>
                                                 _pickAndUploadPhoto(controller),
-                                      onRemovePhoto:
-                                          _hasPhoto(profile) && !_isPhotoSaving
-                                          ? () => _removePhoto(controller)
-                                          : null,
                                     ),
                                     const SizedBox(height: AppSpacing.lg),
                                     _EmailInfoCard(email: profile.email),
@@ -146,7 +142,13 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
   }
 
   Future<void> _pickAndUploadPhoto(CurrentProfileController controller) async {
-    final pickedImage = await MyImagePicker.pick(context);
+    final profile = controller.profile;
+    final pickedImage = await MyImagePicker.pick(
+      context,
+      onRemovePhoto: profile != null && _hasPhoto(profile)
+          ? () => _removePhoto(controller)
+          : null,
+    );
     if (pickedImage == null || !mounted) {
       return;
     }
@@ -318,7 +320,6 @@ class _AvatarSection extends StatelessWidget {
     required this.errorMessage,
     required this.onSaveName,
     required this.onChangePhoto,
-    required this.onRemovePhoto,
   });
 
   final AppProfile profile;
@@ -331,7 +332,6 @@ class _AvatarSection extends StatelessWidget {
   final String? errorMessage;
   final VoidCallback onSaveName;
   final VoidCallback? onChangePhoto;
-  final VoidCallback? onRemovePhoto;
 
   @override
   Widget build(BuildContext context) {
@@ -358,7 +358,7 @@ class _AvatarSection extends StatelessWidget {
             clipBehavior: Clip.none,
             children: [
               MyImage(
-                imagePath: profile.fotoPathSupabase,
+                imagePath: _profilePhotoPath(profile),
                 initials: _initialsFor(profile),
                 resolveImageUrl: resolveImageUrl,
                 size: 96,
@@ -382,25 +382,13 @@ class _AvatarSection extends StatelessWidget {
                   ),
                 ),
               Positioned(
-                right: -42,
+                right: -12,
                 bottom: -4,
-                child: Row(
-                  children: [
-                    _AvatarActionButton(
-                      tooltip: 'Cambiar foto',
-                      icon: Icons.edit_rounded,
-                      surface: surface,
-                      onTap: onChangePhoto,
-                    ),
-                    const SizedBox(width: 6),
-                    _AvatarActionButton(
-                      tooltip: 'Quitar foto',
-                      icon: Icons.delete_outline_rounded,
-                      surface: surface,
-                      danger: true,
-                      onTap: onRemovePhoto,
-                    ),
-                  ],
+                child: _AvatarActionButton(
+                  tooltip: 'Cambiar foto',
+                  icon: Icons.edit_rounded,
+                  surface: surface,
+                  onTap: onChangePhoto,
                 ),
               ),
             ],
@@ -472,24 +460,18 @@ class _AvatarActionButton extends StatelessWidget {
     required this.icon,
     required this.surface,
     required this.onTap,
-    this.danger = false,
   });
 
   final String tooltip;
   final IconData icon;
   final Color surface;
   final VoidCallback? onTap;
-  final bool danger;
 
   @override
   Widget build(BuildContext context) {
     final enabled = onTap != null;
-    final color = danger
-        ? AppColors.danger
-        : Theme.of(context).colorScheme.primary;
-    final foreground = danger
-        ? AppColors.white
-        : Theme.of(context).colorScheme.onPrimary;
+    final color = Theme.of(context).colorScheme.primary;
+    final foreground = Theme.of(context).colorScheme.onPrimary;
 
     return AppInteractive(
       tooltip: enabled ? tooltip : null,
@@ -599,6 +581,20 @@ class _EmptyProfileState extends StatelessWidget {
 bool _hasPhoto(AppProfile profile) {
   return (profile.fotoPathLocal?.trim().isNotEmpty ?? false) ||
       (profile.fotoPathSupabase?.trim().isNotEmpty ?? false);
+}
+
+String? _profilePhotoPath(AppProfile profile) {
+  final localPath = profile.fotoPathLocal?.trim();
+  if (localPath != null && localPath.isNotEmpty) {
+    return localPath;
+  }
+
+  final remotePath = profile.fotoPathSupabase?.trim();
+  if (remotePath != null && remotePath.isNotEmpty) {
+    return remotePath;
+  }
+
+  return null;
 }
 
 String _initialsFor(AppProfile profile) {

@@ -31,6 +31,7 @@ class AikiApp extends StatelessWidget {
               theme: AppTheme.light,
               darkTheme: AppTheme.dark,
               themeMode: themeController.themeMode,
+              themeAnimationDuration: Duration.zero,
               initialRoute: AppRouter.splash,
               onGenerateRoute: AppRouter.onGenerateRoute,
             );

@@ -60,18 +60,6 @@ class SettingsSection extends StatelessWidget {
           Divider(height: 1, color: stroke),
           const ThemeModeTile(),
           Divider(height: 1, color: stroke),
-          const AppSettingTile(
-            icon: Icons.notifications_none_rounded,
-            title: 'Notificaciones',
-            subtitle: 'Gestiona tus preferencias',
-          ),
-          Divider(height: 1, color: stroke),
-          const AppSettingTile(
-            icon: Icons.privacy_tip_outlined,
-            title: 'Privacidad',
-            subtitle: 'Controla tu privacidad y datos',
-          ),
-          Divider(height: 1, color: stroke),
           AppSettingTile(
             icon: Icons.logout_rounded,
             title: 'Cerrar sesión',

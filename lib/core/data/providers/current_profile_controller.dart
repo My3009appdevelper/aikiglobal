@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../local/app_database.dart';
+import '../local/cache/local_media_cache.dart';
 import '../local/daos/profiles_dao.dart';
 import '../models/app_profile.dart';
 import '../remote/services/auth_remote_service.dart';
@@ -20,6 +21,7 @@ enum AppViewMode { user, admin }
 class CurrentProfileController extends ChangeNotifier {
   static const String _onboardingCompletedKey = 'aiki_onboarding_completed_v1';
   static const String _rememberMeKey = 'aiki_remember_user';
+  static const String _profilePhotoCacheNamespace = 'profile_photos';
   static const int _signupProfileRetryAttempts = 5;
   static const Duration _signupProfileRetryDelay = Duration(milliseconds: 450);
 
@@ -29,17 +31,20 @@ class CurrentProfileController extends ChangeNotifier {
     ProfilesSyncService? syncService,
     AuthRemoteService? authService,
     ProfilePhotoStorageService? profilePhotoStorageService,
+    LocalMediaCache? localMediaCache,
   }) : _profilesDao = profilesDao,
        _remoteService = remoteService,
        _syncService = syncService,
        _authService = authService,
-       _profilePhotoStorageService = profilePhotoStorageService;
+       _profilePhotoStorageService = profilePhotoStorageService,
+       _localMediaCache = localMediaCache;
 
   final ProfilesDao? _profilesDao;
   final ProfilesRemoteService? _remoteService;
   final ProfilesSyncService? _syncService;
   final AuthRemoteService? _authService;
   final ProfilePhotoStorageService? _profilePhotoStorageService;
+  final LocalMediaCache? _localMediaCache;
 
   StreamSubscription<LocalProfile?>? _profileSubscription;
   StreamSubscription<AuthState>? _authSubscription;
@@ -273,6 +278,7 @@ class CurrentProfileController extends ChangeNotifier {
       _viewMode = AppViewMode.user;
     }
     _setLoading(false);
+    unawaited(_cacheProfilePhotoForCurrentLocalProfile());
 
     if (refreshRemote) {
       await pullFromRemote();
@@ -301,6 +307,7 @@ class CurrentProfileController extends ChangeNotifier {
           notifyListeners();
         } else {
           await dao.upsertProfile(profileRemoteToCompanion(remoteProfile));
+          await _cacheProfilePhotoByUuid(appProfile.uuidProfile);
         }
       }
     } catch (error) {
@@ -327,6 +334,7 @@ class CurrentProfileController extends ChangeNotifier {
 
     try {
       await syncService.sync();
+      await _cacheProfilePhotoForCurrentLocalProfile();
     } catch (error) {
       _error = error;
       if (throwOnError) {
@@ -411,6 +419,98 @@ class CurrentProfileController extends ChangeNotifier {
     );
   }
 
+  Future<void> _cacheProfilePhotoForCurrentLocalProfile() async {
+    final current = _profile;
+    if (current == null) {
+      return;
+    }
+
+    await _cacheProfilePhotoByUuid(current.uuidProfile);
+  }
+
+  Future<void> _cacheProfilePhotoByUuid(String uuidProfile) async {
+    final dao = _profilesDao;
+    if (dao == null) {
+      return;
+    }
+
+    final localProfile = await dao.getByUuid(uuidProfile);
+    if (localProfile == null) {
+      return;
+    }
+
+    await _cacheProfilePhotoForProfile(AppProfile.fromLocal(localProfile));
+  }
+
+  Future<void> _cacheProfilePhotoForProfile(AppProfile profile) async {
+    final dao = _profilesDao;
+    final storageService = _profilePhotoStorageService;
+    final cache = _localMediaCache;
+    if (dao == null || storageService == null || cache == null) {
+      return;
+    }
+
+    final remotePath = _cleanNullableText(profile.fotoPathSupabase);
+    final localPath = _cleanNullableText(profile.fotoPathLocal);
+
+    if (remotePath == null) {
+      if (localPath != null) {
+        await cache.delete(localPath);
+        await dao.updateFotoPathLocal(profile.uuidProfile, fotoPathLocal: null);
+      }
+      return;
+    }
+
+    final expectedLocalPath = await cache.canonicalPath(
+      namespace: _profilePhotoCacheNamespace,
+      remotePath: remotePath,
+    );
+
+    final hasDifferentLocalCache =
+        expectedLocalPath != null &&
+        localPath != null &&
+        localPath != expectedLocalPath;
+    if (hasDifferentLocalCache) {
+      await dao.updateFotoPathLocal(profile.uuidProfile, fotoPathLocal: null);
+      unawaited(cache.delete(localPath));
+    }
+
+    if (expectedLocalPath != null && localPath == expectedLocalPath) {
+      final hasCachedFile = await cache.exists(localPath);
+      if (hasCachedFile) {
+        return;
+      }
+    }
+
+    try {
+      final bytes = await storageService.downloadProfilePhoto(remotePath);
+      if (bytes == null || bytes.isEmpty) {
+        return;
+      }
+
+      final nextLocalPath = await cache.writeBytes(
+        namespace: _profilePhotoCacheNamespace,
+        remotePath: remotePath,
+        bytes: bytes,
+      );
+
+      if (nextLocalPath == null) {
+        return;
+      }
+
+      if (localPath != null && localPath != nextLocalPath) {
+        unawaited(cache.delete(localPath));
+      }
+      await dao.updateFotoPathLocal(
+        profile.uuidProfile,
+        fotoPathLocal: nextLocalPath,
+      );
+    } catch (_) {
+      // La caché local es una optimización: si falla, la app puede seguir
+      // mostrando la imagen remota con una signed URL.
+    }
+  }
+
   Future<void> updateLocalPhotoPath(String? fotoPathLocal) async {
     final current = _profile;
     if (current == null) {
@@ -450,6 +550,7 @@ class CurrentProfileController extends ChangeNotifier {
     }
 
     final previousPath = current.fotoPathSupabase;
+    final previousLocalPath = current.fotoPathLocal;
     final nextPath = await storageService.uploadProfilePhoto(
       authUserId: current.authUserId,
       bytes: bytes,
@@ -457,16 +558,33 @@ class CurrentProfileController extends ChangeNotifier {
       contentType: contentType,
     );
 
+    String? nextLocalPath;
     try {
-      await updateLocalPhotoPath(null);
+      nextLocalPath = await _localMediaCache?.writeBytes(
+        namespace: _profilePhotoCacheNamespace,
+        remotePath: nextPath,
+        bytes: bytes,
+      );
+    } catch (_) {
+      nextLocalPath = null;
+    }
+
+    try {
+      await updateLocalPhotoPath(nextLocalPath);
       await updateEditableProfile(
         fotoPathSupabase: nextPath,
         syncAfterUpdate: true,
       );
+      if (previousLocalPath != null && previousLocalPath != nextLocalPath) {
+        unawaited(_localMediaCache?.delete(previousLocalPath));
+      }
       if (previousPath != null && previousPath.trim() != nextPath) {
         unawaited(storageService.deleteProfilePhoto(previousPath));
       }
     } catch (_) {
+      if (nextLocalPath != null) {
+        unawaited(_localMediaCache?.delete(nextLocalPath));
+      }
       unawaited(storageService.deleteProfilePhoto(nextPath));
       rethrow;
     }
@@ -480,8 +598,12 @@ class CurrentProfileController extends ChangeNotifier {
     }
 
     final previousPath = current.fotoPathSupabase;
+    final previousLocalPath = current.fotoPathLocal;
     await updateLocalPhotoPath(null);
     await updateEditableProfile(fotoPathSupabase: '', syncAfterUpdate: true);
+    if (previousLocalPath != null) {
+      unawaited(_localMediaCache?.delete(previousLocalPath));
+    }
 
     if (storageService != null && previousPath != null) {
       unawaited(storageService.deleteProfilePhoto(previousPath));

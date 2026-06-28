@@ -2,28 +2,32 @@ import 'dart:typed_data';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class ProfilePhotoStorageService {
-  ProfilePhotoStorageService({required SupabaseClient supabase})
+class ContentMediaStorageService {
+  ContentMediaStorageService({required SupabaseClient supabase})
     : _supabase = supabase;
 
-  static const bucket = 'profiles';
+  static const bucket = 'content';
   static const signedUrlExpiresInSeconds = 60 * 60;
 
   final SupabaseClient _supabase;
 
-  Future<String> uploadProfilePhoto({
-    required String authUserId,
+  Future<String> uploadCover({
+    required String uuidContentItem,
     required Uint8List bytes,
     required String fileName,
     String? contentType,
   }) async {
-    final cleanAuthUserId = authUserId.trim();
-    if (cleanAuthUserId.isEmpty) {
-      throw StateError('No hay usuario autenticado para subir la foto.');
+    final cleanUuid = uuidContentItem.trim();
+    if (cleanUuid.isEmpty) {
+      throw StateError('No hay contenido válido para subir la portada.');
+    }
+    if (bytes.isEmpty) {
+      throw StateError('La portada seleccionada está vacía.');
     }
 
+    final safeContentType = _contentTypeFor(fileName, contentType);
     final remotePath =
-        '$cleanAuthUserId/avatar_${DateTime.now().millisecondsSinceEpoch}${_extensionFor(fileName, contentType)}';
+        '$cleanUuid/cover/${DateTime.now().millisecondsSinceEpoch}${_extensionFor(fileName, safeContentType)}';
 
     await _supabase.storage
         .from(bucket)
@@ -32,14 +36,14 @@ class ProfilePhotoStorageService {
           bytes,
           fileOptions: FileOptions(
             upsert: false,
-            contentType: contentType ?? _contentTypeFor(fileName),
+            contentType: safeContentType,
           ),
         );
 
     return remotePath;
   }
 
-  Future<void> deleteProfilePhoto(String? remotePath) async {
+  Future<void> deleteMedia(String? remotePath) async {
     final cleanPath = remotePath?.trim();
     if (cleanPath == null || cleanPath.isEmpty) {
       return;
@@ -48,7 +52,7 @@ class ProfilePhotoStorageService {
     await _supabase.storage.from(bucket).remove([cleanPath]);
   }
 
-  Future<Uint8List?> downloadProfilePhoto(String? remotePath) async {
+  Future<Uint8List?> downloadMedia(String? remotePath) async {
     final cleanPath = remotePath?.trim();
     if (cleanPath == null || cleanPath.isEmpty) {
       return null;
@@ -69,7 +73,7 @@ class ProfilePhotoStorageService {
   }
 }
 
-String _extensionFor(String fileName, String? contentType) {
+String _extensionFor(String fileName, String contentType) {
   final cleanName = fileName.trim().toLowerCase();
   final dotIndex = cleanName.lastIndexOf('.');
   if (dotIndex >= 0 && dotIndex < cleanName.length - 1) {
@@ -86,7 +90,19 @@ String _extensionFor(String fileName, String? contentType) {
   };
 }
 
-String _contentTypeFor(String fileName) {
+String _contentTypeFor(String fileName, String? contentType) {
+  final cleanContentType = contentType?.trim().toLowerCase();
+  if (const {
+    'image/jpeg',
+    'image/jpg',
+    'image/png',
+    'image/webp',
+  }.contains(cleanContentType)) {
+    return cleanContentType == 'image/jpg'
+        ? 'image/jpeg'
+        : cleanContentType!;
+  }
+
   final cleanName = fileName.trim().toLowerCase();
   if (cleanName.endsWith('.png')) {
     return 'image/png';

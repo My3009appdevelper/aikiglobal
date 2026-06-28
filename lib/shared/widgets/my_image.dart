@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_radius.dart';
+import 'my_image_local.dart';
 
 class MyImage extends StatefulWidget {
   const MyImage({
@@ -46,8 +47,15 @@ class _MyImageState extends State<MyImage> {
   @override
   Widget build(BuildContext context) {
     final imagePath = widget.imagePath?.trim();
+    final localPath = _localImagePath(imagePath);
     final directUrl = _directImageUrl(imagePath);
-    final content = directUrl != null
+    final content = localPath != null
+        ? buildLocalImage(
+            path: localPath,
+            fit: widget.fit,
+            fallback: _fallback(),
+          )
+        : directUrl != null
         ? _ImageContent(url: directUrl, fit: widget.fit, fallback: _fallback())
         : _resolvedUrl == null
         ? _fallback()
@@ -158,6 +166,26 @@ String? _directImageUrl(String? imagePath) {
   if (imagePath.startsWith('http://') ||
       imagePath.startsWith('https://') ||
       imagePath.startsWith('assets/')) {
+    return imagePath;
+  }
+
+  return null;
+}
+
+String? _localImagePath(String? imagePath) {
+  if (imagePath == null || imagePath.isEmpty) {
+    return null;
+  }
+
+  if (_directImageUrl(imagePath) != null) {
+    return null;
+  }
+
+  final isWindowsAbsolutePath = RegExp(r'^[a-zA-Z]:[\\/]').hasMatch(imagePath);
+  final isUnixAbsolutePath = imagePath.startsWith('/');
+  final isFileUri = imagePath.startsWith('file://');
+
+  if (isWindowsAbsolutePath || isUnixAbsolutePath || isFileUri) {
     return imagePath;
   }
 

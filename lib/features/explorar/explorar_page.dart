@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_assets.dart';
@@ -582,6 +583,7 @@ class _ExploreViewData {
       type: _displayType(item.tipo),
       duration: _formatDuration(item.duracionSegundos),
       imageAsset: _fallbackAssetForType(item.tipo, index),
+      imagePath: _coverPath(item),
       description: item.descripcion ?? item.subtitulo,
       isNew: item.destacado,
       isFavorite: favoriteContentIds.contains(item.uuidContentItem),
@@ -608,6 +610,22 @@ class _ExploreViewData {
       'session' => 'Sesión',
       _ => value,
     };
+  }
+
+  static String? _coverPath(AppContentItem item) {
+    if (!kIsWeb) {
+      final localPath = item.coverPathLocal?.trim();
+      if (localPath != null && localPath.isNotEmpty) {
+        return localPath;
+      }
+    }
+
+    final remotePath = item.coverPathSupabase?.trim();
+    if (remotePath != null && remotePath.isNotEmpty) {
+      return remotePath;
+    }
+
+    return null;
   }
 
   static String _normalizeType(String value) {

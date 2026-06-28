@@ -7,6 +7,8 @@ import '../../app/app_router.dart';
 import '../../shared/widgets/app_background.dart';
 import '../../shared/widgets/app_bottom_nav_bar.dart';
 import '../../shared/widgets/app_progress_celebration_overlay.dart';
+import '../admin/admin_content/admin_content_page.dart';
+import '../admin/admin_users/admin_users_page.dart';
 import '../espacio_seguro/espacio_seguro_page.dart';
 import '../explorar/explorar_page.dart';
 import '../perfil/perfil_page.dart';
@@ -25,9 +27,15 @@ class _HomeShellPageState extends State<HomeShellPage> {
   bool _showStreakOverlay = false;
   AppProgressCelebrationData? _streakOverlayData;
 
-  static const _pages = [ExplorarPage(), EspacioSeguroPage(), PerfilPage()];
+  static const _userPages = [ExplorarPage(), EspacioSeguroPage(), PerfilPage()];
 
-  static const _items = [
+  static const _adminPages = [
+    AdminContentPage(),
+    AdminUsersPage(),
+    PerfilPage(),
+  ];
+
+  static const _userItems = [
     AppBottomNavItem(
       label: 'Explorar',
       icon: Icons.explore_outlined,
@@ -37,6 +45,24 @@ class _HomeShellPageState extends State<HomeShellPage> {
       label: 'Mi espacio',
       icon: Icons.home_outlined,
       activeIcon: Icons.home_rounded,
+    ),
+    AppBottomNavItem(
+      label: 'Perfil',
+      icon: Icons.person_outline_rounded,
+      activeIcon: Icons.person_rounded,
+    ),
+  ];
+
+  static const _adminItems = [
+    AppBottomNavItem(
+      label: 'Contenido',
+      icon: Icons.inventory_2_outlined,
+      activeIcon: Icons.inventory_2_rounded,
+    ),
+    AppBottomNavItem(
+      label: 'Usuarios',
+      icon: Icons.group_outlined,
+      activeIcon: Icons.group_rounded,
     ),
     AppBottomNavItem(
       label: 'Perfil',
@@ -102,9 +128,8 @@ class _HomeShellPageState extends State<HomeShellPage> {
     return AnimatedBuilder(
       animation: AppDataScope.currentProfile(context),
       builder: (context, _) {
-        final isAuthenticated = AppDataScope.currentProfile(
-          context,
-        ).isAuthenticated;
+        final profileController = AppDataScope.currentProfile(context);
+        final isAuthenticated = profileController.isAuthenticated;
         if (!isAuthenticated) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (context.mounted) {
@@ -117,6 +142,13 @@ class _HomeShellPageState extends State<HomeShellPage> {
           return const Scaffold(body: SizedBox.shrink());
         }
 
+        final isAdminView = profileController.isAdminView;
+        final pages = isAdminView ? _adminPages : _userPages;
+        final items = isAdminView ? _adminItems : _userItems;
+        final safeIndex = _currentIndex >= pages.length
+            ? pages.length - 1
+            : _currentIndex;
+
         return Scaffold(
           body: Stack(
             children: [
@@ -126,15 +158,15 @@ class _HomeShellPageState extends State<HomeShellPage> {
                 contentDelay: const Duration(milliseconds: 2000),
                 imageAsset: AppAssets.backgroundGarden,
                 imageOpacity: 0.045,
-                child: IndexedStack(index: _currentIndex, children: _pages),
+                child: IndexedStack(index: safeIndex, children: pages),
               ),
               Align(
                 alignment: Alignment.bottomCenter,
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 560),
                   child: AppBottomNavBar(
-                    items: _items,
-                    currentIndex: _currentIndex,
+                    items: items,
+                    currentIndex: safeIndex,
                     onTap: (index) {
                       setState(() => _currentIndex = index);
                     },

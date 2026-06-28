@@ -33,6 +33,10 @@ class AppSecondaryButton extends StatelessWidget {
         : AppColors.white;
 
     final enabled = onPressed != null;
+    final textStyle = Theme.of(context).textTheme.labelLarge?.copyWith(
+      decoration: TextDecoration.none,
+      decorationThickness: 0,
+    );
     final content = AppInteractive(
       tooltip: enabled ? label : null,
       borderRadius: AppRadius.full,
@@ -56,7 +60,7 @@ class AppSecondaryButton extends StatelessWidget {
                 label,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.labelLarge,
+                style: textStyle,
               ),
             ),
             if (icon != null) ...[

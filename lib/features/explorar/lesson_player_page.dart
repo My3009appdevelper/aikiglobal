@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_assets.dart';
+import '../../core/data/providers/app_data_scope.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
+import '../../shared/widgets/app_cover_image.dart';
 import '../../shared/widgets/app_interactive.dart';
 import '../../shared/widgets/app_logo.dart';
 import 'models/content_item.dart';
@@ -52,7 +54,21 @@ class LessonPlayerPage extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Image.asset(item.imageAsset, fit: BoxFit.cover),
+                    AppCoverImage(
+                      fallbackAsset: null,
+                      imagePath: item.imagePath,
+                      resolveImageUrl: AppDataScope.contentItems(
+                        context,
+                      ).resolveCoverImageUrl,
+                      fallback: Container(
+                        color: isDark ? AppColors.darkSurface : AppColors.sandLight,
+                        alignment: Alignment.center,
+                        child: AppLogo(
+                          width: 146,
+                          light: isDark,
+                        ),
+                      ),
+                    ),
                     DecoratedBox(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -165,8 +181,8 @@ class _CircleIcon extends StatelessWidget {
     return AppInteractive(
       tooltip: tooltip,
       borderRadius: AppRadius.full,
-      hoverScale: 1.08,
-      pressedScale: 0.9,
+      hoverScale: 1,
+      pressedScale: 1,
       onTap: onTap ?? () {},
       child: Container(
         width: 52,
@@ -193,8 +209,8 @@ class _PlayerIconButton extends StatelessWidget {
     return AppInteractive(
       tooltip: tooltip,
       borderRadius: AppRadius.full,
-      hoverScale: 1.14,
-      pressedScale: 0.88,
+      hoverScale: 1,
+      pressedScale: 1,
       onTap: () {},
       child: SizedBox.square(
         dimension: 46,
@@ -214,8 +230,8 @@ class _LargePlayButton extends StatelessWidget {
     return AppInteractive(
       tooltip: 'Reproducir lección',
       borderRadius: AppRadius.full,
-      hoverScale: 1.06,
-      pressedScale: 0.9,
+      hoverScale: 1,
+      pressedScale: 1,
       onTap: () {},
       child: Container(
         width: 82,
@@ -309,3 +325,4 @@ class _NextLessonCard extends StatelessWidget {
     );
   }
 }
+

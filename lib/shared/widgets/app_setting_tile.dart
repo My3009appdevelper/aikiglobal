@@ -73,6 +73,7 @@ class AppSettingTile extends StatelessWidget {
                 ],
               ),
             ),
+            const SizedBox(width: 18),
             trailing ??
                 Icon(
                   Icons.chevron_right_rounded,

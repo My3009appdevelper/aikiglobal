@@ -41,6 +41,7 @@ class PerfilPage extends StatelessWidget {
         child: AppRefreshIndicator(
           onRefresh: () => _refreshProfile(context),
           child: CustomScrollView(
+            key: const PageStorageKey<String>('perfil_scroll_view'),
             physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
               SliverToBoxAdapter(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/data/providers/app_data_scope.dart';
 import '../../../shared/widgets/app_content_card.dart';
 import '../models/content_item.dart';
 
@@ -19,6 +20,8 @@ class ContentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppContentCard(
       imageAsset: item.imageAsset,
+      imagePath: item.imagePath,
+      resolveImageUrl: AppDataScope.contentItems(context).resolveCoverImageUrl,
       title: item.title,
       subtitle: item.subtitle,
       badge: item.type,
