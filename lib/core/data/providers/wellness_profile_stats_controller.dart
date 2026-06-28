@@ -27,11 +27,16 @@ class WellnessProfileStatsController extends ChangeNotifier {
 
   AppWellnessProfileStats? _stats;
   String? _activeProfileUuid;
+  WellnessStreakChangeEvent? _lastStreakChangeEvent;
+  int _streakChangeEventId = 0;
+  final Set<String> _publishedExpiredStreakKeys = <String>{};
   bool _isLoading = false;
   bool _isSyncing = false;
   Object? _error;
 
   AppWellnessProfileStats? get stats => _stats;
+  WellnessStreakChangeEvent? get lastStreakChangeEvent =>
+      _lastStreakChangeEvent;
   String? get activeProfileUuid => _activeProfileUuid;
   int get currentStreak => _effectiveCurrentStreak(_stats);
   int get longestStreak => _stats?.longestStreak ?? 0;
@@ -176,7 +181,7 @@ class WellnessProfileStatsController extends ChangeNotifier {
     }
   }
 
-  Future<int?> registerActivity({
+  Future<WellnessStreakChangeEvent?> registerActivity({
     required String uuidProfile,
     required String fecha,
   }) async {
@@ -203,7 +208,15 @@ class WellnessProfileStatsController extends ChangeNotifier {
     );
 
     final previousStreak = _effectiveCurrentStreak(current);
-    return next.currentStreak > previousStreak ? next.currentStreak : null;
+    if (next.currentStreak <= previousStreak) {
+      return null;
+    }
+
+    return _publishStreakChange(
+      previousStreak: previousStreak,
+      streak: next.currentStreak,
+      type: WellnessStreakChangeType.increased,
+    );
   }
 
   void clear() {
@@ -212,6 +225,8 @@ class WellnessProfileStatsController extends ChangeNotifier {
     _error = null;
     _isLoading = false;
     _isSyncing = false;
+    _lastStreakChangeEvent = null;
+    _publishedExpiredStreakKeys.clear();
     _cancelSubscription();
     notifyListeners();
   }
@@ -222,13 +237,24 @@ class WellnessProfileStatsController extends ChangeNotifier {
       return;
     }
 
+    final expirationKey =
+        '${uuidProfile.trim()}|${current!.lastActivityDate}|${current.currentStreak}';
+    if (!_publishedExpiredStreakKeys.add(expirationKey)) {
+      return;
+    }
+
     await _upsertStats(
       uuidProfile: uuidProfile,
       currentStreak: 0,
-      longestStreak: current!.longestStreak,
+      longestStreak: current.longestStreak,
       lastActivityDate: current.lastActivityDate,
       totalActiveDays: current.totalActiveDays,
       updatedAt: DateTime.now().toUtc(),
+    );
+    _publishStreakChange(
+      previousStreak: current.currentStreak,
+      streak: 0,
+      type: WellnessStreakChangeType.reset,
     );
   }
 
@@ -407,6 +433,35 @@ class WellnessProfileStatsController extends ChangeNotifier {
     notifyListeners();
   }
 
+  WellnessStreakChangeEvent _publishStreakChange({
+    required int previousStreak,
+    required int streak,
+    required WellnessStreakChangeType type,
+  }) {
+    _streakChangeEventId++;
+    final event = WellnessStreakChangeEvent(
+      id: _streakChangeEventId,
+      previousStreak: previousStreak,
+      streak: streak,
+      type: type,
+    );
+    _lastStreakChangeEvent = event;
+    notifyListeners();
+    return event;
+  }
+
+  void simulateStreakChangeForDebug({
+    required int previousStreak,
+    required int streak,
+    required WellnessStreakChangeType type,
+  }) {
+    _publishStreakChange(
+      previousStreak: previousStreak,
+      streak: streak,
+      type: type,
+    );
+  }
+
   void _cancelSubscription() {
     _statsSubscription?.cancel();
     _statsSubscription = null;
@@ -503,3 +558,19 @@ String _dateKey(DateTime date) {
 }
 
 int _positiveValue(int value) => value < 0 ? 0 : value;
+
+enum WellnessStreakChangeType { increased, reset }
+
+class WellnessStreakChangeEvent {
+  const WellnessStreakChangeEvent({
+    required this.id,
+    required this.previousStreak,
+    required this.streak,
+    required this.type,
+  });
+
+  final int id;
+  final int previousStreak;
+  final int streak;
+  final WellnessStreakChangeType type;
+}

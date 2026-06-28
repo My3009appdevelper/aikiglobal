@@ -42,7 +42,26 @@ class ProfilesRemoteService extends BaseService {
   Future<void> updateUserEditableOnline(
     String uuidProfile,
     Map<String, dynamic> patch,
-  ) {
-    return updateOnlineById(uuidProfile.trim(), patch, touchUpdatedAt: false);
+  ) async {
+    final cleanUuid = uuidProfile.trim();
+    final body = patch.containsKey(updatedAtColumn)
+        ? patch
+        : <String, dynamic>{...patch, updatedAtColumn: isoUtc(nowUtc())};
+
+    final response = await runRemote(
+      'updateUserEditableOnline',
+      () => supabase
+          .from(table)
+          .update(body)
+          .eq(idColumn, cleanUuid)
+          .select(idColumn)
+          .limit(1),
+    );
+
+    if (List<Map<String, dynamic>>.from(response).isEmpty) {
+      throw StateError(
+        'No se pudo actualizar el perfil remoto. Verifica sesión y permisos.',
+      );
+    }
   }
 }

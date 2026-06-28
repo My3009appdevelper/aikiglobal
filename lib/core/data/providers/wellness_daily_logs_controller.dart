@@ -300,7 +300,7 @@ class WellnessDailyLogsController extends ChangeNotifier {
     }
   }
 
-  Future<int?> markMeditationCompleted({
+  Future<WellnessStreakChangeEvent?> markMeditationCompleted({
     required String uuidProfile,
     DateTime? date,
     int minutes = 0,
@@ -537,7 +537,7 @@ class WellnessDailyLogsController extends ChangeNotifier {
         _cleanNullableText(nota) != null;
   }
 
-  Future<int?> _registerActivity({
+  Future<WellnessStreakChangeEvent?> _registerActivity({
     required String uuidProfile,
     required String fecha,
   }) async {

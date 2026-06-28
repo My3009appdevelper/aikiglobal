@@ -9,6 +9,7 @@ import '../local/app_database.dart';
 import '../local/daos/profiles_dao.dart';
 import '../models/app_profile.dart';
 import '../remote/services/auth_remote_service.dart';
+import '../remote/services/profile_photo_storage_service.dart';
 import '../remote/services/profiles_remote_service.dart';
 import '../remote/supabase_config.dart';
 import '../sync/profiles_sync_service.dart';
@@ -27,15 +28,18 @@ class CurrentProfileController extends ChangeNotifier {
     ProfilesRemoteService? remoteService,
     ProfilesSyncService? syncService,
     AuthRemoteService? authService,
+    ProfilePhotoStorageService? profilePhotoStorageService,
   }) : _profilesDao = profilesDao,
        _remoteService = remoteService,
        _syncService = syncService,
-       _authService = authService;
+       _authService = authService,
+       _profilePhotoStorageService = profilePhotoStorageService;
 
   final ProfilesDao? _profilesDao;
   final ProfilesRemoteService? _remoteService;
   final ProfilesSyncService? _syncService;
   final AuthRemoteService? _authService;
+  final ProfilePhotoStorageService? _profilePhotoStorageService;
 
   StreamSubscription<LocalProfile?>? _profileSubscription;
   StreamSubscription<AuthState>? _authSubscription;
@@ -311,7 +315,7 @@ class CurrentProfileController extends ChangeNotifier {
     await syncWithRemote();
   }
 
-  Future<void> syncWithRemote() async {
+  Future<void> syncWithRemote({bool throwOnError = false}) async {
     final syncService = _syncService;
     if (syncService == null) {
       await pullFromRemote();
@@ -325,6 +329,9 @@ class CurrentProfileController extends ChangeNotifier {
       await syncService.sync();
     } catch (error) {
       _error = error;
+      if (throwOnError) {
+        rethrow;
+      }
     } finally {
       _setSyncing(false);
     }
@@ -364,6 +371,7 @@ class CurrentProfileController extends ChangeNotifier {
               ? const Value.absent()
               : Value(onboardingCompletado),
           updatedAt: Value(now),
+          syncedAt: const Value(null),
         ),
       );
     } else {
@@ -392,7 +400,7 @@ class CurrentProfileController extends ChangeNotifier {
     }
 
     if (syncAfterUpdate) {
-      await syncWithRemote();
+      await syncWithRemote(throwOnError: true);
     }
   }
 
@@ -425,6 +433,68 @@ class CurrentProfileController extends ChangeNotifier {
       // y esa ruta nunca debe enviarse a Supabase.
       return;
     }
+  }
+
+  Future<void> updateProfilePhoto({
+    required Uint8List bytes,
+    required String fileName,
+    String? contentType,
+  }) async {
+    final current = _profile;
+    final storageService = _profilePhotoStorageService;
+    if (current == null) {
+      throw StateError('No hay perfil local cargado.');
+    }
+    if (storageService == null) {
+      throw StateError('No hay servicio de Storage configurado.');
+    }
+
+    final previousPath = current.fotoPathSupabase;
+    final nextPath = await storageService.uploadProfilePhoto(
+      authUserId: current.authUserId,
+      bytes: bytes,
+      fileName: fileName,
+      contentType: contentType,
+    );
+
+    try {
+      await updateLocalPhotoPath(null);
+      await updateEditableProfile(
+        fotoPathSupabase: nextPath,
+        syncAfterUpdate: true,
+      );
+      if (previousPath != null && previousPath.trim() != nextPath) {
+        unawaited(storageService.deleteProfilePhoto(previousPath));
+      }
+    } catch (_) {
+      unawaited(storageService.deleteProfilePhoto(nextPath));
+      rethrow;
+    }
+  }
+
+  Future<void> removeProfilePhoto() async {
+    final current = _profile;
+    final storageService = _profilePhotoStorageService;
+    if (current == null) {
+      throw StateError('No hay perfil local cargado.');
+    }
+
+    final previousPath = current.fotoPathSupabase;
+    await updateLocalPhotoPath(null);
+    await updateEditableProfile(fotoPathSupabase: '', syncAfterUpdate: true);
+
+    if (storageService != null && previousPath != null) {
+      unawaited(storageService.deleteProfilePhoto(previousPath));
+    }
+  }
+
+  Future<String?> createProfilePhotoSignedUrl(String? remotePath) {
+    final storageService = _profilePhotoStorageService;
+    if (storageService == null) {
+      return Future<String?>.value(null);
+    }
+
+    return storageService.createSignedUrl(remotePath);
   }
 
   Future<void> clear() async {

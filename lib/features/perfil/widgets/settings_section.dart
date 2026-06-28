@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../app/app_router.dart';
 import '../../../core/data/providers/app_data_scope.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
@@ -49,10 +50,12 @@ class SettingsSection extends StatelessWidget {
               );
             },
           ),
-          const AppSettingTile(
+          AppSettingTile(
             icon: Icons.person_outline_rounded,
             title: 'Datos personales',
             subtitle: 'Gestiona tu información personal',
+            onTap: () =>
+                Navigator.of(context).pushNamed(AppRouter.personalData),
           ),
           Divider(height: 1, color: stroke),
           const ThemeModeTile(),

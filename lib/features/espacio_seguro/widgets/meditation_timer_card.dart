@@ -19,10 +19,6 @@ class MeditationTimerCard extends StatelessWidget {
     final stroke = brightness == Brightness.dark
         ? AppColors.darkStroke
         : AppColors.stroke;
-    final muted = brightness == Brightness.dark
-        ? AppColors.darkTextMuted
-        : AppColors.textSecondary;
-
     return AppInteractive(
       borderRadius: AppRadius.large,
       hoverScale: 1.01,
@@ -60,20 +56,11 @@ class MeditationTimerCard extends StatelessWidget {
                 children: [
                   Text(
                     'Timer de meditación',
-                    maxLines: 1,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w800,
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Configura duración y sonido para volver a tu centro.',
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodySmall?.copyWith(color: muted, height: 1.18),
                   ),
                 ],
               ),

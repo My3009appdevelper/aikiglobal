@@ -12,6 +12,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../shared/widgets/app_background.dart';
 import '../../shared/widgets/app_interactive.dart';
 import '../../shared/widgets/app_primary_button.dart';
+import '../../shared/widgets/app_progress_celebration_overlay.dart';
 import '../../shared/widgets/app_responsive_container.dart';
 
 class MeditationTimerPage extends StatefulWidget {
@@ -29,9 +30,9 @@ class _MeditationTimerPageState extends State<MeditationTimerPage> {
   bool _hasStarted = false;
   bool _completedSessionRecorded = false;
   bool _showCompletionOverlay = false;
-  _ProgressOverlayData? _progressOverlayData;
+  AppProgressCelebrationData? _progressOverlayData;
+  VoidCallback? _progressOverlayOnClose;
   Timer? _timer;
-  Timer? _completionOverlayTimer;
 
   int get _totalSeconds => _durationMinutes * 60;
   bool get _isFinished => _hasStarted && _remainingSeconds == 0;
@@ -52,7 +53,6 @@ class _MeditationTimerPageState extends State<MeditationTimerPage> {
   @override
   void dispose() {
     _timer?.cancel();
-    _completionOverlayTimer?.cancel();
     super.dispose();
   }
 
@@ -209,9 +209,10 @@ class _MeditationTimerPageState extends State<MeditationTimerPage> {
                       );
                     },
                     child: _showCompletionOverlay
-                        ? _ProgressCelebrationOverlay(
+                        ? AppProgressCelebrationOverlay(
                             key: ValueKey(_progressOverlayData),
                             data: _progressOverlayData!,
+                            onClose: _closeProgressCelebration,
                           )
                         : const SizedBox.shrink(key: ValueKey('empty')),
                   ),
@@ -311,7 +312,7 @@ class _MeditationTimerPageState extends State<MeditationTimerPage> {
       return;
     }
 
-    final newStreak = await AppDataScope.wellnessDailyLogs(context)
+    final streakEvent = await AppDataScope.wellnessDailyLogs(context)
         .markMeditationCompleted(
           uuidProfile: profile.uuidProfile,
           minutes: minutesToRecord,
@@ -322,21 +323,24 @@ class _MeditationTimerPageState extends State<MeditationTimerPage> {
     }
 
     _showProgressCelebration(
-      _ProgressOverlayData(
+      AppProgressCelebrationData(
         title: 'Meditación completada',
         body:
             'Sumaste ${_wellnessMinutesLabel(minutesToRecord)} a tu bienestar.',
         icon: Icons.self_improvement_rounded,
       ),
-      onFinished: newStreak == null
+      onFinished: streakEvent == null
           ? null
           : () {
               _showProgressCelebration(
-                _ProgressOverlayData(
+                AppProgressCelebrationData(
                   title: 'Racha actualizada',
                   body:
-                      'Ya llevas ${_streakDaysLabel(newStreak)} cuidando de ti.',
+                      'Ya llevas ${_streakDaysLabel(streakEvent.streak)} cuidando de ti.',
                   icon: Icons.local_fire_department_rounded,
+                  fromValue: streakEvent.previousStreak,
+                  toValue: streakEvent.streak,
+                  valueLabel: 'días',
                 ),
               );
             },
@@ -344,29 +348,32 @@ class _MeditationTimerPageState extends State<MeditationTimerPage> {
   }
 
   void _showProgressCelebration(
-    _ProgressOverlayData data, {
+    AppProgressCelebrationData data, {
     VoidCallback? onFinished,
   }) {
-    _completionOverlayTimer?.cancel();
     setState(() {
       _progressOverlayData = data;
+      _progressOverlayOnClose = onFinished;
       _showCompletionOverlay = true;
     });
+  }
 
-    _completionOverlayTimer = Timer(const Duration(milliseconds: 2600), () {
+  void _closeProgressCelebration() {
+    final next = _progressOverlayOnClose;
+    setState(() {
+      _showCompletionOverlay = false;
+      _progressOverlayOnClose = null;
+    });
+
+    if (next == null) {
+      return;
+    }
+
+    Future<void>.delayed(const Duration(milliseconds: 220), () {
       if (!mounted) {
         return;
       }
-
-      setState(() => _showCompletionOverlay = false);
-      if (onFinished != null) {
-        Timer(const Duration(milliseconds: 220), () {
-          if (!mounted) {
-            return;
-          }
-          onFinished();
-        });
-      }
+      next();
     });
   }
 }
@@ -421,105 +428,6 @@ class _TimerHeader extends StatelessWidget {
       ],
     );
   }
-}
-
-class _ProgressCelebrationOverlay extends StatelessWidget {
-  const _ProgressCelebrationOverlay({super.key, required this.data});
-
-  final _ProgressOverlayData data;
-
-  @override
-  Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final scheme = Theme.of(context).colorScheme;
-    final surface = brightness == Brightness.dark
-        ? AppColors.darkSurface
-        : AppColors.white;
-    final muted = brightness == Brightness.dark
-        ? AppColors.darkTextMuted
-        : AppColors.textSecondary;
-
-    return Container(
-      color: AppColors.primaryDeep.withValues(
-        alpha: brightness == Brightness.dark ? 0.62 : 0.34,
-      ),
-      padding: const EdgeInsets.all(28),
-      child: Center(
-        child: TweenAnimationBuilder<double>(
-          tween: Tween(begin: 0, end: 1),
-          duration: const Duration(milliseconds: 760),
-          curve: Curves.easeOutBack,
-          builder: (context, value, child) {
-            return Transform.scale(
-              scale: 0.88 + (0.12 * value),
-              child: Opacity(opacity: value.clamp(0, 1), child: child),
-            );
-          },
-          child: Container(
-            width: double.infinity,
-            constraints: const BoxConstraints(maxWidth: 360),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
-            decoration: BoxDecoration(
-              color: surface.withValues(alpha: 0.96),
-              borderRadius: AppRadius.large,
-              border: Border.all(color: scheme.primary.withValues(alpha: 0.24)),
-              boxShadow: AppShadows.soft(brightness),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 74,
-                  height: 74,
-                  decoration: BoxDecoration(
-                    color: scheme.primary.withValues(alpha: 0.12),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(data.icon, color: scheme.primary, size: 40),
-                ),
-                const SizedBox(height: 18),
-                Text(
-                  data.title,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  data.body,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(color: muted, height: 1.25),
-                ),
-                const SizedBox(height: 18),
-                LinearProgressIndicator(
-                  minHeight: 5,
-                  borderRadius: AppRadius.full,
-                  value: 1,
-                  color: scheme.primary,
-                  backgroundColor: scheme.primary.withValues(alpha: 0.12),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ProgressOverlayData {
-  const _ProgressOverlayData({
-    required this.title,
-    required this.body,
-    required this.icon,
-  });
-
-  final String title;
-  final String body;
-  final IconData icon;
 }
 
 class _TimerRing extends StatelessWidget {

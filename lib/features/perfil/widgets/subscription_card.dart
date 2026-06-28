@@ -22,7 +22,7 @@ class SubscriptionCard extends StatelessWidget {
     final accentForeground = Theme.of(context).colorScheme.onPrimary;
 
     return Container(
-      height: 320,
+      height: 256,
       decoration: BoxDecoration(
         color: surface.withValues(alpha: 0.9),
         borderRadius: AppRadius.large,
@@ -36,7 +36,7 @@ class SubscriptionCard extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: SizedBox(
-              width: 240,
+              width: 220,
               height: double.infinity,
               child: Image.asset(
                 AppAssets.backgroundArchitecture,
@@ -61,7 +61,7 @@ class SubscriptionCard extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(22),
+            padding: const EdgeInsets.all(18),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -69,8 +69,8 @@ class SubscriptionCard extends StatelessWidget {
                 Row(
                   children: [
                     Container(
-                      width: 52,
-                      height: 52,
+                      width: 44,
+                      height: 44,
                       decoration: BoxDecoration(
                         color: accent,
                         shape: BoxShape.circle,
@@ -80,7 +80,7 @@ class SubscriptionCard extends StatelessWidget {
                         color: accentForeground,
                       ),
                     ),
-                    const SizedBox(width: 14),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,7 +102,7 @@ class SubscriptionCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 10),
                 Row(
                   children: [
                     Icon(Icons.local_florist_outlined, color: accent, size: 20),
@@ -119,17 +119,17 @@ class SubscriptionCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
                 Text(
                   'Renovación automática el\n12 de junio de 2025',
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
-                const SizedBox(height: 18),
+                const SizedBox(height: 12),
                 AppPrimaryButton(
                   label: 'Gestionar plan',
                   onPressed: () {},
                   expand: false,
-                  height: 48,
+                  height: 44,
                 ),
               ],
             ),

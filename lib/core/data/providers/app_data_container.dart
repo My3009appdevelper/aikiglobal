@@ -8,6 +8,7 @@ import '../local/daos/wellness_daily_logs_dao.dart';
 import '../local/daos/wellness_profile_stats_dao.dart';
 import '../remote/services/auth_remote_service.dart';
 import '../remote/services/content_items_remote_service.dart';
+import '../remote/services/profile_photo_storage_service.dart';
 import '../remote/services/profiles_remote_service.dart';
 import '../remote/services/user_content_states_remote_service.dart';
 import '../remote/services/wellness_daily_logs_remote_service.dart';
@@ -38,6 +39,7 @@ class AppDataContainer {
     required this.wellnessDailyLogsController,
     required this.wellnessProfileStatsController,
     this.profilesRemoteService,
+    this.profilePhotoStorageService,
     this.contentItemsRemoteService,
     this.userContentStatesRemoteService,
     this.wellnessDailyLogsRemoteService,
@@ -57,6 +59,7 @@ class AppDataContainer {
   final WellnessDailyLogsDao? wellnessDailyLogsDao;
   final WellnessProfileStatsDao? wellnessProfileStatsDao;
   final ProfilesRemoteService? profilesRemoteService;
+  final ProfilePhotoStorageService? profilePhotoStorageService;
   final ContentItemsRemoteService? contentItemsRemoteService;
   final UserContentStatesRemoteService? userContentStatesRemoteService;
   final WellnessDailyLogsRemoteService? wellnessDailyLogsRemoteService;
@@ -104,6 +107,7 @@ class AppDataContainer {
     }
 
     ProfilesRemoteService? profilesRemoteService;
+    ProfilePhotoStorageService? profilePhotoStorageService;
     ContentItemsRemoteService? contentItemsRemoteService;
     UserContentStatesRemoteService? userContentStatesRemoteService;
     WellnessDailyLogsRemoteService? wellnessDailyLogsRemoteService;
@@ -119,6 +123,9 @@ class AppDataContainer {
     if (supabase != null) {
       authRemoteService = AuthRemoteService(supabase: supabase);
       profilesRemoteService = ProfilesRemoteService(supabase: supabase);
+      profilePhotoStorageService = ProfilePhotoStorageService(
+        supabase: supabase,
+      );
       contentItemsRemoteService = ContentItemsRemoteService(supabase: supabase);
       userContentStatesRemoteService = UserContentStatesRemoteService(
         supabase: supabase,
@@ -171,6 +178,7 @@ class AppDataContainer {
       remoteService: profilesRemoteService,
       syncService: profilesSyncService,
       authService: authRemoteService,
+      profilePhotoStorageService: profilePhotoStorageService,
     );
 
     final contentItemsController = ContentItemsController(
@@ -245,6 +253,7 @@ class AppDataContainer {
       wellnessDailyLogsController: wellnessDailyLogsController,
       wellnessProfileStatsController: wellnessProfileStatsController,
       profilesRemoteService: profilesRemoteService,
+      profilePhotoStorageService: profilePhotoStorageService,
       contentItemsRemoteService: contentItemsRemoteService,
       userContentStatesRemoteService: userContentStatesRemoteService,
       wellnessDailyLogsRemoteService: wellnessDailyLogsRemoteService,

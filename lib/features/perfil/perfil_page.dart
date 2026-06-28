@@ -4,6 +4,7 @@ import '../../app/app_router.dart';
 import '../../core/data/providers/app_data_scope.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../shared/widgets/app_logo.dart';
+import '../../shared/widgets/app_refresh_indicator.dart';
 import '../../shared/widgets/app_responsive_container.dart';
 import 'widgets/settings_section.dart';
 import 'widgets/subscription_card.dart';
@@ -28,33 +29,41 @@ class PerfilPage extends StatelessWidget {
     ).pushNamedAndRemoveUntil(AppRouter.login, (route) => false);
   }
 
+  Future<void> _refreshProfile(BuildContext context) async {
+    await AppDataScope.currentProfile(context).syncWithRemote();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       bottom: false,
       child: AppResponsiveContainer(
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: AppSpacing.md),
-                  const _ProfileHeader(),
-                  const SizedBox(height: AppSpacing.lg),
-                  const SubscriptionCard(),
-                  const SizedBox(height: AppSpacing.xl),
-                  Text(
-                    'Configuración',
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  SettingsSection(onLogout: () => _logout(context)),
-                  const SizedBox(height: 130),
-                ],
+        child: AppRefreshIndicator(
+          onRefresh: () => _refreshProfile(context),
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: AppSpacing.md),
+                    const _ProfileHeader(),
+                    const SizedBox(height: AppSpacing.lg),
+                    const SubscriptionCard(),
+                    const SizedBox(height: AppSpacing.xl),
+                    Text(
+                      'Configuración',
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    SettingsSection(onLogout: () => _logout(context)),
+                    const SizedBox(height: 130),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
