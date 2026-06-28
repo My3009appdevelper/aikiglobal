@@ -27,6 +27,7 @@ import '../../../shared/widgets/app_logo.dart';
 import '../../../shared/widgets/my_image_picker.dart';
 import 'content_media_duration_text.dart';
 import 'content_media_form_draft.dart';
+import 'content_media_metadata_policy.dart';
 
 class AdminContentFormPage extends StatefulWidget {
   const AdminContentFormPage({super.key, this.item});
@@ -69,6 +70,7 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
       _pendingMedia.isNotEmpty ||
       _pendingRemovedMediaIds.isNotEmpty ||
       _mediaEdits.isNotEmpty;
+  bool get _mediaMetadataEditable => contentMediaMetadataIsEditable(_type);
   bool get _canPublish =>
       _hasChanges || (widget.item?.status.trim().toLowerCase() != 'published');
   bool get _isPublished =>
@@ -230,6 +232,15 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
     return draft.nextSortOrder;
   }
 
+  int? _contentDurationSecondsFromForm() {
+    final durationMinutes = int.tryParse(_durationController.text.trim());
+    if (durationMinutes == null || durationMinutes <= 0) {
+      return null;
+    }
+
+    return durationMinutes * 60;
+  }
+
   @override
   Widget build(BuildContext context) {
     final contentMediaController = AppDataScope.contentMedia(context);
@@ -272,7 +283,14 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
                                 labelFor: _typeLabel,
                                 onChanged: (value) {
                                   if (value != null) {
-                                    setState(() => _type = value);
+                                    setState(() {
+                                      _type = value;
+                                      if (!contentMediaMetadataIsEditable(
+                                        value,
+                                      )) {
+                                        _mediaEdits.clear();
+                                      }
+                                    });
                                   }
                                 },
                               ),
@@ -359,6 +377,10 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
                               items: mediaDraft.visiblePersistedMedia,
                               pendingItems: mediaDraft.visiblePendingUploads,
                               mediaEdits: _mediaEdits,
+                              metadataEditable: _mediaMetadataEditable,
+                              contentTitle: _titleController.text.trim(),
+                              contentDurationSeconds:
+                                  _contentDurationSecondsFromForm(),
                               isLoading:
                                   contentMediaController.isLoading ||
                                   contentMediaController.isSyncing,
@@ -531,6 +553,10 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
   }
 
   void _updatePendingMediaTitle(PendingContentMediaUpload media, String title) {
+    if (!_mediaMetadataEditable) {
+      return;
+    }
+
     final index = _pendingMedia.indexWhere(
       (item) => item.uuidContentMedia == media.uuidContentMedia,
     );
@@ -548,6 +574,10 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
     PendingContentMediaUpload media,
     String minutesText,
   ) {
+    if (!_mediaMetadataEditable) {
+      return;
+    }
+
     final index = _pendingMedia.indexWhere(
       (item) => item.uuidContentMedia == media.uuidContentMedia,
     );
@@ -584,10 +614,18 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
   }
 
   void _updateExistingMediaTitle(AppContentMedia media, String title) {
+    if (!_mediaMetadataEditable) {
+      return;
+    }
+
     _setMediaEdit(media, _mediaEditFor(media).copyWith(titulo: title));
   }
 
   void _updateExistingMediaDuration(AppContentMedia media, String minutesText) {
+    if (!_mediaMetadataEditable) {
+      return;
+    }
+
     _setMediaEdit(
       media,
       _mediaEditFor(media).copyWith(
@@ -623,12 +661,13 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
     final mediaController = AppDataScope.contentMedia(context);
     final mediaDraft = _mediaDraft(mediaController.items);
     final hasUntitledMedia =
-        mediaDraft.visiblePersistedMedia.any(
-          (media) => _mediaEditFor(media).titulo.trim().isEmpty,
-        ) ||
-        mediaDraft.visiblePendingUploads.any(
-          (media) => media.titulo.trim().isEmpty,
-        );
+        _mediaMetadataEditable &&
+        (mediaDraft.visiblePersistedMedia.any(
+              (media) => _mediaEditFor(media).titulo.trim().isEmpty,
+            ) ||
+            mediaDraft.visiblePendingUploads.any(
+              (media) => media.titulo.trim().isEmpty,
+            ));
     if (hasUntitledMedia) {
       setState(() => _errorMessage = 'Escribe un título para cada archivo.');
       return false;
@@ -649,7 +688,7 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
       }
     }
 
-    final durationMinutes = int.tryParse(_durationController.text.trim());
+    final contentDurationSeconds = _contentDurationSecondsFromForm();
     final order = int.tryParse(_orderController.text.trim()) ?? 0;
     final delayPublishUntilMediaUpload =
         cleanStatus == 'published' && hasPendingMedia && !hasExistingMedia;
@@ -680,9 +719,7 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
         status: initialStatus,
         destacado: _featured,
         descargable: _downloadable,
-        duracionSegundos: durationMinutes == null || durationMinutes <= 0
-            ? null
-            : durationMinutes * 60,
+        duracionSegundos: contentDurationSeconds,
         orden: order,
         createdBy: profile?.uuidProfile,
         syncAfterSave: true,
@@ -693,12 +730,22 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
       _coverFileName = null;
       _coverContentType = null;
 
-      isApplyingMediaMetadata = _mediaEdits.isNotEmpty;
-      await _applyPendingMediaMetadataEdits();
+      isApplyingMediaMetadata = _hasPendingMediaMetadataUpdates(
+        mediaDraft,
+        contentTitle: title,
+        contentDurationSeconds: contentDurationSeconds,
+      );
+      await _applyPendingMediaMetadataEdits(
+        contentTitle: title,
+        contentDurationSeconds: contentDurationSeconds,
+      );
       isApplyingMediaMetadata = false;
 
       isUploadingPendingMedia = _pendingMedia.isNotEmpty;
-      await _uploadPendingMedia();
+      await _uploadPendingMedia(
+        contentTitle: title,
+        contentDurationSeconds: contentDurationSeconds,
+      );
       isUploadingPendingMedia = false;
 
       isApplyingMediaRemovals = _pendingRemovedMediaIds.isNotEmpty;
@@ -748,19 +795,66 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
     }
   }
 
-  Future<void> _applyPendingMediaMetadataEdits() async {
-    if (_mediaEdits.isEmpty) {
+  bool _hasPendingMediaMetadataUpdates(
+    ContentMediaFormDraft draft, {
+    required String contentTitle,
+    required int? contentDurationSeconds,
+  }) {
+    if (_mediaMetadataEditable) {
+      return _mediaEdits.isNotEmpty;
+    }
+
+    return draft.visiblePersistedMedia.any((media) {
+      final metadata = contentMediaMetadataForSave(
+        contentType: _type,
+        contentTitle: contentTitle,
+        contentDurationSeconds: contentDurationSeconds,
+        mediaTitle: media.titulo ?? '',
+        mediaDurationSeconds: media.duracionSegundos,
+      );
+      return metadata.title != (media.titulo ?? '').trim() ||
+          metadata.durationSeconds != media.duracionSegundos;
+    });
+  }
+
+  Future<void> _applyPendingMediaMetadataEdits({
+    required String contentTitle,
+    required int? contentDurationSeconds,
+  }) async {
+    final mediaMetadataEditable = _mediaMetadataEditable;
+    if (mediaMetadataEditable && _mediaEdits.isEmpty) {
       return;
     }
 
     final mediaController = AppDataScope.contentMedia(context);
+    final visibleMedia = _mediaDraft(
+      mediaController.items,
+    ).visiblePersistedMedia;
     final visibleMediaById = {
-      for (final media in _mediaDraft(
-        mediaController.items,
-      ).visiblePersistedMedia)
-        media.uuidContentMedia: media,
+      for (final media in visibleMedia) media.uuidContentMedia: media,
     };
-    final edits = Map<String, ContentMediaMetadataEdit>.of(_mediaEdits);
+    final edits = mediaMetadataEditable
+        ? Map<String, ContentMediaMetadataEdit>.of(_mediaEdits)
+        : {
+            for (final media in visibleMedia)
+              media.uuidContentMedia: ContentMediaMetadataEdit(
+                uuidContentMedia: media.uuidContentMedia,
+                titulo: contentMediaMetadataForSave(
+                  contentType: _type,
+                  contentTitle: contentTitle,
+                  contentDurationSeconds: contentDurationSeconds,
+                  mediaTitle: media.titulo ?? '',
+                  mediaDurationSeconds: media.duracionSegundos,
+                ).title,
+                duracionSegundos: contentMediaMetadataForSave(
+                  contentType: _type,
+                  contentTitle: contentTitle,
+                  contentDurationSeconds: contentDurationSeconds,
+                  mediaTitle: media.titulo ?? '',
+                  mediaDurationSeconds: media.duracionSegundos,
+                ).durationSeconds,
+              ),
+          };
 
     for (final entry in edits.entries) {
       final media = visibleMediaById[entry.key];
@@ -797,7 +891,10 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
     }
   }
 
-  Future<void> _uploadPendingMedia() async {
+  Future<void> _uploadPendingMedia({
+    required String contentTitle,
+    required int? contentDurationSeconds,
+  }) async {
     if (_pendingMedia.isEmpty) {
       return;
     }
@@ -810,16 +907,23 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
       if (bytes.isEmpty) {
         throw StateError('El archivo seleccionado está vacío.');
       }
+      final metadata = contentMediaMetadataForSave(
+        contentType: _type,
+        contentTitle: contentTitle,
+        contentDurationSeconds: contentDurationSeconds,
+        mediaTitle: item.titulo,
+        mediaDurationSeconds: item.duracionSegundos,
+      );
 
       await mediaController.addMedia(
         uuidContentMedia: item.uuidContentMedia,
         uuidContentItem: _uuidContentItem,
         tipo: item.tipo,
-        titulo: item.titulo,
+        titulo: metadata.title,
         bytes: bytes,
         fileName: item.fileName,
         contentType: item.contentType,
-        duracionSegundos: item.duracionSegundos,
+        duracionSegundos: metadata.durationSeconds,
         orden: item.orden,
         syncAfterSave: true,
       );
@@ -1062,6 +1166,9 @@ class _MediaFilesCard extends StatelessWidget {
     required this.items,
     required this.pendingItems,
     required this.mediaEdits,
+    required this.metadataEditable,
+    required this.contentTitle,
+    required this.contentDurationSeconds,
     required this.isLoading,
     required this.onAdd,
     required this.onRemove,
@@ -1075,6 +1182,9 @@ class _MediaFilesCard extends StatelessWidget {
   final List<AppContentMedia> items;
   final List<PendingContentMediaUpload> pendingItems;
   final Map<String, ContentMediaMetadataEdit> mediaEdits;
+  final bool metadataEditable;
+  final String contentTitle;
+  final int? contentDurationSeconds;
   final bool isLoading;
   final VoidCallback? onAdd;
   final ValueChanged<AppContentMedia>? onRemove;
@@ -1095,6 +1205,9 @@ class _MediaFilesCard extends StatelessWidget {
           key: ValueKey(item.uuidContentMedia),
           item: item,
           edit: mediaEdits[item.uuidContentMedia],
+          metadataEditable: metadataEditable,
+          contentTitle: contentTitle,
+          contentDurationSeconds: contentDurationSeconds,
           onRemove: onRemove,
           onTitleChanged: onMediaTitleChanged == null
               ? null
@@ -1107,6 +1220,9 @@ class _MediaFilesCard extends StatelessWidget {
         _PendingMediaRow(
           key: ValueKey(item.uuidContentMedia),
           item: item,
+          metadataEditable: metadataEditable,
+          contentTitle: contentTitle,
+          contentDurationSeconds: contentDurationSeconds,
           onRemove: onRemovePending,
           onTitleChanged: onPendingTitleChanged == null
               ? null
@@ -1214,12 +1330,18 @@ class _PendingMediaRow extends StatefulWidget {
   const _PendingMediaRow({
     super.key,
     required this.item,
+    required this.metadataEditable,
+    required this.contentTitle,
+    required this.contentDurationSeconds,
     required this.onRemove,
     required this.onTitleChanged,
     required this.onDurationChanged,
   });
 
   final PendingContentMediaUpload item;
+  final bool metadataEditable;
+  final String contentTitle;
+  final int? contentDurationSeconds;
   final ValueChanged<PendingContentMediaUpload>? onRemove;
   final ValueChanged<String>? onTitleChanged;
   final ValueChanged<String>? onDurationChanged;
@@ -1293,39 +1415,45 @@ class _PendingMediaRowState extends State<_PendingMediaRow> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextField(
-                controller: _titleController,
-                enabled: widget.onTitleChanged != null,
-                onChanged: widget.onTitleChanged,
-                textInputAction: TextInputAction.next,
-                style: Theme.of(context).textTheme.titleMedium,
-                decoration: const InputDecoration(
-                  hintText: 'Título del archivo',
-                  isDense: true,
-                  contentPadding: EdgeInsets.symmetric(vertical: 8),
-                ),
-              ),
-              const SizedBox(height: 8),
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 180),
-                child: TextField(
-                  controller: _durationController,
-                  enabled: widget.onDurationChanged != null,
-                  onChanged: widget.onDurationChanged,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  textInputAction: TextInputAction.done,
+              if (widget.metadataEditable) ...[
+                TextField(
+                  controller: _titleController,
+                  enabled: widget.onTitleChanged != null,
+                  onChanged: widget.onTitleChanged,
+                  textInputAction: TextInputAction.next,
+                  style: Theme.of(context).textTheme.titleMedium,
                   decoration: const InputDecoration(
-                    hintText: 'Duración (min)',
+                    hintText: 'Título del archivo',
                     isDense: true,
-                    contentPadding: EdgeInsets.symmetric(vertical: 8),
+                    contentPadding: _mediaEditableTextPadding,
                   ),
                 ),
-              ),
+                const SizedBox(height: 8),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 180),
+                  child: TextField(
+                    controller: _durationController,
+                    enabled: widget.onDurationChanged != null,
+                    onChanged: widget.onDurationChanged,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    textInputAction: TextInputAction.done,
+                    decoration: const InputDecoration(
+                      hintText: 'Duración (min)',
+                      isDense: true,
+                      contentPadding: _mediaEditableTextPadding,
+                    ),
+                  ),
+                ),
+              ] else
+                Text(
+                  _readOnlyMediaTitle(widget.contentTitle, widget.item.tipo),
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
               const SizedBox(height: 4),
               Text(
-                '${_mediaTypeLabel(widget.item.tipo)} · ${_formatMediaDuration(widget.item.duracionSegundos)} · Pendiente de guardar · Orden ${widget.item.orden}',
+                '${_mediaTypeLabel(widget.item.tipo)} · ${_formatMediaDuration(widget.metadataEditable ? widget.item.duracionSegundos : widget.contentDurationSeconds)} · Pendiente de guardar · Orden ${widget.item.orden}',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ],
@@ -1348,6 +1476,9 @@ class _MediaRow extends StatefulWidget {
     super.key,
     required this.item,
     required this.edit,
+    required this.metadataEditable,
+    required this.contentTitle,
+    required this.contentDurationSeconds,
     required this.onRemove,
     required this.onTitleChanged,
     required this.onDurationChanged,
@@ -1355,6 +1486,9 @@ class _MediaRow extends StatefulWidget {
 
   final AppContentMedia item;
   final ContentMediaMetadataEdit? edit;
+  final bool metadataEditable;
+  final String contentTitle;
+  final int? contentDurationSeconds;
   final ValueChanged<AppContentMedia>? onRemove;
   final ValueChanged<String>? onTitleChanged;
   final ValueChanged<String>? onDurationChanged;
@@ -1444,39 +1578,45 @@ class _MediaRowState extends State<_MediaRow> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextField(
-                controller: _titleController,
-                enabled: widget.onTitleChanged != null,
-                onChanged: widget.onTitleChanged,
-                textInputAction: TextInputAction.next,
-                style: Theme.of(context).textTheme.titleMedium,
-                decoration: const InputDecoration(
-                  hintText: 'Título del archivo',
-                  isDense: true,
-                  contentPadding: EdgeInsets.symmetric(vertical: 8),
-                ),
-              ),
-              const SizedBox(height: 8),
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 180),
-                child: TextField(
-                  controller: _durationController,
-                  enabled: widget.onDurationChanged != null,
-                  onChanged: widget.onDurationChanged,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  textInputAction: TextInputAction.done,
+              if (widget.metadataEditable) ...[
+                TextField(
+                  controller: _titleController,
+                  enabled: widget.onTitleChanged != null,
+                  onChanged: widget.onTitleChanged,
+                  textInputAction: TextInputAction.next,
+                  style: Theme.of(context).textTheme.titleMedium,
                   decoration: const InputDecoration(
-                    hintText: 'Duración (min)',
+                    hintText: 'Título del archivo',
                     isDense: true,
-                    contentPadding: EdgeInsets.symmetric(vertical: 8),
+                    contentPadding: _mediaEditableTextPadding,
                   ),
                 ),
-              ),
+                const SizedBox(height: 8),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 180),
+                  child: TextField(
+                    controller: _durationController,
+                    enabled: widget.onDurationChanged != null,
+                    onChanged: widget.onDurationChanged,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    textInputAction: TextInputAction.done,
+                    decoration: const InputDecoration(
+                      hintText: 'Duración (min)',
+                      isDense: true,
+                      contentPadding: _mediaEditableTextPadding,
+                    ),
+                  ),
+                ),
+              ] else
+                Text(
+                  _readOnlyMediaTitle(widget.contentTitle, widget.item.tipo),
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
               const SizedBox(height: 4),
               Text(
-                '${_mediaTypeLabel(widget.item.tipo)} · ${_formatMediaDuration(_effectiveDurationSeconds)} · Orden ${widget.item.orden}',
+                '${_mediaTypeLabel(widget.item.tipo)} · ${_formatMediaDuration(widget.metadataEditable ? _effectiveDurationSeconds : widget.contentDurationSeconds)} · Orden ${widget.item.orden}',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               if (widget.item.hasPendingSync) ...[
@@ -1571,6 +1711,11 @@ const _contentTypes = [
   'session',
 ];
 
+const _mediaEditableTextPadding = EdgeInsets.symmetric(
+  horizontal: 12,
+  vertical: 10,
+);
+
 String _typeLabel(String tipo) {
   return switch (tipo) {
     'course' => 'Curso',
@@ -1608,6 +1753,15 @@ String _mediaTypeLabel(String tipo) {
     'ambient_sound' => 'Sonido ambiental',
     _ => tipo,
   };
+}
+
+String _readOnlyMediaTitle(String contentTitle, String mediaType) {
+  final cleanTitle = contentTitle.trim();
+  if (cleanTitle.isNotEmpty) {
+    return cleanTitle;
+  }
+
+  return _mediaTypeLabel(mediaType);
 }
 
 String _formatMediaDuration(int? seconds) {
