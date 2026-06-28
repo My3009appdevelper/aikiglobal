@@ -7,6 +7,8 @@ import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_shadows.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/app_interactive.dart';
+import '../../../shared/widgets/app_tertiary_button.dart';
+import 'wellness_checkin_sheet.dart';
 
 class WeeklyWellnessTimelineCard extends StatefulWidget {
   const WeeklyWellnessTimelineCard({super.key});
@@ -24,12 +26,7 @@ class _WeeklyWellnessTimelineCardState
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || !_timelineController.hasClients) {
-        return;
-      }
-      _timelineController.jumpTo(_timelineController.position.maxScrollExtent);
-    });
+    _scheduleScrollToToday();
   }
 
   @override
@@ -40,12 +37,13 @@ class _WeeklyWellnessTimelineCardState
 
   @override
   Widget build(BuildContext context) {
-    final controller = AppDataScope.wellnessDailyLogs(context);
+    final logsController = AppDataScope.wellnessDailyLogs(context);
+    final profileController = AppDataScope.currentProfile(context);
 
     return AnimatedBuilder(
-      animation: controller,
+      animation: Listenable.merge([logsController, profileController]),
       builder: (context, _) {
-        final days = _buildDaysFromLogs(controller.logs);
+        final days = _buildDaysFromLogs(logsController.logs);
         final selectedIndex = _selectedIndexFor(days);
         final selectedDay = days[selectedIndex];
 
@@ -54,6 +52,7 @@ class _WeeklyWellnessTimelineCardState
           selectedIndex: selectedIndex,
           selectedDay: selectedDay,
           timelineController: _timelineController,
+          uuidProfile: profileController.profile?.uuidProfile,
           onDaySelected: (day) {
             setState(() => _selectedDateKey = _dateKey(day.date));
           },
@@ -68,6 +67,30 @@ class _WeeklyWellnessTimelineCardState
     );
     return index == -1 ? days.length - 1 : index;
   }
+
+  void _scheduleScrollToToday({int attempt = 0}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+
+      if (!_timelineController.hasClients) {
+        if (attempt < 3) {
+          _scheduleScrollToToday(attempt: attempt + 1);
+        }
+        return;
+      }
+
+      final position = _timelineController.position;
+      final target = position.maxScrollExtent;
+
+      if (target <= 0) {
+        return;
+      }
+
+      _timelineController.jumpTo(target);
+    });
+  }
 }
 
 class _WeeklyWellnessTimelineContent extends StatelessWidget {
@@ -76,6 +99,7 @@ class _WeeklyWellnessTimelineContent extends StatelessWidget {
     required this.selectedIndex,
     required this.selectedDay,
     required this.timelineController,
+    required this.uuidProfile,
     required this.onDaySelected,
   });
 
@@ -83,6 +107,7 @@ class _WeeklyWellnessTimelineContent extends StatelessWidget {
   final int selectedIndex;
   final _WellnessDaySnapshot selectedDay;
   final ScrollController timelineController;
+  final String? uuidProfile;
   final ValueChanged<_WellnessDaySnapshot> onDaySelected;
 
   @override
@@ -104,10 +129,10 @@ class _WeeklyWellnessTimelineContent extends StatelessWidget {
         boxShadow: AppShadows.soft(brightness),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'Tu energía interior de la semana',
+            'Tu energía interior',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.headlineMedium,
@@ -132,13 +157,51 @@ class _WeeklyWellnessTimelineContent extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.md),
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 220),
-            switchInCurve: Curves.easeOutCubic,
-            switchOutCurve: Curves.easeInCubic,
-            child: _SelectedDayDetails(
-              key: ValueKey(selectedDay.date),
-              day: selectedDay,
+          AnimatedSize(
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeOutCubic,
+            alignment: Alignment.topCenter,
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 0),
+              switchInCurve: Curves.easeOutCubic,
+              switchOutCurve: Curves.easeInCubic,
+              layoutBuilder: (currentChild, previousChildren) {
+                return Stack(
+                  alignment: Alignment.topCenter,
+                  children: [...previousChildren, ?currentChild],
+                );
+              },
+              transitionBuilder: (child, animation) {
+                final curved = CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeOutCubic,
+                  reverseCurve: Curves.easeInCubic,
+                );
+
+                return FadeTransition(
+                  opacity: curved,
+                  child: SlideTransition(
+                    position: Tween<Offset>(
+                      begin: const Offset(0, 0.035),
+                      end: Offset.zero,
+                    ).animate(curved),
+                    child: child,
+                  ),
+                );
+              },
+              child: _SelectedDayDetails(
+                key: ValueKey(selectedDay.date),
+                day: selectedDay,
+                onCheckInPressed: selectedDay.isToday && uuidProfile != null
+                    ? () {
+                        _showCheckInSheet(
+                          context: context,
+                          uuidProfile: uuidProfile!,
+                          day: selectedDay,
+                        );
+                      }
+                    : null,
+              ),
             ),
           ),
         ],
@@ -172,15 +235,7 @@ class _DayWellnessChip extends StatelessWidget {
     final textColor = selected
         ? selectedForeground
         : Theme.of(context).colorScheme.onSurface;
-    final tooltip =
-        '${_fullDateLabel(day.date)}\n'
-        'Energía ${day.energia}/5 · Calma ${day.calma}/5\n'
-        'Descanso ${day.descanso}/5 · Conexión ${day.conexion}/5\n'
-        'Meditación ${day.meditacionCompletada ? 'completada' : 'pendiente'} · '
-        '${day.minutosBienestar} min de bienestar';
-
     return AppInteractive(
-      tooltip: tooltip,
       borderRadius: AppRadius.medium,
       onTap: onTap,
       hoverScale: 1.03,
@@ -328,9 +383,14 @@ class _MetricBar extends StatelessWidget {
 }
 
 class _SelectedDayDetails extends StatelessWidget {
-  const _SelectedDayDetails({super.key, required this.day});
+  const _SelectedDayDetails({
+    super.key,
+    required this.day,
+    this.onCheckInPressed,
+  });
 
   final _WellnessDaySnapshot day;
+  final VoidCallback? onCheckInPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -362,26 +422,23 @@ class _SelectedDayDetails extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            day.mood == null ? 'Aún no has registrado este día.' : day.mood!,
-            maxLines: 2,
+            _dayDescription(day),
+            maxLines: 3,
             overflow: TextOverflow.ellipsis,
             style: Theme.of(
               context,
             ).textTheme.bodyMedium?.copyWith(color: muted, height: 1.18),
           ),
           const SizedBox(height: 12),
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            mainAxisSpacing: 8,
-            crossAxisSpacing: 8,
-            childAspectRatio: 3.8,
+          _MetricTileGrid(
             children: [
-              _MetricTile(label: 'Energía', value: day.energia),
-              _MetricTile(label: 'Calma', value: day.calma),
-              _MetricTile(label: 'Descanso', value: day.descanso),
-              _MetricTile(label: 'Conexión', value: day.conexion),
+              _MetricTile(icon: Icons.bolt_rounded, value: day.energia),
+              _MetricTile(icon: Icons.spa_rounded, value: day.calma),
+              _MetricTile(icon: Icons.nights_stay_rounded, value: day.descanso),
+              _MetricTile(
+                icon: Icons.self_improvement_rounded,
+                value: day.conexion,
+              ),
             ],
           ),
           const SizedBox(height: 8),
@@ -399,23 +456,87 @@ class _SelectedDayDetails extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: _DayInfoTile(
-                  icon: Icons.self_improvement_rounded,
+                  icon: Icons.favorite_rounded,
                   label: 'Bienestar',
                   value: '${day.minutosBienestar} min',
                 ),
               ),
             ],
           ),
+          if (day.isToday) ...[
+            const SizedBox(height: 12),
+            Align(
+              alignment: Alignment.center,
+              child: AppTertiaryButton(
+                label: day.hasActivity ? 'Check-in' : 'Check-in',
+                icon: Icons.edit_rounded,
+                onPressed: onCheckInPressed,
+              ),
+            ),
+          ],
         ],
       ),
     );
   }
 }
 
-class _MetricTile extends StatelessWidget {
-  const _MetricTile({required this.label, required this.value});
+void _showCheckInSheet({
+  required BuildContext context,
+  required String uuidProfile,
+  required _WellnessDaySnapshot day,
+}) {
+  showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (_) {
+      return Align(
+        alignment: Alignment.bottomCenter,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 520),
+          child: WellnessCheckInSheet(
+            uuidProfile: uuidProfile,
+            date: day.date,
+            initialMood: day.mood,
+            initialEnergia: day.energia,
+            initialCalma: day.calma,
+            initialDescanso: day.descanso,
+            initialConexion: day.conexion,
+          ),
+        ),
+      );
+    },
+  );
+}
 
-  final String label;
+class _MetricTileGrid extends StatelessWidget {
+  const _MetricTileGrid({required this.children});
+
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 184),
+        child: GridView.count(
+          crossAxisCount: 2,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 8,
+          childAspectRatio: 2.35,
+          children: children,
+        ),
+      ),
+    );
+  }
+}
+
+class _MetricTile extends StatelessWidget {
+  const _MetricTile({required this.icon, required this.value});
+
+  final IconData icon;
   final int value;
 
   @override
@@ -428,25 +549,16 @@ class _MetricTile extends StatelessWidget {
 
     return Container(
       alignment: Alignment.center,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(color: color, borderRadius: AppRadius.medium),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Flexible(
-            child: Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: textColor,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-          const SizedBox(width: 6),
+          Icon(icon, size: 17, color: Theme.of(context).colorScheme.primary),
+          const SizedBox(width: 8),
           Text(
-            '$value/5',
+            value.toString(),
             maxLines: 1,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: textColor,
@@ -532,6 +644,7 @@ class _WellnessDaySnapshot {
     required this.conexion,
     required this.meditacionCompletada,
     required this.minutosBienestar,
+    required this.hasActivity,
     this.mood,
   });
 
@@ -542,6 +655,7 @@ class _WellnessDaySnapshot {
   final int conexion;
   final bool meditacionCompletada;
   final int minutosBienestar;
+  final bool hasActivity;
   final String? mood;
 
   bool get isToday {
@@ -586,6 +700,7 @@ _WellnessDaySnapshot _snapshotForDate(
     conexion: _metricValue(log?.conexion ?? 0),
     meditacionCompletada: log?.meditacionCompletada ?? false,
     minutosBienestar: _positiveValue(log?.minutosBienestar ?? 0),
+    hasActivity: log?.hasActivity ?? false,
     mood: log?.mood,
   );
 }
@@ -593,6 +708,22 @@ _WellnessDaySnapshot _snapshotForDate(
 int _metricValue(int value) => value.clamp(0, 5).toInt();
 
 int _positiveValue(int value) => value < 0 ? 0 : value;
+
+String _dayDescription(_WellnessDaySnapshot day) {
+  final mood = day.mood?.trim();
+
+  if (mood != null && mood.isNotEmpty) {
+    return mood;
+  }
+
+  if (day.hasActivity) {
+    return 'Sin nota registrada para este día.';
+  }
+
+  return day.isToday
+      ? 'Aún no has registrado este día.'
+      : 'No registraste actividad este día.';
+}
 
 String _dateKey(DateTime date) {
   final local = date.toLocal();

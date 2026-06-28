@@ -78,6 +78,8 @@ class _DailyStreakContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasStreak = streak > 0;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(22, 20, 26, 20),
       child: Column(
@@ -95,7 +97,7 @@ class _DailyStreakContent extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           Text(
-            'Estás cuidando de ti',
+            hasStreak ? 'Estás cuidando de ti' : 'No has empezado tu racha',
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -104,22 +106,24 @@ class _DailyStreakContent extends StatelessWidget {
               height: 1.05,
             ),
           ),
-          const SizedBox(height: 4),
-          SizedBox(
-            width: double.infinity,
-            child: FittedBox(
-              alignment: Alignment.centerLeft,
-              fit: BoxFit.scaleDown,
-              child: Text(
-                _streakLabel(streak),
-                maxLines: 1,
-                style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                  color: foreground,
-                  height: 1.03,
+          if (hasStreak) ...[
+            const SizedBox(height: 4),
+            SizedBox(
+              width: double.infinity,
+              child: FittedBox(
+                alignment: Alignment.centerLeft,
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  _streakLabel(streak),
+                  maxLines: 1,
+                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                    color: foreground,
+                    height: 1.03,
+                  ),
                 ),
               ),
             ),
-          ),
+          ],
           const SizedBox(height: 8),
           Text(
             'Pequeños pasos, grandes transformaciones.',

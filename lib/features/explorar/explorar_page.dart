@@ -10,6 +10,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../shared/widgets/app_logo.dart';
+import '../../shared/widgets/app_refresh_indicator.dart';
 import '../../shared/widgets/app_responsive_container.dart';
 import '../../shared/widgets/app_section_header.dart';
 import '../../shared/widgets/app_text_field.dart';
@@ -138,8 +139,7 @@ class _ExplorarPageState extends State<ExplorarPage> {
               allowMockFallback: !contentController.hasRemote,
             );
 
-            return RefreshIndicator.adaptive(
-              color: Theme.of(context).colorScheme.primary,
+            return AppRefreshIndicator(
               onRefresh: _refreshExplore,
               child: CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -537,7 +537,7 @@ class _ExploreViewData {
     return switch (type) {
       QuickCategoryType.audios => 'Audio y sonido',
       QuickCategoryType.meditations => 'Meditaciones',
-      QuickCategoryType.courses => 'Cursos disponibles',
+      QuickCategoryType.courses => 'Cursos',
       QuickCategoryType.favorites => 'Favoritos',
     };
   }

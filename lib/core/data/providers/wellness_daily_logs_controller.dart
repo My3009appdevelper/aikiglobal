@@ -300,14 +300,14 @@ class WellnessDailyLogsController extends ChangeNotifier {
     }
   }
 
-  Future<void> markMeditationCompleted({
+  Future<int?> markMeditationCompleted({
     required String uuidProfile,
     DateTime? date,
     int minutes = 0,
   }) async {
     final cleanProfile = uuidProfile.trim();
     if (cleanProfile.isEmpty) {
-      return;
+      return null;
     }
 
     final fecha = _dateKey(date ?? DateTime.now());
@@ -330,7 +330,7 @@ class WellnessDailyLogsController extends ChangeNotifier {
       updatedAt: now,
     );
 
-    await _registerActivity(uuidProfile: cleanProfile, fecha: fecha);
+    return _registerActivity(uuidProfile: cleanProfile, fecha: fecha);
   }
 
   void clear() {
@@ -537,11 +537,11 @@ class WellnessDailyLogsController extends ChangeNotifier {
         _cleanNullableText(nota) != null;
   }
 
-  Future<void> _registerActivity({
+  Future<int?> _registerActivity({
     required String uuidProfile,
     required String fecha,
   }) async {
-    await _wellnessProfileStatsController?.registerActivity(
+    return _wellnessProfileStatsController?.registerActivity(
       uuidProfile: uuidProfile,
       fecha: fecha,
     );

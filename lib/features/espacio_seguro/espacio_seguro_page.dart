@@ -4,46 +4,71 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_shadows.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/data/providers/app_data_scope.dart';
 import '../../shared/widgets/app_interactive.dart';
 import '../../shared/widgets/app_logo.dart';
+import '../../shared/widgets/app_refresh_indicator.dart';
 import '../../shared/widgets/app_responsive_container.dart';
 import '../notificaciones/notifications_page.dart';
 import 'widgets/calendar_preview_card.dart';
 import 'widgets/daily_streak_card.dart';
 import 'widgets/meditation_today_card.dart';
+import 'widgets/meditation_timer_card.dart';
 import 'widgets/weekly_wellness_timeline_card.dart';
 
 class EspacioSeguroPage extends StatelessWidget {
   const EspacioSeguroPage({super.key});
+
+  Future<void> _refreshSafeSpace(BuildContext context) async {
+    final profile = AppDataScope.currentProfile(context).profile;
+    if (profile == null) {
+      return;
+    }
+
+    await Future.wait([
+      AppDataScope.wellnessDailyLogs(
+        context,
+      ).syncWithRemote(uuidProfile: profile.uuidProfile),
+      AppDataScope.wellnessProfileStats(
+        context,
+      ).syncWithRemote(uuidProfile: profile.uuidProfile),
+    ]);
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       bottom: false,
       child: AppResponsiveContainer(
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: AppSpacing.md),
-                  const AppLogo(width: 148),
-                  const SizedBox(height: AppSpacing.lg),
-                  const _SafeSpaceIntro(),
-                  const SizedBox(height: AppSpacing.lg),
-                  const DailyStreakCard(),
-                  const SizedBox(height: AppSpacing.lg),
-                  const WeeklyWellnessTimelineCard(),
-                  const SizedBox(height: AppSpacing.lg),
-                  const CalendarPreviewCard(),
-                  const SizedBox(height: AppSpacing.lg),
-                  const MeditationTodayCard(),
-                  const SizedBox(height: 130),
-                ],
+        child: AppRefreshIndicator(
+          onRefresh: () => _refreshSafeSpace(context),
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: AppSpacing.md),
+                    const AppLogo(width: 148),
+                    const SizedBox(height: AppSpacing.lg),
+                    const _SafeSpaceIntro(),
+                    const SizedBox(height: AppSpacing.lg),
+                    const DailyStreakCard(),
+                    const SizedBox(height: AppSpacing.lg),
+                    const MeditationTimerCard(),
+                    const SizedBox(height: AppSpacing.lg),
+                    const WeeklyWellnessTimelineCard(),
+                    const SizedBox(height: AppSpacing.lg),
+                    const CalendarPreviewCard(),
+                    const SizedBox(height: AppSpacing.lg),
+                    const MeditationTodayCard(),
+                    const SizedBox(height: 130),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

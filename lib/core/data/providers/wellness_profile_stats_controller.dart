@@ -33,7 +33,7 @@ class WellnessProfileStatsController extends ChangeNotifier {
 
   AppWellnessProfileStats? get stats => _stats;
   String? get activeProfileUuid => _activeProfileUuid;
-  int get currentStreak => _stats?.currentStreak ?? 0;
+  int get currentStreak => _effectiveCurrentStreak(_stats);
   int get longestStreak => _stats?.longestStreak ?? 0;
   int get totalActiveDays => _stats?.totalActiveDays ?? 0;
   String? get lastActivityDate => _stats?.lastActivityDate;
@@ -67,6 +67,9 @@ class WellnessProfileStatsController extends ChangeNotifier {
                 : AppWellnessProfileStats.fromLocal(localStats);
             _error = null;
             notifyListeners();
+            if (localStats != null) {
+              unawaited(_expireCurrentStreakIfNeeded(cleanProfile));
+            }
           },
           onError: (Object error) {
             _error = error;
@@ -89,10 +92,12 @@ class WellnessProfileStatsController extends ChangeNotifier {
     final dao = _wellnessProfileStatsDao;
     if (dao == null) {
       await _loadRemoteForProfile(cleanProfile);
+      await _expireCurrentStreakIfNeeded(cleanProfile);
       return;
     }
 
     await _loadFromLocal(() => dao.getByProfile(cleanProfile));
+    await _expireCurrentStreakIfNeeded(cleanProfile);
   }
 
   Future<void> pullFromRemote({String? uuidProfile}) async {
@@ -104,6 +109,7 @@ class WellnessProfileStatsController extends ChangeNotifier {
     final dao = _wellnessProfileStatsDao;
     if (dao == null) {
       await _loadRemoteForProfile(cleanProfile);
+      await _expireCurrentStreakIfNeeded(cleanProfile);
       return;
     }
 
@@ -122,6 +128,7 @@ class WellnessProfileStatsController extends ChangeNotifier {
           () => dao.getByProfile(cleanProfile),
           keepPreviousError: true,
         );
+        await _expireCurrentStreakIfNeeded(cleanProfile);
       }
     } catch (error) {
       _error = error;
@@ -140,6 +147,7 @@ class WellnessProfileStatsController extends ChangeNotifier {
     final dao = _wellnessProfileStatsDao;
     if (dao == null) {
       await _loadRemoteForProfile(cleanProfile);
+      await _expireCurrentStreakIfNeeded(cleanProfile);
       return;
     }
 
@@ -158,6 +166,7 @@ class WellnessProfileStatsController extends ChangeNotifier {
           () => dao.getByProfile(cleanProfile),
           keepPreviousError: true,
         );
+        await _expireCurrentStreakIfNeeded(cleanProfile);
       }
     } catch (error) {
       _error = error;
@@ -167,21 +176,21 @@ class WellnessProfileStatsController extends ChangeNotifier {
     }
   }
 
-  Future<void> registerActivity({
+  Future<int?> registerActivity({
     required String uuidProfile,
     required String fecha,
   }) async {
     final cleanProfile = uuidProfile.trim();
     final cleanDate = _normalizeDateKey(fecha);
     if (cleanProfile.isEmpty || cleanDate.isEmpty) {
-      return;
+      return null;
     }
 
     final current = await _findStats(cleanProfile);
     final next = _nextStats(fecha: cleanDate, current: current);
 
     if (next == null) {
-      return;
+      return null;
     }
 
     await _upsertStats(
@@ -192,6 +201,9 @@ class WellnessProfileStatsController extends ChangeNotifier {
       totalActiveDays: next.totalActiveDays,
       updatedAt: DateTime.now().toUtc(),
     );
+
+    final previousStreak = _effectiveCurrentStreak(current);
+    return next.currentStreak > previousStreak ? next.currentStreak : null;
   }
 
   void clear() {
@@ -202,6 +214,22 @@ class WellnessProfileStatsController extends ChangeNotifier {
     _isSyncing = false;
     _cancelSubscription();
     notifyListeners();
+  }
+
+  Future<void> _expireCurrentStreakIfNeeded(String uuidProfile) async {
+    final current = await _findStats(uuidProfile);
+    if (!_shouldExpireCurrentStreak(current)) {
+      return;
+    }
+
+    await _upsertStats(
+      uuidProfile: uuidProfile,
+      currentStreak: 0,
+      longestStreak: current!.longestStreak,
+      lastActivityDate: current.lastActivityDate,
+      totalActiveDays: current.totalActiveDays,
+      updatedAt: DateTime.now().toUtc(),
+    );
   }
 
   Future<AppWellnessProfileStats?> _findStats(String uuidProfile) async {
@@ -266,7 +294,7 @@ class WellnessProfileStatsController extends ChangeNotifier {
     required String uuidProfile,
     required int currentStreak,
     required int longestStreak,
-    required String lastActivityDate,
+    required String? lastActivityDate,
     required int totalActiveDays,
     required DateTime updatedAt,
   }) async {
@@ -425,6 +453,36 @@ bool _isYesterday(String? lastDate, String currentDate) {
 
   final yesterday = current.subtract(const Duration(days: 1));
   return _dateKey(yesterday) == _normalizeDateKey(lastDate);
+}
+
+int _effectiveCurrentStreak(AppWellnessProfileStats? stats) {
+  if (_shouldExpireCurrentStreak(stats)) {
+    return 0;
+  }
+
+  return _positiveValue(stats?.currentStreak ?? 0);
+}
+
+bool _shouldExpireCurrentStreak(AppWellnessProfileStats? stats) {
+  if (stats == null || stats.currentStreak <= 0) {
+    return false;
+  }
+
+  return !_keepsStreakAlive(stats.lastActivityDate);
+}
+
+bool _keepsStreakAlive(String? lastActivityDate) {
+  final lastDate = _normalizeDateKey(lastActivityDate ?? '');
+  if (lastDate.isEmpty) {
+    return false;
+  }
+
+  final today = _dateKey(DateTime.now());
+  if (lastDate == today || _isYesterday(lastDate, today)) {
+    return true;
+  }
+
+  return _isAfter(lastDate, today);
 }
 
 bool _isAfter(String firstDate, String secondDate) {
