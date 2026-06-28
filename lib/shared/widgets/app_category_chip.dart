@@ -33,8 +33,8 @@ class AppCategoryChip extends StatelessWidget {
     return AppInteractive(
       tooltip: 'Abrir $label',
       borderRadius: AppRadius.large,
-      hoverScale: 1.04,
-      pressedScale: 0.9,
+      hoverScale: 1,
+      pressedScale: 1,
       onTap: onTap ?? () {},
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
