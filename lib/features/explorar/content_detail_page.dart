@@ -11,6 +11,8 @@ import '../../shared/widgets/app_cover_image.dart';
 import '../../shared/widgets/app_interactive.dart';
 import '../../shared/widgets/app_primary_button.dart';
 import '../../shared/widgets/app_logo.dart';
+import 'content_item_media_display_policy.dart';
+import 'content_media_presentation.dart';
 import 'content_media_playback_selection.dart';
 import 'lesson_player_page.dart';
 import 'models/content_item.dart';
@@ -22,7 +24,7 @@ class ContentDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isCourse = item.lessons != null;
+    final showsMediaStages = contentItemShowsMediaStages(item);
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -38,6 +40,9 @@ class ContentDetailPage extends StatelessWidget {
                       padding: const EdgeInsets.fromLTRB(24, 24, 24, 128),
                       child: Column(
                         children: [
+                          _StatsRow(item: item),
+                          const SizedBox(height: 28),
+
                           Text(
                             item.description ??
                                 'Un espacio para reconectar con tu cuerpo, tu mente y tu energía interior.',
@@ -45,14 +50,14 @@ class ContentDetailPage extends StatelessWidget {
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                           const SizedBox(height: 28),
-                          _StatsRow(item: item),
-                          const SizedBox(height: 28),
-                          _AboutCard(item: item),
-                          if (item.uuidContentItem != null || isCourse) ...[
+
+                          if (showsMediaStages &&
+                              (item.uuidContentItem != null ||
+                                  item.lessons != null)) ...[
                             const SizedBox(height: 18),
                             _ContentMediaList(
                               item: item,
-                              showFallbackLessons: isCourse,
+                              showFallbackLessons: item.lessons != null,
                             ),
                           ],
                         ],
@@ -68,7 +73,7 @@ class ContentDetailPage extends StatelessWidget {
             right: 24,
             bottom: 26,
             child: AppPrimaryButton(
-              label: isCourse ? 'Comenzar curso' : 'Reproducir ahora',
+              label: showsMediaStages ? 'Comenzar curso' : 'Reproducir ahora',
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute<void>(
@@ -311,14 +316,6 @@ class _StatsRow extends StatelessWidget {
         Expanded(
           child: _Stat(icon: Icons.schedule_rounded, label: item.duration),
         ),
-        Expanded(
-          child: _Stat(
-            icon: Icons.signal_cellular_alt_rounded,
-            label: item.lessons == null
-                ? 'Audio guía'
-                : '${item.lessons} clases',
-          ),
-        ),
       ],
     );
   }
@@ -351,65 +348,6 @@ class _Stat extends StatelessWidget {
           style: Theme.of(context).textTheme.bodySmall,
         ),
       ],
-    );
-  }
-}
-
-class _AboutCard extends StatelessWidget {
-  const _AboutCard({required this.item});
-
-  final ContentItem item;
-
-  @override
-  Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final surface = brightness == Brightness.dark
-        ? AppColors.darkSurface
-        : AppColors.white;
-    final stroke = brightness == Brightness.dark
-        ? AppColors.darkStroke
-        : AppColors.stroke;
-    final iconSurface = brightness == Brightness.dark
-        ? AppColors.darkSurfaceSoft
-        : AppColors.sandLight;
-
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: surface,
-        borderRadius: AppRadius.large,
-        border: Border.all(color: stroke),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CircleAvatar(
-            backgroundColor: iconSurface,
-            child: Icon(
-              Icons.local_florist_outlined,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Sobre este contenido',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  item.description ??
-                      'Diseñado para acompañarte con calma, presencia y claridad.',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -456,7 +394,16 @@ class _ContentMediaListState extends State<_ContentMediaList> {
         final media = playableContentMediaItems(mediaController.items);
         if (media.isNotEmpty) {
           return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Etapas del curso',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ),
+              const SizedBox(height: 8),
               for (final item in media)
                 ListTile(
                   contentPadding: EdgeInsets.zero,
@@ -508,7 +455,10 @@ class _FallbackLessonList extends StatelessWidget {
     ];
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Text('Etapas del curso', style: Theme.of(context).textTheme.titleLarge),
+        const SizedBox(height: 8),
         for (var i = 0; i < lessons.length; i++)
           ListTile(
             contentPadding: EdgeInsets.zero,
@@ -535,25 +485,11 @@ String _mediaTitle(AppContentMedia item) {
     return title;
   }
 
-  return _mediaTypeLabel(item.tipo);
+  return contentMediaKindLabel(item.tipo);
 }
 
 String _mediaSubtitle(AppContentMedia item) {
-  return '${_mediaTypeLabel(item.tipo)} · ${_formatMediaDuration(item.duracionSegundos)}';
-}
-
-String _mediaTypeLabel(String tipo) {
-  final cleanType = tipo.trim().toLowerCase();
-  if (ContentMediaFileMetadata.isSupportedType(cleanType)) {
-    return cleanType.toUpperCase();
-  }
-
-  return switch (cleanType) {
-    'video' => 'Video',
-    'audio' => 'Audio',
-    'ambient_sound' => 'Sonido ambiental',
-    _ => tipo,
-  };
+  return contentMediaSubtitle(item);
 }
 
 IconData _mediaIcon(AppContentMedia item) {
@@ -565,21 +501,6 @@ IconData _mediaIcon(AppContentMedia item) {
   return switch (cleanType) {
     'video' => Icons.videocam_outlined,
     'ambient_sound' => Icons.graphic_eq_rounded,
-    _ => Icons.mic_none_rounded,
+    _ => Icons.graphic_eq_rounded,
   };
-}
-
-String _formatMediaDuration(int? seconds) {
-  if (seconds == null || seconds <= 0) {
-    return 'Duración pendiente';
-  }
-
-  final totalMinutes = (seconds / 60).round();
-  if (totalMinutes < 60) {
-    return '$totalMinutes min';
-  }
-
-  final hours = totalMinutes ~/ 60;
-  final minutes = totalMinutes % 60;
-  return minutes == 0 ? '${hours}h' : '${hours}h ${minutes}m';
 }

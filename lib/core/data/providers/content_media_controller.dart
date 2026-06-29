@@ -134,6 +134,33 @@ class ContentMediaController extends ChangeNotifier {
     await _loadFromLocal(() => dao.getByContent(cleanContentUuid));
   }
 
+  Future<List<AppContentMedia>> getByContentSnapshot(
+    String uuidContentItem,
+  ) async {
+    final cleanContentUuid = uuidContentItem.trim();
+    if (cleanContentUuid.isEmpty) {
+      return const [];
+    }
+
+    final dao = _contentMediaDao;
+    if (dao != null) {
+      final localMedia = await dao.getByContent(cleanContentUuid);
+      if (localMedia.isNotEmpty || _contentMediaRemoteService == null) {
+        return _toAppMedia(localMedia);
+      }
+    }
+
+    final remoteService = _contentMediaRemoteService;
+    if (remoteService != null) {
+      final rows = await remoteService.getByContentOnline(cleanContentUuid);
+      return List.unmodifiable(rows.map(contentMediaRemoteToApp));
+    }
+
+    return List.unmodifiable(
+      _items.where((media) => media.uuidContentItem == cleanContentUuid),
+    );
+  }
+
   Future<bool> hasPublishableMedia(String uuidContentItem) async {
     final cleanContentUuid = uuidContentItem.trim();
     if (cleanContentUuid.isEmpty) {
@@ -202,7 +229,8 @@ class ContentMediaController extends ChangeNotifier {
     required String uuidContentItem,
     required String tipo,
     required String titulo,
-    required Uint8List bytes,
+    Uint8List? bytes,
+    String? localPath,
     required String fileName,
     String? contentType,
     int? duracionSegundos,
@@ -215,6 +243,8 @@ class ContentMediaController extends ChangeNotifier {
         _cleanNullableText(uuidContentMedia) ?? _generateUuidV4();
     final cleanTipo = normalizeMediaType(tipo, fileName: fileName);
     final cleanTitulo = titulo.trim();
+    final cleanLocalPath = _cleanNullableText(localPath);
+    final hasBytes = bytes != null && bytes.isNotEmpty;
 
     if (cleanContentUuid.isEmpty) {
       throw ArgumentError('El contenido es obligatorio.');
@@ -227,7 +257,7 @@ class ContentMediaController extends ChangeNotifier {
     if (cleanTitulo.isEmpty) {
       throw ArgumentError('El título del archivo es obligatorio.');
     }
-    if (bytes.isEmpty) {
+    if (cleanLocalPath == null && !hasBytes) {
       throw ArgumentError('El archivo seleccionado está vacío.');
     }
 
@@ -243,15 +273,22 @@ class ContentMediaController extends ChangeNotifier {
         uuidContentItem: cleanContentUuid,
         uuidContentMedia: cleanMediaUuid,
         bytes: bytes,
+        localPath: cleanLocalPath,
         fileName: _cleanNullableText(fileName) ?? 'media_file',
         contentType: _cleanNullableText(contentType),
       );
 
-      final localPath = await _localMediaCache?.writeBytes(
-        namespace: _contentMediaCacheNamespace,
-        remotePath: uploadedRemotePath,
-        bytes: bytes,
-      );
+      final cachedLocalPath = cleanLocalPath != null
+          ? await _localMediaCache?.copyFile(
+              namespace: _contentMediaCacheNamespace,
+              remotePath: uploadedRemotePath,
+              localPath: cleanLocalPath,
+            )
+          : await _localMediaCache?.writeBytes(
+              namespace: _contentMediaCacheNamespace,
+              remotePath: uploadedRemotePath,
+              bytes: bytes!,
+            );
 
       final dao = _contentMediaDao;
       final remoteService = _contentMediaRemoteService;
@@ -264,7 +301,7 @@ class ContentMediaController extends ChangeNotifier {
             tipo: cleanTipo,
             titulo: Value(cleanTitulo),
             storagePathSupabase: uploadedRemotePath,
-            storagePathLocal: Value(localPath),
+            storagePathLocal: Value(cachedLocalPath),
             duracionSegundos: Value(duracionSegundos),
             orden: Value(orden),
             createdAt: Value(now),

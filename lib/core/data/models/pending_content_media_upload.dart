@@ -14,6 +14,7 @@ class PendingContentMediaUpload {
     this.duracionSegundos,
     this.localPath,
     this.bytes,
+    this.fileSizeBytes,
   });
 
   final String uuidContentMedia;
@@ -25,6 +26,21 @@ class PendingContentMediaUpload {
   final int? duracionSegundos;
   final String? localPath;
   final Uint8List? bytes;
+  final int? fileSizeBytes;
+
+  String? get cleanLocalPath {
+    final cleanPath = localPath?.trim();
+    return cleanPath == null || cleanPath.isEmpty ? null : cleanPath;
+  }
+
+  bool get hasLocalFileSource => cleanLocalPath != null;
+
+  bool get hasInMemoryBytes {
+    final deferredBytes = bytes;
+    return deferredBytes != null && deferredBytes.isNotEmpty;
+  }
+
+  bool get hasReadableSource => hasLocalFileSource || hasInMemoryBytes;
 
   PendingContentMediaUpload copyWith({
     String? titulo,
@@ -42,6 +58,7 @@ class PendingContentMediaUpload {
           : duracionSegundos as int?,
       localPath: localPath,
       bytes: bytes,
+      fileSizeBytes: fileSizeBytes,
     );
   }
 
@@ -51,7 +68,7 @@ class PendingContentMediaUpload {
       return deferredBytes;
     }
 
-    final cleanPath = localPath?.trim();
+    final cleanPath = cleanLocalPath;
     if (cleanPath == null || cleanPath.isEmpty) {
       throw StateError('No se pudo leer el archivo seleccionado.');
     }

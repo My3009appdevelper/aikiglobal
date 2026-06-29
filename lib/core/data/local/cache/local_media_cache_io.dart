@@ -44,6 +44,33 @@ class LocalMediaCache {
     return file.path;
   }
 
+  Future<String?> copyFile({
+    required String namespace,
+    required String remotePath,
+    required String localPath,
+  }) async {
+    final cleanPath = _cleanLocalPath(localPath);
+    if (cleanPath == null) {
+      return null;
+    }
+
+    final filePath = await canonicalPath(
+      namespace: namespace,
+      remotePath: remotePath,
+    );
+    if (filePath == null) {
+      return null;
+    }
+
+    final sourceFile = File(cleanPath);
+    if (!await sourceFile.exists()) {
+      return null;
+    }
+
+    final cachedFile = await sourceFile.copy(filePath);
+    return cachedFile.path;
+  }
+
   Future<bool> exists(String? localPath) async {
     final cleanPath = _cleanLocalPath(localPath);
     if (cleanPath == null) {

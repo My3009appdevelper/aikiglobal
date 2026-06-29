@@ -43,6 +43,27 @@ void main() {
     expect(await upload.readBytes(), [4, 5, 6]);
   });
 
+  test(
+    'uses local file as preferred upload source without in-memory bytes',
+    () {
+      final upload = PendingContentMediaUpload(
+        uuidContentMedia: 'media-1',
+        tipo: 'mp4',
+        titulo: 'Clase',
+        fileName: 'Clase.mp4',
+        contentType: 'video/mp4',
+        orden: 0,
+        localPath: ' C:/media/clase.mp4 ',
+        fileSizeBytes: 120,
+      );
+
+      expect(upload.cleanLocalPath, 'C:/media/clase.mp4');
+      expect(upload.hasLocalFileSource, isTrue);
+      expect(upload.hasInMemoryBytes, isFalse);
+      expect(upload.hasReadableSource, isTrue);
+    },
+  );
+
   test('copyWith updates editable title and duration', () {
     final upload = PendingContentMediaUpload(
       uuidContentMedia: 'media-1',

@@ -20,7 +20,7 @@ class DailyStreakCard extends StatelessWidget {
       animation: statsController,
       builder: (context, _) {
         return Container(
-          constraints: const BoxConstraints(minHeight: 190),
+          height: 208,
           decoration: BoxDecoration(
             borderRadius: AppRadius.large,
             boxShadow: AppShadows.elevated(brightness),

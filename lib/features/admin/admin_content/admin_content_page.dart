@@ -19,15 +19,7 @@ import 'admin_content_form_page.dart';
 
 enum AdminContentFilter { all, published, draft, archived }
 
-enum AdminContentTypeFilter {
-  all,
-  course,
-  meditation,
-  audio,
-  sound,
-  event,
-  session,
-}
+enum AdminContentTypeFilter { all, meditation, audio, sound, event }
 
 class AdminContentPage extends StatefulWidget {
   const AdminContentPage({super.key});
@@ -133,7 +125,8 @@ class _AdminContentPageState extends State<AdminContentPage> {
                           onChanged: (filter) =>
                               setState(() => _typeFilter = filter),
                         ),
-                        if (controller.isSyncing || controller.isLoading) ...[
+                        if (controller.isLoading &&
+                            controller.items.isEmpty) ...[
                           const SizedBox(height: AppSpacing.md),
                           const LinearProgressIndicator(minHeight: 2),
                         ],
@@ -214,14 +207,11 @@ class _AdminContentPageState extends State<AdminContentPage> {
 
       final matchesType = switch (_typeFilter) {
         AdminContentTypeFilter.all => true,
-        AdminContentTypeFilter.course => _normalizedType(item.tipo) == 'course',
         AdminContentTypeFilter.meditation =>
           _normalizedType(item.tipo) == 'meditation',
         AdminContentTypeFilter.audio => _normalizedType(item.tipo) == 'audio',
         AdminContentTypeFilter.sound => _normalizedType(item.tipo) == 'sound',
         AdminContentTypeFilter.event => _normalizedType(item.tipo) == 'event',
-        AdminContentTypeFilter.session =>
-          _normalizedType(item.tipo) == 'session',
       };
 
       if (!matchesType) {
@@ -694,12 +684,10 @@ String _filterLabel(AdminContentFilter filter) {
 String _typeFilterLabel(AdminContentTypeFilter filter) {
   return switch (filter) {
     AdminContentTypeFilter.all => 'Todos',
-    AdminContentTypeFilter.course => 'Cursos',
     AdminContentTypeFilter.meditation => 'Meditaciones',
     AdminContentTypeFilter.audio => 'Audio',
     AdminContentTypeFilter.sound => 'Sonido',
     AdminContentTypeFilter.event => 'Eventos',
-    AdminContentTypeFilter.session => 'Sesiones',
   };
 }
 

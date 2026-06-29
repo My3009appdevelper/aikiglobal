@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../../../core/data/models/app_wellness_daily_log.dart';
 import '../../../core/data/providers/app_data_scope.dart';
+import '../../../core/data/providers/wellness_profile_stats_controller.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_shadows.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/app_interactive.dart';
+import '../../../shared/widgets/app_progress_celebration_overlay.dart';
 import '../../../shared/widgets/app_tertiary_button.dart';
 import 'wellness_checkin_sheet.dart';
 
@@ -480,12 +482,12 @@ class _SelectedDayDetails extends StatelessWidget {
   }
 }
 
-void _showCheckInSheet({
+Future<void> _showCheckInSheet({
   required BuildContext context,
   required String uuidProfile,
   required _WellnessDaySnapshot day,
-}) {
-  showModalBottomSheet<void>(
+}) async {
+  final streakEvent = await showModalBottomSheet<WellnessStreakChangeEvent>(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
@@ -504,6 +506,37 @@ void _showCheckInSheet({
             initialConexion: day.conexion,
           ),
         ),
+      );
+    },
+  );
+
+  if (streakEvent == null || !context.mounted) {
+    return;
+  }
+
+  _showStreakCelebrationDialog(context, streakEvent);
+}
+
+void _showStreakCelebrationDialog(
+  BuildContext context,
+  WellnessStreakChangeEvent event,
+) {
+  showGeneralDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    barrierColor: Colors.transparent,
+    transitionDuration: const Duration(milliseconds: 220),
+    pageBuilder: (dialogContext, _, _) {
+      return AppProgressCelebrationOverlay(
+        data: AppProgressCelebrationData(
+          title: 'Racha actualizada',
+          body: 'Ya llevas ${_streakDaysLabel(event.streak)} cuidando de ti.',
+          icon: Icons.local_fire_department_rounded,
+          fromValue: event.previousStreak,
+          toValue: event.streak,
+          valueLabel: 'días',
+        ),
+        onClose: () => Navigator.of(dialogContext).pop(),
       );
     },
   );
@@ -708,6 +741,10 @@ _WellnessDaySnapshot _snapshotForDate(
 int _metricValue(int value) => value.clamp(0, 5).toInt();
 
 int _positiveValue(int value) => value < 0 ? 0 : value;
+
+String _streakDaysLabel(int days) {
+  return days == 1 ? '1 día seguido' : '$days días seguidos';
+}
 
 String _dayDescription(_WellnessDaySnapshot day) {
   final mood = day.mood?.trim();

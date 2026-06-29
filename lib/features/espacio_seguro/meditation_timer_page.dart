@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 
 import '../../core/constants/app_assets.dart';
+import '../../core/data/models/app_content_media.dart';
 import '../../core/data/models/app_content_item.dart';
 import '../../core/data/providers/app_data_scope.dart';
 import '../../core/theme/app_colors.dart';
@@ -10,10 +12,12 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_shadows.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../shared/widgets/app_background.dart';
+import '../../shared/widgets/app_cover_image.dart';
 import '../../shared/widgets/app_interactive.dart';
 import '../../shared/widgets/app_primary_button.dart';
 import '../../shared/widgets/app_progress_celebration_overlay.dart';
 import '../../shared/widgets/app_responsive_container.dart';
+import 'meditation_timer_audio_policy.dart';
 
 class MeditationTimerPage extends StatefulWidget {
   const MeditationTimerPage({super.key});
@@ -33,6 +37,17 @@ class _MeditationTimerPageState extends State<MeditationTimerPage> {
   AppProgressCelebrationData? _progressOverlayData;
   VoidCallback? _progressOverlayOnClose;
   Timer? _timer;
+  final AudioPlayer _ambientPlayer = AudioPlayer();
+  List<AppContentItem> _timerSounds = const [];
+  AppContentMedia? _selectedSoundMedia;
+  bool _hasLoadedTimerSounds = false;
+  bool _isLoadingTimerSounds = false;
+  bool _isLoadingSoundMedia = false;
+  Object? _timerSoundsError;
+  Object? _soundMediaError;
+  Object? _ambientSoundError;
+  int _soundMediaLoadGeneration = 0;
+  String? _loadedAmbientRemotePath;
 
   int get _totalSeconds => _durationMinutes * 60;
   bool get _isFinished => _hasStarted && _remainingSeconds == 0;
@@ -51,15 +66,21 @@ class _MeditationTimerPageState extends State<MeditationTimerPage> {
   }
 
   @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_hasLoadedTimerSounds) {
+      return;
+    }
+
+    _hasLoadedTimerSounds = true;
+    unawaited(_loadTimerSounds());
   }
 
-  List<AppContentItem> _publishedSounds(List<AppContentItem> items) {
-    return items.where((item) {
-      return item.tipo.trim().toLowerCase() == 'sound' && item.isPublished;
-    }).toList();
+  @override
+  void dispose() {
+    _timer?.cancel();
+    unawaited(_ambientPlayer.dispose());
+    super.dispose();
   }
 
   AppContentItem? _selectedSound(List<AppContentItem> sounds) {
@@ -79,6 +100,93 @@ class _MeditationTimerPageState extends State<MeditationTimerPage> {
     }
 
     return sounds.first;
+  }
+
+  Future<void> _loadTimerSounds() async {
+    setState(() {
+      _isLoadingTimerSounds = true;
+      _timerSoundsError = null;
+    });
+
+    try {
+      final contentController = AppDataScope.contentItems(context);
+      final snapshot = await contentController.getPublishedSnapshot();
+      final sounds = publishedMeditationTimerSounds(snapshot);
+      final selectedSound = _selectedSound(sounds);
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _timerSounds = sounds;
+        _selectedSoundId = selectedSound?.uuidContentItem;
+        _isLoadingTimerSounds = false;
+      });
+      unawaited(_loadSoundMedia(selectedSound));
+    } catch (error, stackTrace) {
+      debugPrint('MeditationTimerPage.load sounds error: $error');
+      debugPrintStack(stackTrace: stackTrace);
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _timerSounds = const [];
+        _selectedSoundMedia = null;
+        _timerSoundsError = error;
+        _isLoadingTimerSounds = false;
+      });
+    }
+  }
+
+  Future<void> _loadSoundMedia(AppContentItem? sound) async {
+    final generation = ++_soundMediaLoadGeneration;
+    if (sound == null) {
+      setState(() {
+        _selectedSoundMedia = null;
+        _soundMediaError = null;
+        _isLoadingSoundMedia = false;
+      });
+      return;
+    }
+
+    setState(() {
+      _selectedSoundMedia = null;
+      _soundMediaError = null;
+      _ambientSoundError = null;
+      _isLoadingSoundMedia = true;
+    });
+
+    try {
+      final mediaController = AppDataScope.contentMedia(context);
+      final mediaItems = await mediaController.getByContentSnapshot(
+        sound.uuidContentItem,
+      );
+      final selectedMedia = selectMeditationTimerSoundMedia(
+        mediaItems,
+        uuidContentItem: sound.uuidContentItem,
+      );
+
+      if (!mounted || generation != _soundMediaLoadGeneration) {
+        return;
+      }
+
+      setState(() {
+        _selectedSoundMedia = selectedMedia;
+        _isLoadingSoundMedia = false;
+      });
+    } catch (error, stackTrace) {
+      debugPrint('MeditationTimerPage.load media error: $error');
+      debugPrintStack(stackTrace: stackTrace);
+      if (!mounted || generation != _soundMediaLoadGeneration) {
+        return;
+      }
+      setState(() {
+        _selectedSoundMedia = null;
+        _soundMediaError = error;
+        _isLoadingSoundMedia = false;
+      });
+    }
   }
 
   @override
@@ -117,35 +225,46 @@ class _MeditationTimerPageState extends State<MeditationTimerPage> {
                               onChanged: _updateDuration,
                             ),
                             const SizedBox(height: AppSpacing.lg),
-                            AnimatedBuilder(
-                              animation: AppDataScope.contentItems(context),
-                              builder: (context, _) {
+                            Builder(
+                              builder: (context) {
                                 final contentController =
                                     AppDataScope.contentItems(context);
-                                final sounds = _publishedSounds(
-                                  contentController.items,
+                                final selectedSound = _selectedSound(
+                                  _timerSounds,
                                 );
-                                final selectedSound = _selectedSound(sounds);
 
                                 return Column(
                                   children: [
                                     _SoundSection(
-                                      sounds: sounds,
+                                      sounds: _timerSounds,
                                       selectedSoundId:
                                           selectedSound?.uuidContentItem,
                                       isLoading:
-                                          contentController.isLoading ||
-                                          contentController.isSyncing,
+                                          _isLoadingTimerSounds ||
+                                          _isLoadingSoundMedia,
                                       enabled: !_isRunning,
+                                      resolveCoverImageUrl: contentController
+                                          .resolveCoverImageUrl,
                                       onSelected: (sound) {
                                         setState(() {
                                           _selectedSoundId =
                                               sound.uuidContentItem;
                                         });
+                                        unawaited(_loadSoundMedia(sound));
                                       },
                                     ),
                                     const SizedBox(height: AppSpacing.lg),
-                                    _SelectedSoundNote(sound: selectedSound),
+                                    _SelectedSoundNote(
+                                      sound: selectedSound,
+                                      hasAudio: _selectedSoundMedia != null,
+                                      isLoading:
+                                          _isLoadingTimerSounds ||
+                                          _isLoadingSoundMedia,
+                                      error:
+                                          _ambientSoundError ??
+                                          _soundMediaError ??
+                                          _timerSoundsError,
+                                    ),
                                   ],
                                 );
                               },
@@ -252,6 +371,7 @@ class _MeditationTimerPageState extends State<MeditationTimerPage> {
       _isRunning = true;
       _hasStarted = true;
     });
+    unawaited(_startAmbientSoundIfAvailable());
 
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -259,6 +379,7 @@ class _MeditationTimerPageState extends State<MeditationTimerPage> {
 
       if (_remainingSeconds <= 1) {
         _timer?.cancel();
+        unawaited(_stopAmbientSound());
         setState(() {
           _remainingSeconds = 0;
           _isRunning = false;
@@ -273,7 +394,86 @@ class _MeditationTimerPageState extends State<MeditationTimerPage> {
 
   void _pauseTimer() {
     _timer?.cancel();
+    unawaited(_pauseAmbientSound());
     setState(() => _isRunning = false);
+  }
+
+  Future<void> _startAmbientSoundIfAvailable() async {
+    final mediaController = AppDataScope.contentMedia(context);
+    final sound = _selectedSound(_timerSounds);
+    if (sound == null) {
+      return;
+    }
+
+    try {
+      setState(() => _ambientSoundError = null);
+      final mediaItems = await mediaController.getByContentSnapshot(
+        sound.uuidContentItem,
+      );
+
+      if (!mounted || !_isRunning) {
+        return;
+      }
+
+      final selectedMedia =
+          _selectedSoundMedia?.uuidContentItem == sound.uuidContentItem
+          ? _selectedSoundMedia
+          : selectMeditationTimerSoundMedia(
+              mediaItems,
+              uuidContentItem: sound.uuidContentItem,
+            );
+
+      if (selectedMedia == null) {
+        throw StateError('El sonido seleccionado no tiene archivos.');
+      }
+
+      final remotePath = selectedMedia.storagePathSupabase.trim();
+      if (remotePath.isEmpty) {
+        throw StateError('El archivo del sonido no tiene ruta remota.');
+      }
+
+      final audioUrl = await mediaController.resolveMediaUrl(remotePath);
+      if (!mounted || !_isRunning) {
+        return;
+      }
+      if (audioUrl == null || audioUrl.isEmpty) {
+        throw StateError('No se pudo generar la URL del sonido.');
+      }
+
+      setState(() {
+        _selectedSoundMedia = selectedMedia;
+      });
+
+      await _ambientPlayer.setLoopMode(LoopMode.one);
+      await _ambientPlayer.setVolume(1);
+      if (_loadedAmbientRemotePath != remotePath) {
+        await _ambientPlayer.setUrl(audioUrl);
+        _loadedAmbientRemotePath = remotePath;
+      }
+      await _ambientPlayer.play();
+    } catch (error, stackTrace) {
+      debugPrint('MeditationTimerPage.play ambient sound error: $error');
+      debugPrintStack(stackTrace: stackTrace);
+      await _ambientPlayer.stop();
+      _loadedAmbientRemotePath = null;
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _ambientSoundError = error;
+        _isRunning = false;
+      });
+      _timer?.cancel();
+    }
+  }
+
+  Future<void> _pauseAmbientSound() async {
+    await _ambientPlayer.pause();
+  }
+
+  Future<void> _stopAmbientSound() async {
+    await _ambientPlayer.stop();
+    _loadedAmbientRemotePath = null;
   }
 
   Widget _buildPrimaryTimerAction() {
@@ -288,6 +488,7 @@ class _MeditationTimerPageState extends State<MeditationTimerPage> {
   void _stopTimerAndRecordPartial() {
     final minutesToRecord = _elapsedFullMinutes;
     _timer?.cancel();
+    unawaited(_stopAmbientSound());
     setState(() {
       _remainingSeconds = _durationMinutes * 60;
       _isRunning = false;
@@ -552,6 +753,7 @@ class _SoundSection extends StatelessWidget {
     required this.selectedSoundId,
     required this.isLoading,
     required this.enabled,
+    required this.resolveCoverImageUrl,
     required this.onSelected,
   });
 
@@ -559,6 +761,7 @@ class _SoundSection extends StatelessWidget {
   final String? selectedSoundId;
   final bool isLoading;
   final bool enabled;
+  final Future<String?> Function(String imagePath) resolveCoverImageUrl;
   final ValueChanged<AppContentItem> onSelected;
 
   @override
@@ -568,7 +771,7 @@ class _SoundSection extends StatelessWidget {
       child: sounds.isEmpty
           ? _EmptySoundState(isLoading: isLoading)
           : SizedBox(
-              height: 178,
+              height: 154,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 clipBehavior: Clip.none,
@@ -580,9 +783,9 @@ class _SoundSection extends StatelessWidget {
                   final sound = sounds[index];
                   return _SoundCoverCard(
                     sound: sound,
-                    fallbackAsset: _fallbackSoundCover(index),
                     selected: sound.uuidContentItem == selectedSoundId,
                     enabled: enabled,
+                    resolveCoverImageUrl: resolveCoverImageUrl,
                     onTap: () => onSelected(sound),
                   );
                 },
@@ -639,16 +842,16 @@ class _EmptySoundState extends StatelessWidget {
 class _SoundCoverCard extends StatelessWidget {
   const _SoundCoverCard({
     required this.sound,
-    required this.fallbackAsset,
     required this.selected,
     required this.enabled,
+    required this.resolveCoverImageUrl,
     required this.onTap,
   });
 
   final AppContentItem sound;
-  final String fallbackAsset;
   final bool selected;
   final bool enabled;
+  final Future<String?> Function(String imagePath) resolveCoverImageUrl;
   final VoidCallback onTap;
 
   @override
@@ -666,7 +869,7 @@ class _SoundCoverCard extends StatelessWidget {
     final muted = brightness == Brightness.dark
         ? AppColors.darkTextMuted
         : AppColors.textSecondary;
-    final coverAsset = _coverAssetForSound(sound, fallbackAsset);
+    final coverPath = _coverPathForSound(sound);
 
     return AppInteractive(
       tooltip: enabled ? 'Seleccionar ${sound.titulo}' : null,
@@ -679,8 +882,9 @@ class _SoundCoverCard extends StatelessWidget {
         opacity: enabled ? 1 : 0.58,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
-          width: 154,
-          padding: const EdgeInsets.all(10),
+          width: 128,
+          height: 150,
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: surface.withValues(alpha: 0.94),
             borderRadius: AppRadius.large,
@@ -693,33 +897,27 @@ class _SoundCoverCard extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: AppRadius.medium,
-                    child: Image.asset(
-                      coverAsset,
+                    child: SizedBox(
                       width: double.infinity,
-                      height: 92,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          width: double.infinity,
-                          height: 92,
-                          color: brightness == Brightness.dark
-                              ? AppColors.darkSurface
-                              : AppColors.sandLight,
-                          child: Icon(
-                            Icons.graphic_eq_rounded,
-                            color: scheme.primary,
-                          ),
-                        );
-                      },
+                      height: 74,
+                      child: AppCoverImage(
+                        imagePath: coverPath,
+                        resolveImageUrl: resolveCoverImageUrl,
+                        fallback: _SoundCoverFallback(
+                          brightness: brightness,
+                          color: scheme.primary,
+                        ),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                   if (selected)
                     Positioned(
-                      top: 8,
-                      right: 8,
+                      top: 6,
+                      right: 6,
                       child: Container(
-                        width: 26,
-                        height: 26,
+                        width: 24,
+                        height: 24,
                         decoration: BoxDecoration(
                           color: scheme.primary,
                           shape: BoxShape.circle,
@@ -727,33 +925,64 @@ class _SoundCoverCard extends StatelessWidget {
                         child: Icon(
                           Icons.check_rounded,
                           color: scheme.onPrimary,
-                          size: 18,
+                          size: 17,
                         ),
                       ),
                     ),
                 ],
               ),
-              const SizedBox(height: 9),
-              Text(
-                sound.titulo,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(
-                  context,
-                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+              const SizedBox(height: 7),
+              SizedBox(
+                height: 31,
+                child: Text(
+                  sound.titulo,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    height: 1.12,
+                  ),
+                ),
               ),
-              const Spacer(),
+              const SizedBox(height: 3),
               Text(
                 _formatSoundDuration(sound.duracionSegundos),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(
                   context,
-                ).textTheme.bodySmall?.copyWith(color: muted),
+                ).textTheme.bodySmall?.copyWith(color: muted, height: 1),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _SoundCoverFallback extends StatelessWidget {
+  const _SoundCoverFallback({required this.brightness, required this.color});
+
+  final Brightness brightness;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: brightness == Brightness.dark
+          ? AppColors.darkSurface
+          : AppColors.sandLight,
+      alignment: Alignment.center,
+      child: Image.asset(
+        Theme.of(context).brightness == Brightness.dark
+            ? AppAssets.logoCompleteColorWhiteLetters
+            : AppAssets.logoCompleteColor,
+        width: 82,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) {
+          return Icon(Icons.graphic_eq_rounded, color: color);
+        },
       ),
     );
   }
@@ -802,15 +1031,30 @@ class _TimerSection extends StatelessWidget {
 }
 
 class _SelectedSoundNote extends StatelessWidget {
-  const _SelectedSoundNote({required this.sound});
+  const _SelectedSoundNote({
+    required this.sound,
+    required this.hasAudio,
+    required this.isLoading,
+    required this.error,
+  });
 
   final AppContentItem? sound;
+  final bool hasAudio;
+  final bool isLoading;
+  final Object? error;
 
   @override
   Widget build(BuildContext context) {
-    final message = sound == null
+    final selectedSound = sound;
+    final message = selectedSound == null
         ? 'Selecciona un sonido para acompañar tu meditación.'
-        : 'Ambiente seleccionado: ${sound!.titulo}';
+        : error != null
+        ? 'No se pudo preparar el sonido de ambiente.'
+        : isLoading
+        ? 'Preparando sonido de ambiente...'
+        : hasAudio
+        ? 'Ambiente seleccionado: ${selectedSound.titulo}'
+        : 'Ambiente seleccionado: ${selectedSound.titulo}. Falta agregar audio.';
 
     return Center(
       child: Text(
@@ -853,33 +1097,16 @@ String _formatSoundDuration(int? seconds) {
   return minutes == 0 ? '${hours}h' : '${hours}h ${minutes}m';
 }
 
-String _coverAssetForSound(AppContentItem sound, String fallbackAsset) {
+String? _coverPathForSound(AppContentItem sound) {
   final localPath = sound.coverPathLocal?.trim();
-  if (localPath != null && localPath.startsWith('assets/')) {
+  if (localPath != null && localPath.isNotEmpty) {
     return localPath;
   }
 
-  return fallbackAsset;
-}
+  final remotePath = sound.coverPathSupabase?.trim();
+  if (remotePath != null && remotePath.isNotEmpty) {
+    return remotePath;
+  }
 
-String _fallbackSoundCover(int index) {
-  const covers = [
-    AppAssets.audio1,
-    AppAssets.audio2,
-    AppAssets.audio3,
-    AppAssets.audio4,
-    AppAssets.audio5,
-    AppAssets.audio6,
-    AppAssets.audio7,
-    AppAssets.audio8,
-    AppAssets.audio9,
-    AppAssets.audio10,
-    AppAssets.audio11,
-    AppAssets.audio12,
-    AppAssets.audio13,
-    AppAssets.audio14,
-    AppAssets.audio15,
-  ];
-
-  return covers[index % covers.length];
+  return null;
 }

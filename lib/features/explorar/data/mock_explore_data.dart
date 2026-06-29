@@ -255,7 +255,7 @@ class MockExploreData {
     ),
     ContentItem(
       title: 'Sonido de lluvia interior',
-      type: 'Audio',
+      type: 'Sonido',
       duration: '40 min',
       imageAsset: AppAssets.audio5,
       description:
@@ -288,7 +288,7 @@ class MockExploreData {
     ),
     ContentItem(
       title: 'Fuego de descanso',
-      type: 'Audio',
+      type: 'Sonido',
       duration: '45 min',
       imageAsset: AppAssets.audio9,
       description:
@@ -296,7 +296,7 @@ class MockExploreData {
     ),
     ContentItem(
       title: 'Bosque de bambú',
-      type: 'Audio',
+      type: 'Sonido',
       duration: '36 min',
       imageAsset: AppAssets.audio11,
       description:
@@ -304,7 +304,7 @@ class MockExploreData {
     ),
     ContentItem(
       title: 'Arroyo y piedras',
-      type: 'Audio',
+      type: 'Sonido',
       duration: '38 min',
       imageAsset: AppAssets.audio12,
       description:
@@ -312,7 +312,7 @@ class MockExploreData {
     ),
     ContentItem(
       title: 'Campanas del porche',
-      type: 'Audio',
+      type: 'Sonido',
       duration: '30 min',
       imageAsset: AppAssets.audio13,
       description:
@@ -320,7 +320,7 @@ class MockExploreData {
     ),
     ContentItem(
       title: 'Descanso lunar',
-      type: 'Audio',
+      type: 'Sonido',
       duration: '42 min',
       imageAsset: AppAssets.audio14,
       description:
@@ -328,7 +328,7 @@ class MockExploreData {
     ),
     ContentItem(
       title: 'Café tranquilo',
-      type: 'Audio',
+      type: 'Sonido',
       duration: '22 min',
       imageAsset: AppAssets.audio15,
       description:

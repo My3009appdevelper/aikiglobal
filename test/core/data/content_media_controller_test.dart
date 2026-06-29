@@ -80,4 +80,69 @@ void main() {
       expect(updated?.syncedAt, null);
     },
   );
+
+  test(
+    'loads a content media snapshot without replacing active items',
+    () async {
+      final database = AppDatabase(executor: NativeDatabase.memory());
+      addTearDown(database.close);
+      final dao = ContentMediaDao(database);
+      final now = DateTime.utc(2026, 6, 28);
+
+      await dao.upsertContentMediaBatch([
+        _media(
+          uuid: 'media-audio',
+          contentUuid: 'content-audio',
+          storagePath: 'content-audio/media/media-audio/file.mp3',
+          now: now,
+        ),
+        _media(
+          uuid: 'media-sound',
+          contentUuid: 'content-sound',
+          storagePath: 'content-sound/media/media-sound/file.mp3',
+          now: now,
+        ),
+      ]);
+
+      final controller = ContentMediaController(
+        contentMediaDao: dao,
+        contentMediaRemoteService: null,
+        contentMediaStorageService: null,
+        syncService: null,
+      );
+
+      await controller.loadForContent('content-audio');
+      expect(controller.activeContentUuid, 'content-audio');
+      expect(controller.items.map((item) => item.uuidContentMedia), [
+        'media-audio',
+      ]);
+
+      final snapshot = await controller.getByContentSnapshot('content-sound');
+
+      expect(snapshot.map((item) => item.uuidContentMedia), ['media-sound']);
+      expect(controller.activeContentUuid, 'content-audio');
+      expect(controller.items.map((item) => item.uuidContentMedia), [
+        'media-audio',
+      ]);
+    },
+  );
+}
+
+ContentMediaTableCompanion _media({
+  required String uuid,
+  required String contentUuid,
+  required String storagePath,
+  required DateTime now,
+}) {
+  return ContentMediaTableCompanion.insert(
+    uuidContentMedia: uuid,
+    uuidContentItem: contentUuid,
+    tipo: 'mp3',
+    titulo: Value(uuid),
+    storagePathSupabase: storagePath,
+    orden: const Value(0),
+    createdAt: Value(now),
+    updatedAt: Value(now),
+    syncedAt: Value(now),
+  );
 }

@@ -16,6 +16,9 @@ import 'widgets/meditation_today_card.dart';
 import 'widgets/meditation_timer_card.dart';
 import 'widgets/weekly_wellness_timeline_card.dart';
 
+bool get _showCalendarPreviewCard => false;
+bool get _showMeditationTodayCard => false;
+
 class EspacioSeguroPage extends StatelessWidget {
   const EspacioSeguroPage({super.key});
 
@@ -59,10 +62,14 @@ class EspacioSeguroPage extends StatelessWidget {
                     const MeditationTimerCard(),
                     const SizedBox(height: AppSpacing.lg),
                     const WeeklyWellnessTimelineCard(),
-                    const SizedBox(height: AppSpacing.lg),
-                    const CalendarPreviewCard(),
-                    const SizedBox(height: AppSpacing.lg),
-                    const MeditationTodayCard(),
+                    if (_showCalendarPreviewCard) ...[
+                      const SizedBox(height: AppSpacing.lg),
+                      const CalendarPreviewCard(),
+                    ],
+                    if (_showMeditationTodayCard) ...[
+                      const SizedBox(height: AppSpacing.lg),
+                      const MeditationTodayCard(),
+                    ],
                     const SizedBox(height: 130),
                   ],
                 ),

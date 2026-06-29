@@ -6,6 +6,7 @@ class AppTextField extends StatelessWidget {
   const AppTextField({
     super.key,
     required this.hintText,
+    this.labelText,
     this.controller,
     this.focusNode,
     this.keyboardType,
@@ -16,11 +17,13 @@ class AppTextField extends StatelessWidget {
     this.onChanged,
     this.onSubmitted,
     this.onEditingComplete,
+    this.onTapOutside,
     this.minLines,
     this.maxLines = 1,
   });
 
   final String hintText;
+  final String? labelText;
   final TextEditingController? controller;
   final FocusNode? focusNode;
   final TextInputType? keyboardType;
@@ -31,6 +34,7 @@ class AppTextField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted;
   final VoidCallback? onEditingComplete;
+  final TapRegionCallback? onTapOutside;
   final int? minLines;
   final int? maxLines;
 
@@ -51,9 +55,11 @@ class AppTextField extends StatelessWidget {
       onChanged: onChanged,
       onSubmitted: onSubmitted,
       onEditingComplete: onEditingComplete,
+      onTapOutside: onTapOutside,
       style: Theme.of(context).textTheme.bodyLarge,
       decoration: InputDecoration(
-        hintText: hintText,
+        labelText: labelText,
+        hintText: labelText == hintText ? null : hintText,
         prefixIcon: prefixIcon == null ? null : Icon(prefixIcon, color: muted),
         suffixIcon: suffixIcon,
       ),

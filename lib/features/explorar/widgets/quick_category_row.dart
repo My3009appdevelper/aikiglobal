@@ -5,22 +5,22 @@ import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_shadows.dart';
 import '../../../shared/widgets/app_category_chip.dart';
 
-enum QuickCategoryType { audios, meditations, courses, favorites }
+enum QuickCategoryType { meditations, audios, sounds, favorites }
 
 class QuickCategoryRow extends StatelessWidget {
   const QuickCategoryRow({
     super.key,
-    required this.audioCount,
     required this.meditationCount,
-    required this.courseCount,
+    required this.audioCount,
+    required this.soundCount,
     required this.favoriteCount,
     this.selectedType,
     this.onSelected,
   });
 
-  final int audioCount;
   final int meditationCount;
-  final int courseCount;
+  final int audioCount;
+  final int soundCount;
   final int favoriteCount;
   final QuickCategoryType? selectedType;
   final ValueChanged<QuickCategoryType>? onSelected;
@@ -56,27 +56,13 @@ class QuickCategoryRow extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: AppCategoryChip(
-              icon: Icons.graphic_eq_rounded,
-              label: 'Audios',
-              caption: _countLabel(audioCount, 'disponible', 'disponibles'),
-              color: _chipColor(
-                QuickCategoryType.audios,
-                primaryIconColor,
-                secondaryIconColor,
-              ),
-              foregroundColor: iconForeground,
-              onTap: () => onSelected?.call(QuickCategoryType.audios),
-            ),
-          ),
-          Expanded(
-            child: AppCategoryChip(
               icon: Icons.self_improvement_rounded,
               label: 'Meditaciones',
               caption: _countLabel(meditationCount, 'práctica', 'prácticas'),
               color: _chipColor(
                 QuickCategoryType.meditations,
-                secondaryIconColor,
                 primaryIconColor,
+                secondaryIconColor,
               ),
               foregroundColor: iconForeground,
               onTap: () => onSelected?.call(QuickCategoryType.meditations),
@@ -84,21 +70,35 @@ class QuickCategoryRow extends StatelessWidget {
           ),
           Expanded(
             child: AppCategoryChip(
-              icon: Icons.volunteer_activism_outlined,
-              label: 'Cursos',
-              caption: _countLabel(courseCount, 'ruta', 'rutas'),
+              icon: Icons.headphones_rounded,
+              label: 'Audios',
+              caption: _countLabel(audioCount, 'audio', 'audios'),
               color: _chipColor(
-                QuickCategoryType.courses,
-                primaryIconColor,
+                QuickCategoryType.audios,
                 secondaryIconColor,
+                primaryIconColor,
               ),
               foregroundColor: iconForeground,
-              onTap: () => onSelected?.call(QuickCategoryType.courses),
+              onTap: () => onSelected?.call(QuickCategoryType.audios),
             ),
           ),
           Expanded(
             child: AppCategoryChip(
-              icon: Icons.favorite_border_rounded,
+              icon: Icons.graphic_eq_rounded,
+              label: 'Sonidos',
+              caption: _countLabel(soundCount, 'sonido', 'sonidos'),
+              color: _chipColor(
+                QuickCategoryType.sounds,
+                primaryIconColor,
+                secondaryIconColor,
+              ),
+              foregroundColor: iconForeground,
+              onTap: () => onSelected?.call(QuickCategoryType.sounds),
+            ),
+          ),
+          Expanded(
+            child: AppCategoryChip(
+              icon: Icons.bookmark_border_rounded,
               label: 'Favoritos',
               caption: _countLabel(favoriteCount, 'guardado', 'guardados'),
               color: _chipColor(

@@ -219,7 +219,7 @@ class WellnessDailyLogsController extends ChangeNotifier {
     }
   }
 
-  Future<void> saveCheckIn({
+  Future<WellnessStreakChangeEvent?> saveCheckIn({
     required String uuidProfile,
     DateTime? date,
     String? mood,
@@ -231,7 +231,7 @@ class WellnessDailyLogsController extends ChangeNotifier {
   }) async {
     final cleanProfile = uuidProfile.trim();
     if (cleanProfile.isEmpty) {
-      return;
+      return null;
     }
 
     final fecha = _dateKey(date ?? DateTime.now());
@@ -261,8 +261,10 @@ class WellnessDailyLogsController extends ChangeNotifier {
       conexion: conexion,
       nota: nota,
     )) {
-      await _registerActivity(uuidProfile: cleanProfile, fecha: fecha);
+      return _registerActivity(uuidProfile: cleanProfile, fecha: fecha);
     }
+
+    return null;
   }
 
   Future<void> addWellnessMinutes({

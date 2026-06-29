@@ -18,6 +18,14 @@ class LocalMediaCache {
     return null;
   }
 
+  Future<String?> copyFile({
+    required String namespace,
+    required String remotePath,
+    required String localPath,
+  }) async {
+    return null;
+  }
+
   Future<bool> exists(String? localPath) async {
     return false;
   }

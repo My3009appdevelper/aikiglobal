@@ -9,6 +9,8 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/app_logo.dart';
 import '../../../shared/widgets/app_refresh_indicator.dart';
 import '../../../shared/widgets/app_responsive_container.dart';
+import '../../../shared/widgets/app_text_field.dart';
+import '../../../shared/widgets/my_image.dart';
 
 class AdminUsersPage extends StatefulWidget {
   const AdminUsersPage({super.key});
@@ -18,7 +20,16 @@ class AdminUsersPage extends StatefulWidget {
 }
 
 class _AdminUsersPageState extends State<AdminUsersPage> {
+  final _searchController = TextEditingController();
+  final _searchFocusNode = FocusNode();
   bool _initialized = false;
+
+  @override
+  void dispose() {
+    _searchFocusNode.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   void didChangeDependencies() {
@@ -35,9 +46,23 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
     return AppDataScope.adminProfiles(context).pullFromRemote();
   }
 
+  List<AppProfile> _filteredUsers(List<AppProfile> profiles) {
+    final query = _searchController.text.trim().toLowerCase();
+    if (query.isEmpty) {
+      return profiles;
+    }
+
+    return profiles
+        .where((profile) {
+          final name = (profile.nombre ?? '').toLowerCase();
+          final email = profile.email.toLowerCase();
+          return name.contains(query) || email.contains(query);
+        })
+        .toList(growable: false);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final currentProfile = AppDataScope.currentProfile(context).profile;
     final controller = AppDataScope.adminProfiles(context);
 
     return SafeArea(
@@ -46,7 +71,8 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
         child: AnimatedBuilder(
           animation: controller,
           builder: (context, _) {
-            final users = controller.profiles;
+            final users = _filteredUsers(controller.profiles);
+            final hasSearchQuery = _searchController.text.trim().isNotEmpty;
 
             return AppRefreshIndicator(
               onRefresh: _refresh,
@@ -65,13 +91,16 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
                           active: controller.activeUsers,
                         ),
                         const SizedBox(height: AppSpacing.lg),
-                        if (currentProfile != null) ...[
-                          _AdminUsersNotice(
-                            title: 'Administrador actual',
-                            body: currentProfile.nombre ?? currentProfile.email,
-                          ),
-                          const SizedBox(height: AppSpacing.md),
-                        ],
+                        AppTextField(
+                          controller: _searchController,
+                          focusNode: _searchFocusNode,
+                          hintText: 'Buscar por nombre o correo',
+                          prefixIcon: Icons.search_rounded,
+                          textInputAction: TextInputAction.search,
+                          onChanged: (_) => setState(() {}),
+                          onTapOutside: (_) => _searchFocusNode.unfocus(),
+                        ),
+                        const SizedBox(height: AppSpacing.md),
                         if (controller.isLoading || controller.isSyncing) ...[
                           const LinearProgressIndicator(minHeight: 2),
                           const SizedBox(height: AppSpacing.md),
@@ -82,7 +111,7 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
                             icon: Icons.warning_amber_rounded,
                             title: 'No se pudo cargar usuarios',
                             body:
-                                'Revisa tu conexi\u00f3n o permisos de administrador.',
+                                'Revisa tu conexión o permisos de administrador.',
                           ),
                           const SizedBox(height: AppSpacing.md),
                         ],
@@ -91,9 +120,12 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
                             !controller.isSyncing) ...[
                           _AdminUsersMessage(
                             icon: Icons.people_outline_rounded,
-                            title: 'A\u00fan no hay usuarios para mostrar',
-                            body:
-                                'Aparecer\u00e1n aqu\u00ed cuando haya perfiles activos en la base de datos.',
+                            title: hasSearchQuery
+                                ? 'No encontramos usuarios'
+                                : 'Aún no hay usuarios para mostrar',
+                            body: hasSearchQuery
+                                ? 'Intenta buscar por otro nombre o correo.'
+                                : 'Aparecerán aquí cuando haya perfiles activos en la base de datos.',
                           ),
                         ] else ...[
                           ...users.map(
@@ -201,49 +233,6 @@ class _AdminUsersStat extends StatelessWidget {
   }
 }
 
-class _AdminUsersNotice extends StatelessWidget {
-  const _AdminUsersNotice({required this.title, required this.body});
-
-  final String title;
-  final String body;
-
-  @override
-  Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final surface = brightness == Brightness.dark
-        ? AppColors.darkSurface
-        : AppColors.white;
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: surface.withValues(alpha: 0.9),
-        borderRadius: AppRadius.large,
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.admin_panel_settings_outlined,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: Theme.of(context).textTheme.titleSmall),
-                const SizedBox(height: 2),
-                Text(body, style: Theme.of(context).textTheme.bodySmall),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _AdminUserCard extends StatelessWidget {
   const _AdminUserCard({required this.profile, required this.streakDays});
 
@@ -255,7 +244,7 @@ class _AdminUserCard extends StatelessWidget {
     final name = _userDisplayName(profile);
     final email = profile.email;
     final roleLabel = profile.role.trim().toLowerCase() == 'admin'
-        ? 'Administrador'
+        ? 'Admin'
         : 'Usuario';
     final isActive = profile.activo;
 
@@ -275,76 +264,41 @@ class _AdminUserCard extends StatelessWidget {
         border: Border.all(color: stroke),
         boxShadow: AppShadows.soft(brightness),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Stack(
+        clipBehavior: Clip.none,
         children: [
-          _UserAvatar(label: name),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(name, style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: 4),
-                Text(
-                  email,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const SizedBox(height: 10),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _UserAvatar(profile: profile, label: name),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _SmallBadge(label: roleLabel),
-                    _SmallBadge(
-                      label: isActive ? 'Activo' : 'Inactivo',
-                      muted: !isActive,
+                    Text(name, style: Theme.of(context).textTheme.titleMedium),
+                    const SizedBox(height: 4),
+                    Text(
+                      email,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [_SmallBadge(label: roleLabel)],
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          Tooltip(
-            message: 'D\u00edas de racha',
-            child: Container(
-              width: 84,
-              height: 56,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: isActive
-                    ? Theme.of(
-                        context,
-                      ).colorScheme.primary.withValues(alpha: 0.12)
-                    : AppColors.textMuted.withValues(alpha: 0.12),
-                borderRadius: AppRadius.medium,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Racha',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    streakDays.toString(),
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    streakDays == 1 ? 'd\u00eda' : 'd\u00edas',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ],
-              ),
-            ),
+          Positioned(
+            top: -5,
+            right: -5,
+            child: _StreakCornerBadge(streakDays: streakDays, active: isActive),
           ),
         ],
       ),
@@ -352,20 +306,63 @@ class _AdminUserCard extends StatelessWidget {
   }
 }
 
-class _SmallBadge extends StatelessWidget {
-  const _SmallBadge({required this.label, this.muted = false});
+class _StreakCornerBadge extends StatelessWidget {
+  const _StreakCornerBadge({required this.streakDays, required this.active});
 
-  final String label;
-  final bool muted;
+  final int streakDays;
+  final bool active;
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final background = muted
-        ? (brightness == Brightness.dark
-              ? AppColors.darkSurfaceSoft
-              : AppColors.sandLight)
-        : Theme.of(context).colorScheme.primary.withValues(alpha: 0.12);
+    final color = active
+        ? Theme.of(context).colorScheme.primary
+        : AppColors.textMuted;
+
+    return Tooltip(
+      message: 'Días de racha',
+      child: Container(
+        constraints: const BoxConstraints(minWidth: 40),
+        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: AppRadius.full,
+          boxShadow: AppShadows.soft(Theme.of(context).brightness),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.local_fire_department_rounded,
+              size: 14,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+            const SizedBox(width: 3),
+            Text(
+              streakDays.toString(),
+              maxLines: 1,
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onPrimary,
+                fontWeight: FontWeight.w900,
+                height: 1,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SmallBadge extends StatelessWidget {
+  const _SmallBadge({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final background = Theme.of(
+      context,
+    ).colorScheme.primary.withValues(alpha: 0.12);
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -377,11 +374,7 @@ class _SmallBadge extends StatelessWidget {
         child: Text(
           label,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: muted
-                ? (brightness == Brightness.dark
-                      ? AppColors.darkTextMuted
-                      : AppColors.textSecondary)
-                : Theme.of(context).colorScheme.primary,
+            color: Theme.of(context).colorScheme.primary,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -436,30 +429,22 @@ class _AdminUsersMessage extends StatelessWidget {
 }
 
 class _UserAvatar extends StatelessWidget {
-  const _UserAvatar({required this.label});
+  const _UserAvatar({required this.profile, required this.label});
 
+  final AppProfile profile;
   final String label;
 
   @override
   Widget build(BuildContext context) {
-    final initials = label.isNotEmpty
-        ? label.characters.first.toUpperCase()
-        : '?';
-
     return Tooltip(
       message: label,
-      child: CircleAvatar(
-        radius: 24,
-        backgroundColor: Theme.of(
+      child: MyImage(
+        imagePath: _profilePhotoPath(profile),
+        initials: _initialsFor(profile),
+        resolveImageUrl: AppDataScope.currentProfile(
           context,
-        ).colorScheme.primary.withValues(alpha: 0.14),
-        child: Text(
-          initials,
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            color: Theme.of(context).colorScheme.primary,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
+        ).createProfilePhotoSignedUrl,
+        size: 48,
       ),
     );
   }
@@ -473,4 +458,39 @@ String _userDisplayName(AppProfile profile) {
 
   final emailPrefix = profile.email.split('@').first.trim();
   return emailPrefix.isEmpty ? 'Sin nombre' : emailPrefix;
+}
+
+String? _profilePhotoPath(AppProfile profile) {
+  final localPath = profile.fotoPathLocal?.trim();
+  if (localPath != null && localPath.isNotEmpty) {
+    return localPath;
+  }
+
+  final remotePath = profile.fotoPathSupabase?.trim();
+  if (remotePath != null && remotePath.isNotEmpty) {
+    return remotePath;
+  }
+
+  return null;
+}
+
+String _initialsFor(AppProfile profile) {
+  final source = profile.nombre?.trim().isNotEmpty == true
+      ? profile.nombre!.trim()
+      : profile.email.trim();
+  final parts = source
+      .split(RegExp(r'\s+'))
+      .where((part) => part.trim().isNotEmpty)
+      .toList();
+
+  if (parts.isEmpty) {
+    return 'A';
+  }
+
+  if (parts.length == 1) {
+    return parts.first.characters.first.toUpperCase();
+  }
+
+  return '${parts.first.characters.first}${parts.last.characters.first}'
+      .toUpperCase();
 }

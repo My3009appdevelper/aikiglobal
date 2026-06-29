@@ -151,6 +151,31 @@ class ContentItemsController extends ChangeNotifier {
     await _loadFromLocal(dao.getAllNotDeleted);
   }
 
+  Future<List<AppContentItem>> getPublishedSnapshot({String? tipo}) async {
+    final cleanTipo = _cleanNullableText(tipo);
+    final dao = _contentItemsDao;
+    if (dao != null) {
+      final localItems = await dao.getPublished(tipo: cleanTipo);
+      if (localItems.isNotEmpty || _contentItemsRemoteService == null) {
+        return _toAppItems(localItems);
+      }
+    }
+
+    final remoteService = _contentItemsRemoteService;
+    if (remoteService != null) {
+      final rows = await remoteService.getPublishedOnline(tipo: cleanTipo);
+      return List.unmodifiable(rows.map(contentItemRemoteToApp));
+    }
+
+    return List.unmodifiable(
+      _items.where((item) {
+        final matchesTipo =
+            cleanTipo == null || cleanTipo.isEmpty || item.tipo == cleanTipo;
+        return item.isPublished && matchesTipo;
+      }),
+    );
+  }
+
   Future<void> searchPublished(String query, {String? tipo}) async {
     _adminMode = false;
     _activeTipo = _cleanNullableText(tipo);

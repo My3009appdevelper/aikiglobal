@@ -214,20 +214,21 @@ class _WellnessCheckInSheetState extends State<WellnessCheckInSheet> {
     });
 
     try {
-      await AppDataScope.wellnessDailyLogs(context).saveCheckIn(
-        uuidProfile: widget.uuidProfile,
-        date: widget.date,
-        mood: _moodController.text,
-        energia: _energia,
-        calma: _calma,
-        descanso: _descanso,
-        conexion: _conexion,
-      );
+      final streakEvent = await AppDataScope.wellnessDailyLogs(context)
+          .saveCheckIn(
+            uuidProfile: widget.uuidProfile,
+            date: widget.date,
+            mood: _moodController.text,
+            energia: _energia,
+            calma: _calma,
+            descanso: _descanso,
+            conexion: _conexion,
+          );
 
       if (!mounted) {
         return;
       }
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(streakEvent);
     } catch (_) {
       if (!mounted) {
         return;

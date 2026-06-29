@@ -10,6 +10,7 @@ import '../../../core/data/media/content_media_duration_reader.dart';
 import '../../../core/data/models/app_content_item.dart';
 import '../../../core/data/models/app_content_media.dart';
 import '../../../core/data/models/content_media_file_metadata.dart';
+import '../../../core/data/models/content_media_upload_limits.dart';
 import '../../../core/data/models/pending_content_media_upload.dart';
 import '../../../core/data/providers/app_data_scope.dart';
 import '../../../core/theme/app_colors.dart';
@@ -20,6 +21,7 @@ import '../../../shared/widgets/app_background.dart';
 import '../../../shared/widgets/app_interactive.dart';
 import '../../../shared/widgets/app_primary_button.dart';
 import '../../../shared/widgets/app_responsive_container.dart';
+import '../../../shared/widgets/app_saving_overlay.dart';
 import '../../../shared/widgets/app_secondary_button.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/app_cover_image.dart';
@@ -46,7 +48,7 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
   final _orderController = TextEditingController();
   final _mediaDurationReader = const ContentMediaDurationReader();
 
-  String _type = 'course';
+  String _type = 'meditation';
   bool _featured = false;
   bool _downloadable = false;
   bool _isSaving = false;
@@ -90,7 +92,7 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
       return;
     }
 
-    _type = item.tipo;
+    _type = _contentTypeForForm(item.tipo);
     _featured = item.destacado;
     _downloadable = item.descargable;
     _titleController.text = item.titulo;
@@ -246,211 +248,201 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
     final contentMediaController = AppDataScope.contentMedia(context);
 
     return Scaffold(
-      body: AppBackground(
-        imageOpacity: 0.035,
-        child: SafeArea(
-          bottom: false,
-          child: AppResponsiveContainer(
-            child: CustomScrollView(
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 16, 0, 130),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _FormHeader(
-                          title: _isEditing
-                              ? 'Editar contenido'
-                              : 'Nuevo contenido',
-                          onBack: () => Navigator.of(context).pop(),
-                        ),
-                        const SizedBox(height: AppSpacing.lg),
-                        _CoverPickerCard(
-                          imagePath: _selectedCoverPath(),
-                          previewBytes: _coverPreviewBytes,
-                          onTap: _pickCover,
-                        ),
-                        const SizedBox(height: AppSpacing.lg),
-                        _FormCard(
-                          child: Column(
-                            children: [
-                              _DropdownField(
-                                label: 'Tipo',
-                                value: _type,
-                                items: _contentTypes,
-                                labelFor: _typeLabel,
-                                onChanged: (value) {
-                                  if (value != null) {
-                                    setState(() {
-                                      _type = value;
-                                      if (!contentMediaMetadataIsEditable(
-                                        value,
-                                      )) {
-                                        _mediaEdits.clear();
-                                      }
-                                    });
-                                  }
-                                },
-                              ),
-                              const SizedBox(height: AppSpacing.md),
-                              AppTextField(
-                                controller: _titleController,
-                                hintText: 'Título',
-                                prefixIcon: Icons.title_rounded,
-                                textInputAction: TextInputAction.next,
-                              ),
-                              const SizedBox(height: AppSpacing.md),
-                              AppTextField(
-                                controller: _subtitleController,
-                                hintText: 'Subtítulo',
-                                prefixIcon: Icons.notes_rounded,
-                                textInputAction: TextInputAction.next,
-                              ),
-                              const SizedBox(height: AppSpacing.md),
-                              AppTextField(
-                                controller: _descriptionController,
-                                hintText: 'Descripción',
-                                prefixIcon: Icons.description_outlined,
-                                minLines: 3,
-                                maxLines: 6,
-                              ),
-                              const SizedBox(height: AppSpacing.md),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: AppTextField(
-                                      controller: _durationController,
-                                      hintText: 'Duración en minutos',
-                                      prefixIcon: Icons.schedule_rounded,
-                                      keyboardType: TextInputType.number,
-                                      textInputAction: TextInputAction.next,
-                                    ),
-                                  ),
-                                  const SizedBox(width: AppSpacing.md),
-                                  Expanded(
-                                    child: AppTextField(
-                                      controller: _orderController,
-                                      hintText: 'Orden',
-                                      prefixIcon: Icons.sort_rounded,
-                                      keyboardType: TextInputType.number,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+      body: AppSavingOverlay(
+        isSaving: _isSaving,
+        child: AppBackground(
+          imageOpacity: 0.035,
+          child: SafeArea(
+            bottom: false,
+            child: AppResponsiveContainer(
+              child: CustomScrollView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 16, 0, 130),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _FormHeader(
+                            title: _isEditing
+                                ? 'Editar contenido'
+                                : 'Nuevo contenido',
+                            onBack: () => Navigator.of(context).pop(),
                           ),
-                        ),
-                        const SizedBox(height: AppSpacing.lg),
-                        _FormCard(
-                          child: Column(
-                            children: [
-                              _SwitchRow(
-                                title: 'Destacado',
-                                subtitle:
-                                    'Puede aparecer en espacios recomendados.',
-                                value: _featured,
-                                onChanged: (value) =>
-                                    setState(() => _featured = value),
-                              ),
-                              const SizedBox(height: AppSpacing.sm),
-                              _SwitchRow(
-                                title: 'Descargable',
-                                subtitle:
-                                    'Disponible para descarga cuando se conecte media.',
-                                value: _downloadable,
-                                onChanged: (value) =>
-                                    setState(() => _downloadable = value),
-                              ),
-                            ],
+                          const SizedBox(height: AppSpacing.lg),
+                          _CoverPickerCard(
+                            imagePath: _selectedCoverPath(),
+                            previewBytes: _coverPreviewBytes,
+                            onTap: _pickCover,
                           ),
-                        ),
-                        const SizedBox(height: AppSpacing.lg),
-                        AnimatedBuilder(
-                          animation: contentMediaController,
-                          builder: (context, _) {
-                            final mediaDraft = _mediaDraft(
-                              contentMediaController.items,
-                            );
-                            return _MediaFilesCard(
-                              items: mediaDraft.visiblePersistedMedia,
-                              pendingItems: mediaDraft.visiblePendingUploads,
-                              mediaEdits: _mediaEdits,
-                              metadataEditable: _mediaMetadataEditable,
-                              contentTitle: _titleController.text.trim(),
-                              contentDurationSeconds:
-                                  _contentDurationSecondsFromForm(),
-                              isLoading:
-                                  contentMediaController.isLoading ||
-                                  contentMediaController.isSyncing,
-                              onAdd: _isSaving ? null : _addMedia,
-                              onRemove: _isSaving ? null : _markMediaForRemoval,
-                              onMediaTitleChanged: _isSaving
-                                  ? null
-                                  : _updateExistingMediaTitle,
-                              onMediaDurationChanged: _isSaving
-                                  ? null
-                                  : _updateExistingMediaDuration,
-                              onRemovePending: _isSaving
-                                  ? null
-                                  : _removePendingMedia,
-                              onPendingTitleChanged: _isSaving
-                                  ? null
-                                  : _updatePendingMediaTitle,
-                              onPendingDurationChanged: _isSaving
-                                  ? null
-                                  : _updatePendingMediaDuration,
-                            );
-                          },
-                        ),
-                        if (_errorMessage != null) ...[
-                          const SizedBox(height: AppSpacing.md),
-                          Text(
-                            _errorMessage!,
-                            style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(
-                                  color: AppColors.danger,
-                                  fontWeight: FontWeight.w700,
+                          const SizedBox(height: AppSpacing.lg),
+                          _FormCard(
+                            child: Column(
+                              children: [
+                                _DropdownField(
+                                  label: 'Tipo',
+                                  value: _type,
+                                  items: _contentTypes,
+                                  labelFor: _typeLabel,
+                                  onChanged: (value) {
+                                    if (value != null) {
+                                      setState(() {
+                                        _type = value;
+                                        if (!contentMediaMetadataIsEditable(
+                                          value,
+                                        )) {
+                                          _mediaEdits.clear();
+                                        }
+                                      });
+                                    }
+                                  },
                                 ),
+                                const SizedBox(height: AppSpacing.md),
+                                AppTextField(
+                                  controller: _titleController,
+                                  hintText: 'Título',
+                                  labelText: 'Título',
+                                  prefixIcon: Icons.title_rounded,
+                                  textInputAction: TextInputAction.next,
+                                ),
+                                const SizedBox(height: AppSpacing.md),
+                                AppTextField(
+                                  controller: _subtitleController,
+                                  hintText: 'Subtítulo',
+                                  labelText: 'Subtítulo',
+                                  prefixIcon: Icons.notes_rounded,
+                                  textInputAction: TextInputAction.next,
+                                ),
+                                const SizedBox(height: AppSpacing.md),
+                                AppTextField(
+                                  controller: _descriptionController,
+                                  hintText: 'Descripción',
+                                  labelText: 'Descripción',
+                                  prefixIcon: Icons.description_outlined,
+                                  minLines: 3,
+                                  maxLines: 6,
+                                ),
+                                const SizedBox(height: AppSpacing.md),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: AppTextField(
+                                        controller: _durationController,
+                                        hintText: 'Duración en minutos',
+                                        prefixIcon: Icons.schedule_rounded,
+                                        keyboardType: TextInputType.number,
+                                        textInputAction: TextInputAction.next,
+                                      ),
+                                    ),
+                                    const SizedBox(width: AppSpacing.md),
+                                    Expanded(
+                                      child: AppTextField(
+                                        controller: _orderController,
+                                        hintText: 'Orden',
+                                        prefixIcon: Icons.sort_rounded,
+                                        keyboardType: TextInputType.number,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                        ],
-                        const SizedBox(height: AppSpacing.lg),
-                        AppPrimaryButton(
-                          label: _isSaving
-                              ? 'Guardando...'
-                              : (_isEditing
-                                    ? 'Guardar cambios'
-                                    : 'Guardar borrador'),
-                          icon: Icons.check_rounded,
-                          onPressed: _isSaving || !_hasChanges
-                              ? null
-                              : () => _save(_draftStatusForSave()),
-                        ),
-                        const SizedBox(height: AppSpacing.md),
-                        if (_isEditing && _isPublished) ...[
-                          AppSecondaryButton(
-                            label: 'Hacer borrador',
-                            icon: Icons.edit_note_rounded,
-                            onPressed: _isSaving ? null : () => _save('draft'),
+                          const SizedBox(height: AppSpacing.lg),
+                          _FormCard(
+                            child: Column(
+                              children: [
+                                _SwitchRow(
+                                  title: 'Destacado',
+                                  subtitle:
+                                      'Puede aparecer en espacios recomendados.',
+                                  value: _featured,
+                                  onChanged: (value) =>
+                                      setState(() => _featured = value),
+                                ),
+                                const SizedBox(height: AppSpacing.sm),
+                                _SwitchRow(
+                                  title: 'Descargable',
+                                  subtitle:
+                                      'Disponible para descarga cuando se conecte media.',
+                                  value: _downloadable,
+                                  onChanged: (value) =>
+                                      setState(() => _downloadable = value),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.lg),
+                          AnimatedBuilder(
+                            animation: contentMediaController,
+                            builder: (context, _) {
+                              final mediaDraft = _mediaDraft(
+                                contentMediaController.items,
+                              );
+                              return _MediaFilesCard(
+                                items: mediaDraft.visiblePersistedMedia,
+                                pendingItems: mediaDraft.visiblePendingUploads,
+                                mediaEdits: _mediaEdits,
+                                metadataEditable: _mediaMetadataEditable,
+                                contentTitle: _titleController.text.trim(),
+                                contentDurationSeconds:
+                                    _contentDurationSecondsFromForm(),
+                                onAdd: _isSaving ? null : _addMedia,
+                                onRemove: _isSaving
+                                    ? null
+                                    : _markMediaForRemoval,
+                                onMediaTitleChanged: _isSaving
+                                    ? null
+                                    : _updateExistingMediaTitle,
+                                onMediaDurationChanged: _isSaving
+                                    ? null
+                                    : _updateExistingMediaDuration,
+                                onRemovePending: _isSaving
+                                    ? null
+                                    : _removePendingMedia,
+                                onPendingTitleChanged: _isSaving
+                                    ? null
+                                    : _updatePendingMediaTitle,
+                                onPendingDurationChanged: _isSaving
+                                    ? null
+                                    : _updatePendingMediaDuration,
+                              );
+                            },
+                          ),
+                          if (_errorMessage != null) ...[
+                            const SizedBox(height: AppSpacing.md),
+                            Text(
+                              _errorMessage!,
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(
+                                    color: AppColors.danger,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                            ),
+                          ],
+                          const SizedBox(height: AppSpacing.lg),
+                          AppPrimaryButton(
+                            label: _isSaving
+                                ? 'Guardando...'
+                                : (_isEditing
+                                      ? 'Guardar cambios'
+                                      : 'Guardar borrador'),
+                            icon: Icons.check_rounded,
+                            onPressed: _isSaving || !_hasChanges
+                                ? null
+                                : () => _save(_draftStatusForSave()),
                           ),
                           const SizedBox(height: AppSpacing.md),
-                          AppSecondaryButton(
-                            label: 'Archivar',
-                            icon: Icons.archive_rounded,
-                            onPressed: _isSaving
-                                ? null
-                                : () => _save('archived'),
-                          ),
-                        ] else ...[
-                          AppSecondaryButton(
-                            label: 'Publicar',
-                            icon: Icons.publish_rounded,
-                            onPressed: _isSaving || !_canPublish
-                                ? null
-                                : () => _save('published'),
-                          ),
-                          if (_isEditing && !_isArchived) ...[
+                          if (_isEditing && _isPublished) ...[
+                            AppSecondaryButton(
+                              label: 'Hacer borrador',
+                              icon: Icons.edit_note_rounded,
+                              onPressed: _isSaving
+                                  ? null
+                                  : () => _save('draft'),
+                            ),
                             const SizedBox(height: AppSpacing.md),
                             AppSecondaryButton(
                               label: 'Archivar',
@@ -459,13 +451,31 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
                                   ? null
                                   : () => _save('archived'),
                             ),
+                          ] else ...[
+                            AppSecondaryButton(
+                              label: 'Publicar',
+                              icon: Icons.publish_rounded,
+                              onPressed: _isSaving || !_canPublish
+                                  ? null
+                                  : () => _save('published'),
+                            ),
+                            if (_isEditing && !_isArchived) ...[
+                              const SizedBox(height: AppSpacing.md),
+                              AppSecondaryButton(
+                                label: 'Archivar',
+                                icon: Icons.archive_rounded,
+                                onPressed: _isSaving
+                                    ? null
+                                    : () => _save('archived'),
+                              ),
+                            ],
                           ],
                         ],
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -506,6 +516,15 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
       return;
     }
 
+    final sizeError = validateContentMediaFileSize(
+      tipo: metadata.tipo,
+      sizeBytes: file.size,
+    );
+    if (sizeError != null) {
+      setState(() => _errorMessage = sizeError);
+      return;
+    }
+
     final localPath = file.path?.trim();
     final bytes = file.bytes;
     if ((localPath == null || localPath.isEmpty) &&
@@ -537,6 +556,7 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
           duracionSegundos: durationSeconds,
           localPath: localPath,
           bytes: bytes,
+          fileSizeBytes: file.size,
         ),
       );
       _errorMessage = null;
@@ -903,9 +923,12 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
     final mediaController = AppDataScope.contentMedia(context);
 
     for (final item in pendingMedia) {
-      final bytes = await item.readBytes();
-      if (bytes.isEmpty) {
-        throw StateError('El archivo seleccionado está vacío.');
+      Uint8List? bytes;
+      if (!item.hasLocalFileSource) {
+        bytes = await item.readBytes();
+        if (bytes.isEmpty) {
+          throw StateError('El archivo seleccionado está vacío.');
+        }
       }
       final metadata = contentMediaMetadataForSave(
         contentType: _type,
@@ -921,6 +944,7 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
         tipo: item.tipo,
         titulo: metadata.title,
         bytes: bytes,
+        localPath: item.cleanLocalPath,
         fileName: item.fileName,
         contentType: item.contentType,
         duracionSegundos: metadata.durationSeconds,
@@ -1100,7 +1124,7 @@ class _CoverPickerCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          'Selecciona una imagen para este contenido.',
+                          'Selecciona una imagen.',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context).textTheme.bodySmall
@@ -1169,7 +1193,6 @@ class _MediaFilesCard extends StatelessWidget {
     required this.metadataEditable,
     required this.contentTitle,
     required this.contentDurationSeconds,
-    required this.isLoading,
     required this.onAdd,
     required this.onRemove,
     required this.onMediaTitleChanged,
@@ -1185,7 +1208,6 @@ class _MediaFilesCard extends StatelessWidget {
   final bool metadataEditable;
   final String contentTitle;
   final int? contentDurationSeconds;
-  final bool isLoading;
   final VoidCallback? onAdd;
   final ValueChanged<AppContentMedia>? onRemove;
   final void Function(AppContentMedia item, String title)? onMediaTitleChanged;
@@ -1237,21 +1259,9 @@ class _MediaFilesCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'Archivos del contenido',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-              ),
-              if (isLoading)
-                const SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
-            ],
+          Text(
+            'Archivos del contenido',
+            style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 6),
           Text(
@@ -1702,14 +1712,12 @@ class _SwitchRow extends StatelessWidget {
   }
 }
 
-const _contentTypes = [
-  'course',
-  'meditation',
-  'audio',
-  'sound',
-  'event',
-  'session',
-];
+const _contentTypes = ['meditation', 'audio', 'sound', 'event'];
+
+String _contentTypeForForm(String tipo) {
+  final cleanType = tipo.trim().toLowerCase();
+  return _contentTypes.contains(cleanType) ? cleanType : 'meditation';
+}
 
 const _mediaEditableTextPadding = EdgeInsets.symmetric(
   horizontal: 12,

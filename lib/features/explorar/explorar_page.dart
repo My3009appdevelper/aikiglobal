@@ -31,11 +31,15 @@ class ExplorarPage extends StatefulWidget {
 
 class _ExplorarPageState extends State<ExplorarPage> {
   final _searchController = TextEditingController();
+  final _searchFocusNode = FocusNode();
+  Timer? _searchDebounce;
   QuickCategoryType? _selectedCategory;
   bool _isInitialized = false;
 
   @override
   void dispose() {
+    _searchDebounce?.cancel();
+    _searchFocusNode.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -84,6 +88,30 @@ class _ExplorarPageState extends State<ExplorarPage> {
     } else {
       await controller.searchPublished(query);
     }
+  }
+
+  void _onSearchChanged(String value) {
+    _searchDebounce?.cancel();
+    setState(() {});
+    _searchDebounce = Timer(const Duration(milliseconds: 280), () {
+      if (!mounted) {
+        return;
+      }
+      unawaited(_search(value));
+    });
+  }
+
+  void _submitSearch(String value) {
+    _searchDebounce?.cancel();
+    _searchFocusNode.unfocus();
+    unawaited(_search(value));
+  }
+
+  void _clearSearch() {
+    _searchDebounce?.cancel();
+    _searchController.clear();
+    setState(() {});
+    unawaited(_search(''));
   }
 
   void _selectCategory(QuickCategoryType type) {
@@ -150,10 +178,7 @@ class _ExplorarPageState extends State<ExplorarPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: AppSpacing.md),
-                        _ExploreHeader(
-                          controller: _searchController,
-                          onSubmitted: _search,
-                        ),
+                        const _ExploreHeader(),
                         if (contentController.adminMode) ...[
                           const SizedBox(height: AppSpacing.md),
                           const _AdminViewBanner(),
@@ -163,10 +188,19 @@ class _ExplorarPageState extends State<ExplorarPage> {
                           onTap: () => _openContent(context, data.heroItem),
                         ),
                         const SizedBox(height: AppSpacing.lg),
+                        _ExploreSearchBar(
+                          controller: _searchController,
+                          focusNode: _searchFocusNode,
+                          onChanged: _onSearchChanged,
+                          onSubmitted: _submitSearch,
+                          onClear: _clearSearch,
+                          onTapOutside: (_) => _searchFocusNode.unfocus(),
+                        ),
+                        const SizedBox(height: AppSpacing.lg),
                         QuickCategoryRow(
-                          audioCount: data.audios.length,
                           meditationCount: data.meditations.length,
-                          courseCount: data.courses.length,
+                          audioCount: data.audios.length,
+                          soundCount: data.sounds.length,
                           favoriteCount: data.favorites.length,
                           selectedType: _selectedCategory,
                           onSelected: _selectCategory,
@@ -187,10 +221,7 @@ class _ExplorarPageState extends State<ExplorarPage> {
                           AppSectionHeader(
                             title: 'Resultados',
                             actionLabel: 'Limpiar',
-                            onAction: () {
-                              _searchController.clear();
-                              _search('');
-                            },
+                            onAction: _clearSearch,
                           ),
                           const SizedBox(height: AppSpacing.md),
                           ContentHorizontalList(
@@ -233,8 +264,13 @@ class _ExplorarPageState extends State<ExplorarPage> {
                             onItemTap: (item) => _openContent(context, item),
                           ),
                           _Section(
-                            title: 'Audio y sonido',
+                            title: 'Audios',
                             items: data.audios,
+                            onItemTap: (item) => _openContent(context, item),
+                          ),
+                          _Section(
+                            title: 'Sonidos',
+                            items: data.sounds,
                             onItemTap: (item) => _openContent(context, item),
                           ),
                           _Section(
@@ -410,6 +446,7 @@ class _ExploreViewData {
     required this.meditations,
     required this.events,
     required this.audios,
+    required this.sounds,
     required this.favorites,
     required this.recommended,
     required this.searchResults,
@@ -431,6 +468,7 @@ class _ExploreViewData {
         meditations: [],
         events: [],
         audios: [],
+        sounds: [],
         favorites: [],
         recommended: [],
         searchResults: [],
@@ -455,7 +493,11 @@ class _ExploreViewData {
       events: const [],
       audios: _mapContentItemsByType(realItems, {
         'audio',
+      }, favoriteContentIds: favoriteContentIds),
+      sounds: _mapContentItemsByType(realItems, {
         'sound',
+        'ambient_sound',
+        'sonido',
       }, favoriteContentIds: favoriteContentIds),
       favorites: visualItems.where((item) => item.isFavorite).toList(),
       recommended: controller.featuredItems.isEmpty
@@ -478,7 +520,8 @@ class _ExploreViewData {
         courses: MockExploreData.courses,
         meditations: MockExploreData.meditations,
         events: MockExploreData.events,
-        audios: MockExploreData.audios,
+        audios: _mockAudios,
+        sounds: _mockSounds,
         favorites: _mockFavorites,
         recommended: MockExploreData.recommended,
         searchResults: MockExploreData.recommended,
@@ -490,7 +533,8 @@ class _ExploreViewData {
           ...MockExploreData.courses,
           ...MockExploreData.meditations,
           ...MockExploreData.events,
-          ...MockExploreData.audios,
+          ..._mockAudios,
+          ..._mockSounds,
         ].where((item) {
           return item.title.toLowerCase().contains(cleanQuery) ||
               item.type.toLowerCase().contains(cleanQuery) ||
@@ -502,6 +546,7 @@ class _ExploreViewData {
       meditations: const [],
       events: const [],
       audios: const [],
+      sounds: const [],
       favorites: const [],
       recommended: const [],
       searchResults: results,
@@ -512,6 +557,7 @@ class _ExploreViewData {
   final List<ContentItem> meditations;
   final List<ContentItem> events;
   final List<ContentItem> audios;
+  final List<ContentItem> sounds;
   final List<ContentItem> favorites;
   final List<ContentItem> recommended;
   final List<ContentItem> searchResults;
@@ -521,24 +567,25 @@ class _ExploreViewData {
       meditations.isNotEmpty ||
       events.isNotEmpty ||
       audios.isNotEmpty ||
+      sounds.isNotEmpty ||
       favorites.isNotEmpty ||
       recommended.isNotEmpty ||
       searchResults.isNotEmpty;
 
   List<ContentItem> itemsForCategory(QuickCategoryType type) {
     return switch (type) {
-      QuickCategoryType.audios => audios,
       QuickCategoryType.meditations => meditations,
-      QuickCategoryType.courses => courses,
+      QuickCategoryType.audios => audios,
+      QuickCategoryType.sounds => sounds,
       QuickCategoryType.favorites => favorites,
     };
   }
 
   String titleForCategory(QuickCategoryType type) {
     return switch (type) {
-      QuickCategoryType.audios => 'Audio y sonido',
       QuickCategoryType.meditations => 'Meditaciones',
-      QuickCategoryType.courses => 'Cursos',
+      QuickCategoryType.audios => 'Audios',
+      QuickCategoryType.sounds => 'Sonidos',
       QuickCategoryType.favorites => 'Favoritos',
     };
   }
@@ -595,9 +642,22 @@ class _ExploreViewData {
       ...MockExploreData.courses,
       ...MockExploreData.meditations,
       ...MockExploreData.events,
-      ...MockExploreData.audios,
+      ..._mockAudios,
+      ..._mockSounds,
       ...MockExploreData.recommended,
     ].where((item) => item.isFavorite).toList();
+  }
+
+  static List<ContentItem> get _mockAudios {
+    return MockExploreData.audios.where((item) {
+      return _normalizeType(item.type) == 'audio';
+    }).toList();
+  }
+
+  static List<ContentItem> get _mockSounds {
+    return MockExploreData.audios.where((item) {
+      return _normalizeType(item.type) == 'sonido';
+    }).toList();
   }
 
   static String _displayType(String value) {
@@ -605,7 +665,7 @@ class _ExploreViewData {
       'course' => 'Curso',
       'meditation' => 'Meditación',
       'event' => 'Evento',
-      'sound' => 'Sonido',
+      'ambient_sound' || 'sound' || 'sonido' => 'Sonido',
       'audio' => 'Audio',
       'session' => 'Sesión',
       _ => value,
@@ -698,48 +758,56 @@ class _ExploreViewData {
 }
 
 class _ExploreHeader extends StatelessWidget {
-  const _ExploreHeader({required this.controller, required this.onSubmitted});
-
-  final TextEditingController controller;
-  final ValueChanged<String> onSubmitted;
+  const _ExploreHeader();
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const AppLogo(width: 148),
-        const SizedBox(height: AppSpacing.md),
-        AppTextField(
-          hintText: 'Buscar',
-          controller: controller,
-          prefixIcon: Icons.search_rounded,
-          textInputAction: TextInputAction.search,
-          onSubmitted: onSubmitted,
-          onChanged: (value) {
-            if (value.trim().isEmpty) {
-              onSubmitted(value);
-            }
-          },
-          suffixIcon: ValueListenableBuilder<TextEditingValue>(
-            valueListenable: controller,
-            builder: (context, value, _) {
-              if (value.text.isEmpty) {
-                return const SizedBox.shrink();
-              }
+    return const AppLogo(width: 148);
+  }
+}
 
-              return IconButton(
-                tooltip: 'Limpiar búsqueda',
-                onPressed: () {
-                  controller.clear();
-                  onSubmitted('');
-                },
-                icon: const Icon(Icons.close_rounded),
-              );
-            },
-          ),
-        ),
-      ],
+class _ExploreSearchBar extends StatelessWidget {
+  const _ExploreSearchBar({
+    required this.controller,
+    required this.focusNode,
+    required this.onChanged,
+    required this.onSubmitted,
+    required this.onClear,
+    required this.onTapOutside,
+  });
+
+  final TextEditingController controller;
+  final FocusNode focusNode;
+  final ValueChanged<String> onChanged;
+  final ValueChanged<String> onSubmitted;
+  final VoidCallback onClear;
+  final TapRegionCallback onTapOutside;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppTextField(
+      hintText: 'Buscar',
+      controller: controller,
+      focusNode: focusNode,
+      prefixIcon: Icons.search_rounded,
+      textInputAction: TextInputAction.search,
+      onChanged: onChanged,
+      onSubmitted: onSubmitted,
+      onTapOutside: onTapOutside,
+      suffixIcon: ValueListenableBuilder<TextEditingValue>(
+        valueListenable: controller,
+        builder: (context, value, _) {
+          if (value.text.isEmpty) {
+            return const SizedBox.shrink();
+          }
+
+          return IconButton(
+            tooltip: 'Limpiar búsqueda',
+            onPressed: onClear,
+            icon: const Icon(Icons.close_rounded),
+          );
+        },
+      ),
     );
   }
 }

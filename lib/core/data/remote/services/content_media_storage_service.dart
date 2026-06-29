@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -8,6 +9,7 @@ class ContentMediaStorageService {
 
   static const bucket = 'content';
   static const signedUrlExpiresInSeconds = 60 * 60;
+  static const mediaCacheControlSeconds = '31536000';
 
   final SupabaseClient _supabase;
 
@@ -43,7 +45,8 @@ class ContentMediaStorageService {
   Future<String> uploadMedia({
     required String uuidContentItem,
     required String uuidContentMedia,
-    required Uint8List bytes,
+    Uint8List? bytes,
+    String? localPath,
     required String fileName,
     String? contentType,
   }) async {
@@ -52,21 +55,36 @@ class ContentMediaStorageService {
     if (cleanContentUuid.isEmpty || cleanMediaUuid.isEmpty) {
       throw StateError('No hay contenido válido para subir el archivo.');
     }
-    if (bytes.isEmpty) {
+    final cleanLocalPath = localPath?.trim();
+    final hasLocalFile = cleanLocalPath != null && cleanLocalPath.isNotEmpty;
+    final hasBytes = bytes != null && bytes.isNotEmpty;
+    if (!hasLocalFile && !hasBytes) {
       throw StateError('El archivo seleccionado está vacío.');
     }
 
     final safeContentType = _mediaContentTypeFor(fileName, contentType);
     final remotePath =
         '$cleanContentUuid/media/$cleanMediaUuid/${DateTime.now().millisecondsSinceEpoch}${_mediaExtensionFor(fileName, safeContentType)}';
+    final fileOptions = FileOptions(
+      upsert: false,
+      contentType: safeContentType,
+      cacheControl: mediaCacheControlSeconds,
+    );
 
-    await _supabase.storage
-        .from(bucket)
-        .uploadBinary(
-          remotePath,
-          bytes,
-          fileOptions: FileOptions(upsert: false, contentType: safeContentType),
-        );
+    if (hasLocalFile && contentMediaShouldUseFileUpload(safeContentType)) {
+      final file = File(cleanLocalPath);
+      if (!await file.exists()) {
+        throw StateError('No se pudo leer el archivo seleccionado.');
+      }
+      await _supabase.storage
+          .from(bucket)
+          .upload(remotePath, file, fileOptions: fileOptions);
+    } else {
+      final uploadBytes = bytes ?? await File(cleanLocalPath!).readAsBytes();
+      await _supabase.storage
+          .from(bucket)
+          .uploadBinary(remotePath, uploadBytes, fileOptions: fileOptions);
+    }
 
     return remotePath;
   }
@@ -210,4 +228,8 @@ String _mediaContentTypeFor(String fileName, String? contentType) {
   }
 
   return 'video/mp4';
+}
+
+bool contentMediaShouldUseFileUpload(String contentType) {
+  return contentType.trim().toLowerCase().startsWith('video/');
 }
