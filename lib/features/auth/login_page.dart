@@ -18,7 +18,7 @@ class LoginPage extends StatelessWidget {
     final brightness = Theme.of(context).brightness;
     final cardColor = brightness == Brightness.dark
         ? AppColors.darkSurface
-        : AppColors.white;
+        : AppColors.background;
 
     return Scaffold(
       resizeToAvoidBottomInset: true,

@@ -140,7 +140,7 @@ class _NotificationButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final surface = brightness == Brightness.dark
         ? AppColors.darkSurfaceSoft
-        : AppColors.white.withValues(alpha: 0.86);
+        : AppColors.background.withValues(alpha: 0.86);
     final iconColor = Theme.of(context).colorScheme.primary;
 
     return AppInteractive(
@@ -173,7 +173,7 @@ class _NotificationButton extends StatelessWidget {
                 width: 9,
                 height: 9,
                 decoration: const BoxDecoration(
-                  color: Color(0xFF718456),
+                  color: AppColors.primary,
                   shape: BoxShape.circle,
                 ),
               ),

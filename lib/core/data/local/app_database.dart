@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 
 import 'app_database_file.dart';
+import 'tables/company_info_table.dart';
 import 'tables/content_media_table.dart';
 import 'tables/content_items_table.dart';
 import 'tables/profiles_table.dart';
@@ -14,6 +15,7 @@ part 'app_database.g.dart';
 @DriftDatabase(
   tables: [
     ProfilesTable,
+    CompanyInfoTable,
     ContentItemsTable,
     ContentMediaTable,
     UserContentStatesTable,
@@ -29,7 +31,7 @@ class AppDatabase extends _$AppDatabase {
       );
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration {
@@ -41,6 +43,45 @@ class AppDatabase extends _$AppDatabase {
         }
         if (from < 3) {
           await m.alterTable(TableMigration(contentMediaTable));
+        }
+        if (from < 4) {
+          await m.createTable(companyInfoTable);
+        } else if (from < 5) {
+          await m.addColumn(companyInfoTable, companyInfoTable.textoEntrada);
+          await m.addColumn(companyInfoTable, companyInfoTable.significadoAiki);
+        }
+        if (from >= 4 && from < 6) {
+          await m.addColumn(companyInfoTable, companyInfoTable.heroTitulo);
+          await m.addColumn(companyInfoTable, companyInfoTable.heroSubtitulo);
+          await m.addColumn(companyInfoTable, companyInfoTable.heroImagePath);
+          await m.addColumn(
+            companyInfoTable,
+            companyInfoTable.mensajeFundadoresTitulo,
+          );
+          await m.addColumn(
+            companyInfoTable,
+            companyInfoTable.mensajeFundadoresTexto,
+          );
+          await m.addColumn(
+            companyInfoTable,
+            companyInfoTable.mensajeFundadoresImagePath1,
+          );
+          await m.addColumn(
+            companyInfoTable,
+            companyInfoTable.mensajeFundadoresImagePath2,
+          );
+          await m.addColumn(
+            companyInfoTable,
+            companyInfoTable.mensajeFundadoresImagePath3,
+          );
+          await m.addColumn(
+            companyInfoTable,
+            companyInfoTable.mensajeFundadoresImagePath4,
+          );
+          await m.addColumn(
+            companyInfoTable,
+            companyInfoTable.mensajeFundadoresImagePath5,
+          );
         }
       },
     );

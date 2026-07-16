@@ -167,7 +167,7 @@ class _AdminUsersHeader extends StatelessWidget {
     final brightness = Theme.of(context).brightness;
     final surface = brightness == Brightness.dark
         ? AppColors.darkSurface
-        : AppColors.white;
+        : AppColors.background;
     final stroke = brightness == Brightness.dark
         ? AppColors.darkStroke
         : AppColors.stroke;
@@ -251,7 +251,7 @@ class _AdminUserCard extends StatelessWidget {
     final brightness = Theme.of(context).brightness;
     final surface = brightness == Brightness.dark
         ? AppColors.darkSurface
-        : AppColors.white;
+        : AppColors.background;
     final stroke = brightness == Brightness.dark
         ? AppColors.darkStroke
         : AppColors.stroke;
@@ -399,7 +399,7 @@ class _AdminUsersMessage extends StatelessWidget {
     final brightness = Theme.of(context).brightness;
     final surface = brightness == Brightness.dark
         ? AppColors.darkSurface
-        : AppColors.white;
+        : AppColors.background;
 
     return Container(
       width: double.infinity,

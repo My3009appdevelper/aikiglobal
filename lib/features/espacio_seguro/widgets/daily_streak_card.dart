@@ -37,7 +37,7 @@ class DailyStreakCard extends StatelessWidget {
                   return const DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Color(0xFF4F5F35), Color(0xFF25311F)],
+                        colors: [AppColors.primaryDeep, AppColors.primary],
                       ),
                     ),
                   );
@@ -49,11 +49,11 @@ class DailyStreakCard extends StatelessWidget {
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                     colors: [
-                      const Color(
-                        0xFF40502B,
-                      ).withValues(alpha: isDark ? 0.96 : 0.9),
-                      const Color(0xFF40502B).withValues(alpha: 0.78),
-                      const Color(0xFF1D2718).withValues(alpha: 0.28),
+                      AppColors.primaryDeep.withValues(
+                        alpha: isDark ? 0.96 : 0.9,
+                      ),
+                      AppColors.primaryDeep.withValues(alpha: 0.78),
+                      AppColors.gold31,
                     ],
                   ),
                 ),

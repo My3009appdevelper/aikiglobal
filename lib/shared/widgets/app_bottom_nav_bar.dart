@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_shadows.dart';
 import 'app_interactive.dart';
@@ -32,12 +31,11 @@ class AppBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
+    final scheme = Theme.of(context).colorScheme;
     final background = brightness == Brightness.dark
-        ? AppColors.darkSurface
-        : AppColors.white;
-    final inactive = brightness == Brightness.dark
-        ? AppColors.darkTextMuted
-        : AppColors.primary;
+        ? scheme.surface
+        : scheme.surface;
+    final inactive = scheme.primary.withValues(alpha: 0.31);
 
     return SafeArea(
       top: false,
@@ -50,8 +48,8 @@ class AppBottomNavBar extends StatelessWidget {
             borderRadius: AppRadius.extraLarge,
             border: Border.all(
               color: brightness == Brightness.dark
-                  ? AppColors.darkStroke
-                  : AppColors.stroke,
+                  ? scheme.primary.withValues(alpha: 0.31)
+                  : scheme.secondary.withValues(alpha: 0.14),
             ),
             boxShadow: AppShadows.elevated(brightness),
           ),
@@ -89,9 +87,8 @@ class _NavButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedColor = Theme.of(context).brightness == Brightness.dark
-        ? AppColors.sand
-        : AppColors.primary;
+    final scheme = Theme.of(context).colorScheme;
+    final selectedColor = scheme.onSurface;
     final color = selected ? selectedColor : inactiveColor;
 
     return AppInteractive(

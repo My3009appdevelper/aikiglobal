@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
+import 'my_image_picker_permission_policy.dart';
 
 class MyImagePicker {
   const MyImagePicker._();
@@ -69,12 +71,103 @@ class MyImagePicker {
     if (source == null) {
       return null;
     }
+    if (!context.mounted) {
+      return null;
+    }
 
-    return ImagePicker().pickImage(
-      source: source,
-      maxWidth: 1200,
-      maxHeight: 1200,
-      imageQuality: 84,
+    final hasPermission = await _ensurePermission(context, source);
+    if (!hasPermission || !context.mounted) {
+      return null;
+    }
+
+    try {
+      return ImagePicker().pickImage(
+        source: source,
+        maxWidth: 1200,
+        maxHeight: 1200,
+        imageQuality: 84,
+      );
+    } catch (_) {
+      if (context.mounted) {
+        _showPermissionSnackBar(
+          context,
+          source == ImageSource.camera
+              ? 'No se pudo abrir la cámara.'
+              : 'No se pudo abrir la galería.',
+        );
+      }
+      return null;
+    }
+  }
+
+  static Future<bool> _ensurePermission(
+    BuildContext context,
+    ImageSource source,
+  ) async {
+    if (!imagePickerNeedsManualPermission(source, isWeb: kIsWeb)) {
+      return true;
+    }
+
+    final status = await Permission.camera.request();
+    if (status.isGranted || status.isLimited) {
+      return true;
+    }
+
+    if (!context.mounted) {
+      return false;
+    }
+
+    final shouldOpenSettings =
+        status.isPermanentlyDenied || status.isRestricted;
+    await _showPermissionDialog(
+      context,
+      title: 'Permiso de cámara',
+      message: shouldOpenSettings
+          ? 'Activa el permiso de cámara desde Ajustes para poder tomar una foto.'
+          : 'Necesitamos permiso de cámara para tomar una foto.',
+      actionLabel: shouldOpenSettings ? 'Abrir Ajustes' : 'Entendido',
+      onAction: shouldOpenSettings ? openAppSettings : null,
+    );
+
+    return false;
+  }
+
+  static void _showPermissionSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(behavior: SnackBarBehavior.floating, content: Text(message)),
+      );
+  }
+
+  static Future<void> _showPermissionDialog(
+    BuildContext context, {
+    required String title,
+    required String message,
+    required String actionLabel,
+    Future<bool> Function()? onAction,
+  }) {
+    return showDialog<void>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancelar'),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                onAction?.call();
+              },
+              child: Text(actionLabel),
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -30,7 +30,7 @@ class AppSecondaryButton extends StatelessWidget {
         : AppColors.stroke;
     final background = brightness == Brightness.dark
         ? AppColors.darkSurface
-        : AppColors.white;
+        : AppColors.background;
 
     final enabled = onPressed != null;
     final textStyle = Theme.of(context).textTheme.labelLarge?.copyWith(

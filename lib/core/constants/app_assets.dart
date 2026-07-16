@@ -12,6 +12,9 @@ class AppAssets {
   static const logoCompleteBlack = 'assets/images/logo_completo_negro.png';
   static const sloganPng = 'assets/images/slogan.png';
   static const sloganWebp = 'assets/images/slogan.webp';
+  static const companyMission = 'assets/images/mision.png';
+  static const companyVision = 'assets/images/vision.png';
+  static const companyPhilosophy = 'assets/images/filosofia.png';
 
   static const backgroundArchitecture =
       'assets/images/recursos/background1.png';
@@ -73,6 +76,9 @@ class AppAssets {
     logoCompleteColorWhiteLetters,
     logoCompleteWhite,
     logoCompleteBlack,
+    companyMission,
+    companyVision,
+    companyPhilosophy,
     backgroundArchitecture,
     backgroundGarden,
     backgroundTea,

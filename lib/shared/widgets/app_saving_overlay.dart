@@ -48,7 +48,7 @@ class _SavingBarrier extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final surface = brightness == Brightness.dark
         ? AppColors.darkSurface
-        : AppColors.white;
+        : AppColors.background;
     final muted = brightness == Brightness.dark
         ? AppColors.darkTextMuted
         : AppColors.textSecondary;
@@ -124,7 +124,7 @@ class _SavingBarrier extends StatelessWidget {
                       style: Theme.of(context).textTheme.headlineSmall
                           ?.copyWith(
                             color: scheme.onSurface,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w700,
                           ),
                     ),
                     if (detail != null && detail!.trim().isNotEmpty) ...[

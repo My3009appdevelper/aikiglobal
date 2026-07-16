@@ -7,7 +7,6 @@ import '../../core/constants/app_assets.dart';
 import '../../core/data/models/app_content_item.dart';
 import '../../core/data/providers/app_data_scope.dart';
 import '../../core/data/providers/content_items_controller.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../shared/widgets/app_logo.dart';
@@ -15,6 +14,7 @@ import '../../shared/widgets/app_refresh_indicator.dart';
 import '../../shared/widgets/app_responsive_container.dart';
 import '../../shared/widgets/app_section_header.dart';
 import '../../shared/widgets/app_text_field.dart';
+import '../empresa/company_info_page.dart';
 import 'content_detail_page.dart';
 import 'data/mock_explore_data.dart';
 import 'models/content_item.dart';
@@ -66,6 +66,12 @@ class _ExplorarPageState extends State<ExplorarPage> {
     Navigator.of(context).push(
       MaterialPageRoute<void>(builder: (_) => ContentDetailPage(item: item)),
     );
+  }
+
+  void _openCompanyInfo(BuildContext context) {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (_) => const CompanyInfoPage()));
   }
 
   Future<void> _search(String query) async {
@@ -184,9 +190,7 @@ class _ExplorarPageState extends State<ExplorarPage> {
                           const _AdminViewBanner(),
                         ],
                         const SizedBox(height: AppSpacing.lg),
-                        ExploreHeroCard(
-                          onTap: () => _openContent(context, data.heroItem),
-                        ),
+                        ExploreHeroCard(onTap: () => _openCompanyInfo(context)),
                         const SizedBox(height: AppSpacing.lg),
                         _ExploreSearchBar(
                           controller: _searchController,
@@ -277,6 +281,7 @@ class _ExplorarPageState extends State<ExplorarPage> {
                             title: 'Recomendados para ti',
                             items: data.recommended,
                             cardWidth: 172,
+                            showBadges: true,
                             onItemTap: (item) => _openContent(context, item),
                           ),
                         ],
@@ -300,12 +305,14 @@ class _Section extends StatelessWidget {
     required this.items,
     required this.onItemTap,
     this.cardWidth = 174,
+    this.showBadges = false,
   });
 
   final String title;
   final List<ContentItem> items;
   final ValueChanged<ContentItem> onItemTap;
   final double cardWidth;
+  final bool showBadges;
 
   @override
   Widget build(BuildContext context) {
@@ -326,6 +333,7 @@ class _Section extends StatelessWidget {
         ContentHorizontalList(
           items: items,
           cardWidth: cardWidth,
+          showBadges: showBadges,
           onItemTap: onItemTap,
         ),
       ],
@@ -404,22 +412,15 @@ class _AdminViewBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final surface = brightness == Brightness.dark
-        ? AppColors.darkSurface
-        : AppColors.sandLight;
+    final scheme = Theme.of(context).colorScheme;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: surface.withValues(alpha: 0.86),
+        color: scheme.surface.withValues(alpha: 0.86),
         borderRadius: AppRadius.medium,
-        border: Border.all(
-          color: brightness == Brightness.dark
-              ? AppColors.darkStroke
-              : AppColors.stroke,
-        ),
+        border: Border.all(color: scheme.onSurface.withValues(alpha: 0.14)),
       ),
       child: Row(
         children: [
@@ -588,14 +589,6 @@ class _ExploreViewData {
       QuickCategoryType.sounds => 'Sonidos',
       QuickCategoryType.favorites => 'Favoritos',
     };
-  }
-
-  ContentItem get heroItem {
-    return courses.isNotEmpty
-        ? courses.first
-        : recommended.isNotEmpty
-        ? recommended.first
-        : MockExploreData.courses.first;
   }
 
   static List<ContentItem> _mapContentItemsByType(
@@ -785,10 +778,13 @@ class _ExploreSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return AppTextField(
       hintText: 'Buscar',
       controller: controller,
       focusNode: focusNode,
+      fillColor: scheme.surface,
       prefixIcon: Icons.search_rounded,
       textInputAction: TextInputAction.search,
       onChanged: onChanged,

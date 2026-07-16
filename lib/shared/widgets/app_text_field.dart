@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_colors.dart';
-
 class AppTextField extends StatelessWidget {
   const AppTextField({
     super.key,
@@ -20,6 +18,7 @@ class AppTextField extends StatelessWidget {
     this.onTapOutside,
     this.minLines,
     this.maxLines = 1,
+    this.fillColor,
   });
 
   final String hintText;
@@ -37,12 +36,12 @@ class AppTextField extends StatelessWidget {
   final TapRegionCallback? onTapOutside;
   final int? minLines;
   final int? maxLines;
+  final Color? fillColor;
 
   @override
   Widget build(BuildContext context) {
-    final muted = Theme.of(context).brightness == Brightness.dark
-        ? AppColors.darkTextMuted
-        : AppColors.textMuted;
+    final scheme = Theme.of(context).colorScheme;
+    final muted = scheme.onSurface.withValues(alpha: 0.62);
 
     return TextField(
       controller: controller,
@@ -60,6 +59,7 @@ class AppTextField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: labelText,
         hintText: labelText == hintText ? null : hintText,
+        fillColor: fillColor,
         prefixIcon: prefixIcon == null ? null : Icon(prefixIcon, color: muted),
         suffixIcon: suffixIcon,
       ),

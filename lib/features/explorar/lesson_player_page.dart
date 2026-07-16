@@ -10,6 +10,7 @@ import '../../core/data/providers/app_data_scope.dart';
 import '../../core/data/providers/content_media_controller.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
+import '../../core/theme/app_typography.dart';
 import '../../shared/widgets/app_cover_image.dart';
 import '../../shared/widgets/app_interactive.dart';
 import '../../shared/widgets/app_logo.dart';
@@ -383,22 +384,6 @@ class _LessonPlayerPageState extends State<LessonPlayerPage> {
     await _prepareMedia(media, autoPlay: true);
   }
 
-  Future<void> _playAdjacent(int direction) async {
-    final items = playableContentMediaItems(
-      _mediaController?.items ?? const [],
-    );
-    final selectedUuid = _selectedMedia?.uuidContentMedia;
-    final index = items.indexWhere(
-      (item) => item.uuidContentMedia == selectedUuid,
-    );
-    final nextIndex = index + direction;
-    if (index < 0 || nextIndex < 0 || nextIndex >= items.length) {
-      return;
-    }
-
-    await _selectMedia(items[nextIndex]);
-  }
-
   Future<void> _togglePlayback() async {
     if (_isPreparing) {
       return;
@@ -451,11 +436,9 @@ class _LessonPlayerPageState extends State<LessonPlayerPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final titleColor = theme.colorScheme.onSurface;
-    final bodyColor = isDark
-        ? AppColors.darkTextMuted
-        : AppColors.textSecondary;
+    final scheme = theme.colorScheme;
+    final titleColor = scheme.onSurface;
+    final bodyColor = scheme.onSurface;
     final mediaController = _mediaController;
     final mediaItems = playableContentMediaItems(
       mediaController?.items ?? const [],
@@ -473,10 +456,6 @@ class _LessonPlayerPageState extends State<LessonPlayerPage> {
             (item) => item.uuidContentMedia == selectedMedia.uuidContentMedia,
           );
     final videoController = _videoController;
-    final canControl =
-        videoController != null &&
-        videoController.value.isInitialized &&
-        !_isPreparing;
     final isLoadingMedia =
         (mediaController?.isLoading ?? false) ||
         (mediaController?.isSyncing ?? false);
@@ -501,7 +480,7 @@ class _LessonPlayerPageState extends State<LessonPlayerPage> {
     );
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
+      backgroundColor: scheme.surface,
       body: Stack(
         children: [
           SafeArea(
@@ -536,6 +515,11 @@ class _LessonPlayerPageState extends State<LessonPlayerPage> {
                     canDarkenScreen: canDarkenScreen,
                     onStageTap: _handleStageTap,
                     onPlayPause: _togglePlayback,
+                    onSeek: _seekTo,
+                    onReplay10: () =>
+                        unawaited(_seekRelative(const Duration(seconds: -10))),
+                    onForward10: () =>
+                        unawaited(_seekRelative(const Duration(seconds: 10))),
                     onFullscreen: _openFullscreen,
                     onDarkenScreen: _enableAudioDarkScreen,
                   ),
@@ -548,7 +532,8 @@ class _LessonPlayerPageState extends State<LessonPlayerPage> {
                           mediaLabel,
                           style: Theme.of(context).textTheme.labelMedium
                               ?.copyWith(
-                                color: Theme.of(context).colorScheme.primary,
+                                fontFamily: AppTypography.displayFont,
+                                color: scheme.onSurface,
                               ),
                         ),
                         const SizedBox(height: 10),
@@ -566,55 +551,6 @@ class _LessonPlayerPageState extends State<LessonPlayerPage> {
                           ).textTheme.bodyLarge?.copyWith(color: bodyColor),
                         ),
                         const SizedBox(height: 24),
-                        _PlaybackProgress(
-                          controller: videoController,
-                          enabled: canControl,
-                          onChanged: _seekTo,
-                        ),
-                        const SizedBox(height: 22),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _PlayerIconButton(
-                              Icons.skip_previous_rounded,
-                              tooltip: 'Etapa anterior',
-                              enabled: showsMediaStages && selectedIndex > 0,
-                              onTap: () => unawaited(_playAdjacent(-1)),
-                            ),
-                            _PlayerIconButton(
-                              Icons.replay_10_rounded,
-                              tooltip: 'Retroceder 10 segundos',
-                              enabled: canControl,
-                              onTap: () => unawaited(
-                                _seekRelative(const Duration(seconds: -10)),
-                              ),
-                            ),
-                            _LargePlayButton(
-                              isPlaying:
-                                  videoController?.value.isPlaying ?? false,
-                              isLoading: _isPreparing,
-                              enabled: selectedMedia != null && !_isPreparing,
-                              onTap: () => unawaited(_togglePlayback()),
-                            ),
-                            _PlayerIconButton(
-                              Icons.forward_10_rounded,
-                              tooltip: 'Adelantar 10 segundos',
-                              enabled: canControl,
-                              onTap: () => unawaited(
-                                _seekRelative(const Duration(seconds: 10)),
-                              ),
-                            ),
-                            _PlayerIconButton(
-                              Icons.skip_next_rounded,
-                              tooltip: 'Siguiente etapa',
-                              enabled:
-                                  showsMediaStages &&
-                                  selectedIndex >= 0 &&
-                                  selectedIndex < mediaItems.length - 1,
-                              onTap: () => unawaited(_playAdjacent(1)),
-                            ),
-                          ],
-                        ),
                         if (showsMediaStages) ...[
                           const SizedBox(height: 34),
                           _PlayerMediaList(
@@ -653,6 +589,9 @@ class _PlaybackStage extends StatelessWidget {
     required this.canDarkenScreen,
     required this.onStageTap,
     required this.onPlayPause,
+    required this.onSeek,
+    required this.onReplay10,
+    required this.onForward10,
     required this.onFullscreen,
     required this.onDarkenScreen,
   });
@@ -667,12 +606,17 @@ class _PlaybackStage extends StatelessWidget {
   final bool canDarkenScreen;
   final VoidCallback onStageTap;
   final VoidCallback onPlayPause;
+  final ValueChanged<Duration> onSeek;
+  final VoidCallback onReplay10;
+  final VoidCallback onForward10;
   final VoidCallback onFullscreen;
   final VoidCallback onDarkenScreen;
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
     final videoController = controller;
     final canShowVideo =
         videoController != null &&
@@ -680,6 +624,12 @@ class _PlaybackStage extends StatelessWidget {
         _isVideoMedia(selectedMedia);
     final isPlaying = videoController?.value.isPlaying ?? false;
     final canOpenFullscreen = canShowVideo && playbackError == null;
+    final canControl =
+        videoController != null &&
+        videoController.value.isInitialized &&
+        !isPreparing;
+    final canShowBottomControls =
+        selectedMedia != null && playbackError == null;
 
     return AspectRatio(
       aspectRatio: 1.05,
@@ -707,7 +657,7 @@ class _PlaybackStage extends StatelessWidget {
                   context,
                 ).resolveCoverImageUrl,
                 fallback: Container(
-                  color: isDark ? AppColors.darkSurface : AppColors.sandLight,
+                  color: scheme.surface,
                   alignment: Alignment.center,
                   child: AppLogo(width: 146, light: isDark),
                 ),
@@ -724,27 +674,6 @@ class _PlaybackStage extends StatelessWidget {
                 ),
               ),
             ),
-            if (canOpenFullscreen || canDarkenScreen)
-              Positioned(
-                top: 16,
-                right: 16,
-                child: AnimatedOpacity(
-                  opacity: controlsVisible ? 1 : 0,
-                  duration: const Duration(milliseconds: 160),
-                  child: IgnorePointer(
-                    ignoring: !controlsVisible,
-                    child: _StageOverlayButton(
-                      icon: canOpenFullscreen
-                          ? Icons.fullscreen_rounded
-                          : Icons.dark_mode_rounded,
-                      tooltip: canOpenFullscreen
-                          ? 'Pantalla completa'
-                          : 'Oscurecer pantalla',
-                      onTap: canOpenFullscreen ? onFullscreen : onDarkenScreen,
-                    ),
-                  ),
-                ),
-              ),
             Center(
               child: AnimatedOpacity(
                 opacity: controlsVisible ? 1 : 0,
@@ -785,6 +714,30 @@ class _PlaybackStage extends StatelessWidget {
                 ),
               ),
             ),
+            if (canShowBottomControls)
+              Positioned(
+                left: 16,
+                right: 16,
+                bottom: 16,
+                child: AnimatedOpacity(
+                  opacity: controlsVisible ? 1 : 0,
+                  duration: const Duration(milliseconds: 160),
+                  child: IgnorePointer(
+                    ignoring: !controlsVisible,
+                    child: _StageBottomControls(
+                      controller: videoController,
+                      enabled: canControl,
+                      canOpenFullscreen: canOpenFullscreen,
+                      canDarkenScreen: canDarkenScreen,
+                      onSeek: onSeek,
+                      onReplay10: onReplay10,
+                      onForward10: onForward10,
+                      onFullscreen: onFullscreen,
+                      onDarkenScreen: onDarkenScreen,
+                    ),
+                  ),
+                ),
+              ),
             if (playbackError != null)
               Align(
                 alignment: Alignment.bottomCenter,
@@ -808,22 +761,101 @@ class _PlaybackStage extends StatelessWidget {
   }
 }
 
+class _StageBottomControls extends StatelessWidget {
+  const _StageBottomControls({
+    required this.controller,
+    required this.enabled,
+    required this.canOpenFullscreen,
+    required this.canDarkenScreen,
+    required this.onSeek,
+    required this.onReplay10,
+    required this.onForward10,
+    required this.onFullscreen,
+    required this.onDarkenScreen,
+  });
+
+  final VideoPlayerController? controller;
+  final bool enabled;
+  final bool canOpenFullscreen;
+  final bool canDarkenScreen;
+  final ValueChanged<Duration> onSeek;
+  final VoidCallback onReplay10;
+  final VoidCallback onForward10;
+  final VoidCallback onFullscreen;
+  final VoidCallback onDarkenScreen;
+
+  @override
+  Widget build(BuildContext context) {
+    final canShowCornerAction = canOpenFullscreen || canDarkenScreen;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _PlaybackProgress(
+          controller: controller,
+          enabled: enabled,
+          onChanged: onSeek,
+          activeColor: AppColors.white,
+          inactiveColor: AppColors.white.withValues(alpha: 0.30),
+          textColor: AppColors.white,
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            _StageOverlayButton(
+              icon: Icons.replay_10_rounded,
+              tooltip: 'Retroceder 10 segundos',
+              enabled: enabled,
+              onTap: onReplay10,
+            ),
+            const SizedBox(width: 10),
+            _StageOverlayButton(
+              icon: Icons.forward_10_rounded,
+              tooltip: 'Adelantar 10 segundos',
+              enabled: enabled,
+              onTap: onForward10,
+            ),
+            const Spacer(),
+            if (canShowCornerAction)
+              _StageOverlayButton(
+                icon: canOpenFullscreen
+                    ? Icons.fullscreen_rounded
+                    : Icons.dark_mode_rounded,
+                tooltip: canOpenFullscreen
+                    ? 'Pantalla completa'
+                    : 'Oscurecer pantalla',
+                onTap: canOpenFullscreen ? onFullscreen : onDarkenScreen,
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
 class _StageOverlayButton extends StatelessWidget {
   const _StageOverlayButton({
     required this.icon,
     required this.tooltip,
     required this.onTap,
+    this.enabled = true,
   });
 
   final IconData icon;
   final String tooltip;
   final VoidCallback onTap;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
+    final foreground = enabled
+        ? AppColors.white
+        : AppColors.white.withValues(alpha: 0.45);
+
     return AppInteractive(
       tooltip: tooltip,
       borderRadius: AppRadius.full,
+      enabled: enabled,
       hoverScale: 1,
       pressedScale: 1,
       onTap: onTap,
@@ -831,10 +863,10 @@ class _StageOverlayButton extends StatelessWidget {
         width: 46,
         height: 46,
         decoration: BoxDecoration(
-          color: AppColors.black.withValues(alpha: 0.34),
+          color: AppColors.black.withValues(alpha: enabled ? 0.34 : 0.18),
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, color: AppColors.white, size: 28),
+        child: Icon(icon, color: foreground, size: 28),
       ),
     );
   }
@@ -1185,14 +1217,26 @@ class _PlaybackProgress extends StatelessWidget {
     required this.controller,
     required this.enabled,
     required this.onChanged,
+    this.activeColor,
+    this.inactiveColor,
+    this.textColor,
   });
 
   final VideoPlayerController? controller;
   final bool enabled;
   final ValueChanged<Duration> onChanged;
+  final Color? activeColor;
+  final Color? inactiveColor;
+  final Color? textColor;
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final resolvedActiveColor = activeColor ?? scheme.primary;
+    final resolvedInactiveColor =
+        inactiveColor ?? scheme.primary.withValues(alpha: 0.24);
+    final resolvedTextColor = textColor ?? scheme.onSurface;
+
     final value = controller?.value;
     final duration = value?.duration ?? Duration.zero;
     final position = value?.position ?? Duration.zero;
@@ -1205,23 +1249,35 @@ class _PlaybackProgress extends StatelessWidget {
 
     return Column(
       children: [
-        Slider(
-          value: currentMilliseconds,
-          max: maxMilliseconds,
-          onChanged: enabled
-              ? (value) => onChanged(Duration(milliseconds: value.round()))
-              : null,
+        SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            activeTrackColor: resolvedActiveColor,
+            inactiveTrackColor: resolvedInactiveColor,
+            thumbColor: resolvedActiveColor,
+            overlayColor: resolvedActiveColor.withValues(alpha: 0.14),
+          ),
+          child: Slider(
+            value: currentMilliseconds,
+            max: maxMilliseconds,
+            onChanged: enabled
+                ? (value) => onChanged(Duration(milliseconds: value.round()))
+                : null,
+          ),
         ),
         Row(
           children: [
             Text(
               _formatClock(position),
-              style: Theme.of(context).textTheme.bodySmall,
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: resolvedTextColor),
             ),
             const Spacer(),
             Text(
               _formatClock(duration),
-              style: Theme.of(context).textTheme.bodySmall,
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: resolvedTextColor),
             ),
           ],
         ),
@@ -1245,6 +1301,9 @@ class _PlayerMediaList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
     if (items.isEmpty) {
       return _PlayerStatusMessage(
         text: isLoading
@@ -1256,7 +1315,13 @@ class _PlayerMediaList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Etapas del curso', style: Theme.of(context).textTheme.titleLarge),
+        Text(
+          'Etapas del curso',
+          style: theme.textTheme.titleLarge?.copyWith(
+            color: scheme.onSurface,
+            fontFamily: AppTypography.displayFont,
+          ),
+        ),
         const SizedBox(height: 12),
         for (final item in items)
           Padding(
@@ -1279,21 +1344,22 @@ class _PlayerStatusMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = isDark
-        ? AppColors.darkSurfaceSoft
-        : AppColors.white.withValues(alpha: 0.94);
-    final stroke = isDark ? AppColors.darkStroke : AppColors.stroke;
+    final scheme = Theme.of(context).colorScheme;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: surface,
+        color: scheme.surface,
         borderRadius: AppRadius.medium,
-        border: Border.all(color: stroke),
+        border: Border.all(color: scheme.onSurface.withValues(alpha: 0.14)),
       ),
-      child: Text(text, style: Theme.of(context).textTheme.bodyMedium),
+      child: Text(
+        text,
+        style: Theme.of(
+          context,
+        ).textTheme.bodyMedium?.copyWith(color: scheme.onSurface),
+      ),
     );
   }
 }
@@ -1311,17 +1377,14 @@ class _PlayerMediaTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     final surface = isSelected
-        ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.12)
-        : isDark
-        ? AppColors.darkSurfaceSoft
-        : AppColors.white.withValues(alpha: 0.94);
+        ? scheme.primary.withValues(alpha: 0.12)
+        : scheme.surface;
     final stroke = isSelected
-        ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.42)
-        : isDark
-        ? AppColors.darkStroke
-        : AppColors.stroke;
+        ? scheme.primary.withValues(alpha: 0.42)
+        : scheme.onSurface.withValues(alpha: 0.14);
 
     return AppInteractive(
       tooltip: 'Reproducir etapa',
@@ -1337,10 +1400,7 @@ class _PlayerMediaTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(
-              _mediaIcon(item),
-              color: Theme.of(context).colorScheme.primary,
-            ),
+            Icon(_mediaIcon(item), color: scheme.primary),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -1350,20 +1410,22 @@ class _PlayerMediaTile extends StatelessWidget {
                     _mediaTitle(item),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleMedium,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: scheme.onSurface,
+                      fontFamily: AppTypography.displayFont,
+                    ),
                   ),
                   Text(
                     contentMediaSubtitle(item),
-                    style: Theme.of(context).textTheme.bodySmall,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: scheme.onSurface.withValues(alpha: 0.76),
+                    ),
                   ),
                 ],
               ),
             ),
             if (isSelected)
-              Icon(
-                Icons.equalizer_rounded,
-                color: Theme.of(context).colorScheme.primary,
-              ),
+              Icon(Icons.equalizer_rounded, color: scheme.primary),
           ],
         ),
       ),
@@ -1380,11 +1442,7 @@ class _CircleIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final background = isDark
-        ? AppColors.black.withValues(alpha: 0.25)
-        : AppColors.sandLight.withValues(alpha: 0.95);
-    final iconColor = isDark ? AppColors.white : AppColors.primaryDeep;
+    final scheme = Theme.of(context).colorScheme;
 
     return AppInteractive(
       tooltip: tooltip,
@@ -1395,97 +1453,11 @@ class _CircleIcon extends StatelessWidget {
       child: Container(
         width: 52,
         height: 52,
-        decoration: BoxDecoration(color: background, shape: BoxShape.circle),
-        child: Icon(icon, color: iconColor),
-      ),
-    );
-  }
-}
-
-class _PlayerIconButton extends StatelessWidget {
-  const _PlayerIconButton(
-    this.icon, {
-    required this.tooltip,
-    required this.enabled,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String tooltip;
-  final bool enabled;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = Theme.of(context).brightness == Brightness.dark
-        ? AppColors.white
-        : AppColors.primaryDeep;
-
-    return AppInteractive(
-      tooltip: tooltip,
-      borderRadius: AppRadius.full,
-      enabled: enabled,
-      hoverScale: 1,
-      pressedScale: 1,
-      onTap: onTap,
-      child: SizedBox.square(
-        dimension: 46,
-        child: Icon(
-          icon,
-          color: enabled ? color : color.withValues(alpha: 0.32),
-          size: 34,
-        ),
-      ),
-    );
-  }
-}
-
-class _LargePlayButton extends StatelessWidget {
-  const _LargePlayButton({
-    required this.isPlaying,
-    required this.isLoading,
-    required this.enabled,
-    required this.onTap,
-  });
-
-  final bool isPlaying;
-  final bool isLoading;
-  final bool enabled;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
-    return AppInteractive(
-      tooltip: isPlaying ? 'Pausar' : 'Reproducir',
-      borderRadius: AppRadius.full,
-      enabled: enabled,
-      hoverScale: 1,
-      pressedScale: 1,
-      onTap: onTap,
-      child: Container(
-        width: 82,
-        height: 82,
         decoration: BoxDecoration(
-          color: enabled
-              ? scheme.primary
-              : scheme.primary.withValues(alpha: 0.38),
+          color: scheme.surface,
           shape: BoxShape.circle,
         ),
-        child: isLoading
-            ? Padding(
-                padding: const EdgeInsets.all(26),
-                child: CircularProgressIndicator(
-                  strokeWidth: 3,
-                  color: scheme.onPrimary,
-                ),
-              )
-            : Icon(
-                isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                color: scheme.onPrimary,
-                size: 48,
-              ),
+        child: Icon(icon, color: scheme.onSurface),
       ),
     );
   }

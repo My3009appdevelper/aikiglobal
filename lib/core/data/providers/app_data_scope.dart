@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 
 import 'app_data_container.dart';
 import 'admin_profiles_controller.dart';
+import 'company_info_controller.dart';
 import 'content_media_controller.dart';
 import 'content_items_controller.dart';
 import 'current_profile_controller.dart';
@@ -30,6 +31,10 @@ class AppDataScope extends StatefulWidget {
 
   static AdminProfilesController adminProfiles(BuildContext context) {
     return of(context).adminProfilesController;
+  }
+
+  static CompanyInfoController companyInfo(BuildContext context) {
+    return of(context).companyInfoController;
   }
 
   static ContentItemsController contentItems(BuildContext context) {

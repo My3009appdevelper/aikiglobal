@@ -786,6 +786,1340 @@ class ProfilesTableCompanion extends UpdateCompanion<LocalProfile> {
   }
 }
 
+class $CompanyInfoTableTable extends CompanyInfoTable
+    with TableInfo<$CompanyInfoTableTable, LocalCompanyInfo> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CompanyInfoTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _uuidCompanyInfoMeta = const VerificationMeta(
+    'uuidCompanyInfo',
+  );
+  @override
+  late final GeneratedColumn<String> uuidCompanyInfo = GeneratedColumn<String>(
+    'uuid_company_info',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _slugMeta = const VerificationMeta('slug');
+  @override
+  late final GeneratedColumn<String> slug = GeneratedColumn<String>(
+    'slug',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+    defaultValue: const Constant('main'),
+  );
+  static const VerificationMeta _heroTituloMeta = const VerificationMeta(
+    'heroTitulo',
+  );
+  @override
+  late final GeneratedColumn<String> heroTitulo = GeneratedColumn<String>(
+    'hero_titulo',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _heroSubtituloMeta = const VerificationMeta(
+    'heroSubtitulo',
+  );
+  @override
+  late final GeneratedColumn<String> heroSubtitulo = GeneratedColumn<String>(
+    'hero_subtitulo',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _heroImagePathMeta = const VerificationMeta(
+    'heroImagePath',
+  );
+  @override
+  late final GeneratedColumn<String> heroImagePath = GeneratedColumn<String>(
+    'hero_image_path',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _textoEntradaMeta = const VerificationMeta(
+    'textoEntrada',
+  );
+  @override
+  late final GeneratedColumn<String> textoEntrada = GeneratedColumn<String>(
+    'texto_entrada',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _quienesSomosMeta = const VerificationMeta(
+    'quienesSomos',
+  );
+  @override
+  late final GeneratedColumn<String> quienesSomos = GeneratedColumn<String>(
+    'quienes_somos',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _significadoAikiMeta = const VerificationMeta(
+    'significadoAiki',
+  );
+  @override
+  late final GeneratedColumn<String> significadoAiki = GeneratedColumn<String>(
+    'significado_aiki',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _misionMeta = const VerificationMeta('mision');
+  @override
+  late final GeneratedColumn<String> mision = GeneratedColumn<String>(
+    'mision',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _visionMeta = const VerificationMeta('vision');
+  @override
+  late final GeneratedColumn<String> vision = GeneratedColumn<String>(
+    'vision',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _filosofiaMeta = const VerificationMeta(
+    'filosofia',
+  );
+  @override
+  late final GeneratedColumn<String> filosofia = GeneratedColumn<String>(
+    'filosofia',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _mensajeFundadoresTituloMeta =
+      const VerificationMeta('mensajeFundadoresTitulo');
+  @override
+  late final GeneratedColumn<String> mensajeFundadoresTitulo =
+      GeneratedColumn<String>(
+        'mensaje_fundadores_titulo',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant(''),
+      );
+  static const VerificationMeta _mensajeFundadoresTextoMeta =
+      const VerificationMeta('mensajeFundadoresTexto');
+  @override
+  late final GeneratedColumn<String> mensajeFundadoresTexto =
+      GeneratedColumn<String>(
+        'mensaje_fundadores_texto',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant(''),
+      );
+  static const VerificationMeta _mensajeFundadoresImagePath1Meta =
+      const VerificationMeta('mensajeFundadoresImagePath1');
+  @override
+  late final GeneratedColumn<String> mensajeFundadoresImagePath1 =
+      GeneratedColumn<String>(
+        'mensaje_fundadores_image_path1',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _mensajeFundadoresImagePath2Meta =
+      const VerificationMeta('mensajeFundadoresImagePath2');
+  @override
+  late final GeneratedColumn<String> mensajeFundadoresImagePath2 =
+      GeneratedColumn<String>(
+        'mensaje_fundadores_image_path2',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _mensajeFundadoresImagePath3Meta =
+      const VerificationMeta('mensajeFundadoresImagePath3');
+  @override
+  late final GeneratedColumn<String> mensajeFundadoresImagePath3 =
+      GeneratedColumn<String>(
+        'mensaje_fundadores_image_path3',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _mensajeFundadoresImagePath4Meta =
+      const VerificationMeta('mensajeFundadoresImagePath4');
+  @override
+  late final GeneratedColumn<String> mensajeFundadoresImagePath4 =
+      GeneratedColumn<String>(
+        'mensaje_fundadores_image_path4',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _mensajeFundadoresImagePath5Meta =
+      const VerificationMeta('mensajeFundadoresImagePath5');
+  @override
+  late final GeneratedColumn<String> mensajeFundadoresImagePath5 =
+      GeneratedColumn<String>(
+        'mensaje_fundadores_image_path5',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    uuidCompanyInfo,
+    slug,
+    heroTitulo,
+    heroSubtitulo,
+    heroImagePath,
+    textoEntrada,
+    quienesSomos,
+    significadoAiki,
+    mision,
+    vision,
+    filosofia,
+    mensajeFundadoresTitulo,
+    mensajeFundadoresTexto,
+    mensajeFundadoresImagePath1,
+    mensajeFundadoresImagePath2,
+    mensajeFundadoresImagePath3,
+    mensajeFundadoresImagePath4,
+    mensajeFundadoresImagePath5,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    syncedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'local_company_info';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocalCompanyInfo> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('uuid_company_info')) {
+      context.handle(
+        _uuidCompanyInfoMeta,
+        uuidCompanyInfo.isAcceptableOrUnknown(
+          data['uuid_company_info']!,
+          _uuidCompanyInfoMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_uuidCompanyInfoMeta);
+    }
+    if (data.containsKey('slug')) {
+      context.handle(
+        _slugMeta,
+        slug.isAcceptableOrUnknown(data['slug']!, _slugMeta),
+      );
+    }
+    if (data.containsKey('hero_titulo')) {
+      context.handle(
+        _heroTituloMeta,
+        heroTitulo.isAcceptableOrUnknown(data['hero_titulo']!, _heroTituloMeta),
+      );
+    }
+    if (data.containsKey('hero_subtitulo')) {
+      context.handle(
+        _heroSubtituloMeta,
+        heroSubtitulo.isAcceptableOrUnknown(
+          data['hero_subtitulo']!,
+          _heroSubtituloMeta,
+        ),
+      );
+    }
+    if (data.containsKey('hero_image_path')) {
+      context.handle(
+        _heroImagePathMeta,
+        heroImagePath.isAcceptableOrUnknown(
+          data['hero_image_path']!,
+          _heroImagePathMeta,
+        ),
+      );
+    }
+    if (data.containsKey('texto_entrada')) {
+      context.handle(
+        _textoEntradaMeta,
+        textoEntrada.isAcceptableOrUnknown(
+          data['texto_entrada']!,
+          _textoEntradaMeta,
+        ),
+      );
+    }
+    if (data.containsKey('quienes_somos')) {
+      context.handle(
+        _quienesSomosMeta,
+        quienesSomos.isAcceptableOrUnknown(
+          data['quienes_somos']!,
+          _quienesSomosMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_quienesSomosMeta);
+    }
+    if (data.containsKey('significado_aiki')) {
+      context.handle(
+        _significadoAikiMeta,
+        significadoAiki.isAcceptableOrUnknown(
+          data['significado_aiki']!,
+          _significadoAikiMeta,
+        ),
+      );
+    }
+    if (data.containsKey('mision')) {
+      context.handle(
+        _misionMeta,
+        mision.isAcceptableOrUnknown(data['mision']!, _misionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_misionMeta);
+    }
+    if (data.containsKey('vision')) {
+      context.handle(
+        _visionMeta,
+        vision.isAcceptableOrUnknown(data['vision']!, _visionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_visionMeta);
+    }
+    if (data.containsKey('filosofia')) {
+      context.handle(
+        _filosofiaMeta,
+        filosofia.isAcceptableOrUnknown(data['filosofia']!, _filosofiaMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_filosofiaMeta);
+    }
+    if (data.containsKey('mensaje_fundadores_titulo')) {
+      context.handle(
+        _mensajeFundadoresTituloMeta,
+        mensajeFundadoresTitulo.isAcceptableOrUnknown(
+          data['mensaje_fundadores_titulo']!,
+          _mensajeFundadoresTituloMeta,
+        ),
+      );
+    }
+    if (data.containsKey('mensaje_fundadores_texto')) {
+      context.handle(
+        _mensajeFundadoresTextoMeta,
+        mensajeFundadoresTexto.isAcceptableOrUnknown(
+          data['mensaje_fundadores_texto']!,
+          _mensajeFundadoresTextoMeta,
+        ),
+      );
+    }
+    if (data.containsKey('mensaje_fundadores_image_path1')) {
+      context.handle(
+        _mensajeFundadoresImagePath1Meta,
+        mensajeFundadoresImagePath1.isAcceptableOrUnknown(
+          data['mensaje_fundadores_image_path1']!,
+          _mensajeFundadoresImagePath1Meta,
+        ),
+      );
+    }
+    if (data.containsKey('mensaje_fundadores_image_path2')) {
+      context.handle(
+        _mensajeFundadoresImagePath2Meta,
+        mensajeFundadoresImagePath2.isAcceptableOrUnknown(
+          data['mensaje_fundadores_image_path2']!,
+          _mensajeFundadoresImagePath2Meta,
+        ),
+      );
+    }
+    if (data.containsKey('mensaje_fundadores_image_path3')) {
+      context.handle(
+        _mensajeFundadoresImagePath3Meta,
+        mensajeFundadoresImagePath3.isAcceptableOrUnknown(
+          data['mensaje_fundadores_image_path3']!,
+          _mensajeFundadoresImagePath3Meta,
+        ),
+      );
+    }
+    if (data.containsKey('mensaje_fundadores_image_path4')) {
+      context.handle(
+        _mensajeFundadoresImagePath4Meta,
+        mensajeFundadoresImagePath4.isAcceptableOrUnknown(
+          data['mensaje_fundadores_image_path4']!,
+          _mensajeFundadoresImagePath4Meta,
+        ),
+      );
+    }
+    if (data.containsKey('mensaje_fundadores_image_path5')) {
+      context.handle(
+        _mensajeFundadoresImagePath5Meta,
+        mensajeFundadoresImagePath5.isAcceptableOrUnknown(
+          data['mensaje_fundadores_image_path5']!,
+          _mensajeFundadoresImagePath5Meta,
+        ),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {uuidCompanyInfo};
+  @override
+  LocalCompanyInfo map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalCompanyInfo(
+      uuidCompanyInfo: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid_company_info'],
+      )!,
+      slug: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}slug'],
+      )!,
+      heroTitulo: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}hero_titulo'],
+      )!,
+      heroSubtitulo: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}hero_subtitulo'],
+      )!,
+      heroImagePath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}hero_image_path'],
+      ),
+      textoEntrada: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}texto_entrada'],
+      )!,
+      quienesSomos: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}quienes_somos'],
+      )!,
+      significadoAiki: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}significado_aiki'],
+      )!,
+      mision: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mision'],
+      )!,
+      vision: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}vision'],
+      )!,
+      filosofia: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}filosofia'],
+      )!,
+      mensajeFundadoresTitulo: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mensaje_fundadores_titulo'],
+      )!,
+      mensajeFundadoresTexto: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mensaje_fundadores_texto'],
+      )!,
+      mensajeFundadoresImagePath1: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mensaje_fundadores_image_path1'],
+      ),
+      mensajeFundadoresImagePath2: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mensaje_fundadores_image_path2'],
+      ),
+      mensajeFundadoresImagePath3: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mensaje_fundadores_image_path3'],
+      ),
+      mensajeFundadoresImagePath4: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mensaje_fundadores_image_path4'],
+      ),
+      mensajeFundadoresImagePath5: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mensaje_fundadores_image_path5'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
+    );
+  }
+
+  @override
+  $CompanyInfoTableTable createAlias(String alias) {
+    return $CompanyInfoTableTable(attachedDatabase, alias);
+  }
+}
+
+class LocalCompanyInfo extends DataClass
+    implements Insertable<LocalCompanyInfo> {
+  final String uuidCompanyInfo;
+  final String slug;
+  final String heroTitulo;
+  final String heroSubtitulo;
+  final String? heroImagePath;
+  final String textoEntrada;
+  final String quienesSomos;
+  final String significadoAiki;
+  final String mision;
+  final String vision;
+  final String filosofia;
+  final String mensajeFundadoresTitulo;
+  final String mensajeFundadoresTexto;
+  final String? mensajeFundadoresImagePath1;
+  final String? mensajeFundadoresImagePath2;
+  final String? mensajeFundadoresImagePath3;
+  final String? mensajeFundadoresImagePath4;
+  final String? mensajeFundadoresImagePath5;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
+  final DateTime? syncedAt;
+  const LocalCompanyInfo({
+    required this.uuidCompanyInfo,
+    required this.slug,
+    required this.heroTitulo,
+    required this.heroSubtitulo,
+    this.heroImagePath,
+    required this.textoEntrada,
+    required this.quienesSomos,
+    required this.significadoAiki,
+    required this.mision,
+    required this.vision,
+    required this.filosofia,
+    required this.mensajeFundadoresTitulo,
+    required this.mensajeFundadoresTexto,
+    this.mensajeFundadoresImagePath1,
+    this.mensajeFundadoresImagePath2,
+    this.mensajeFundadoresImagePath3,
+    this.mensajeFundadoresImagePath4,
+    this.mensajeFundadoresImagePath5,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+    this.syncedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['uuid_company_info'] = Variable<String>(uuidCompanyInfo);
+    map['slug'] = Variable<String>(slug);
+    map['hero_titulo'] = Variable<String>(heroTitulo);
+    map['hero_subtitulo'] = Variable<String>(heroSubtitulo);
+    if (!nullToAbsent || heroImagePath != null) {
+      map['hero_image_path'] = Variable<String>(heroImagePath);
+    }
+    map['texto_entrada'] = Variable<String>(textoEntrada);
+    map['quienes_somos'] = Variable<String>(quienesSomos);
+    map['significado_aiki'] = Variable<String>(significadoAiki);
+    map['mision'] = Variable<String>(mision);
+    map['vision'] = Variable<String>(vision);
+    map['filosofia'] = Variable<String>(filosofia);
+    map['mensaje_fundadores_titulo'] = Variable<String>(
+      mensajeFundadoresTitulo,
+    );
+    map['mensaje_fundadores_texto'] = Variable<String>(mensajeFundadoresTexto);
+    if (!nullToAbsent || mensajeFundadoresImagePath1 != null) {
+      map['mensaje_fundadores_image_path1'] = Variable<String>(
+        mensajeFundadoresImagePath1,
+      );
+    }
+    if (!nullToAbsent || mensajeFundadoresImagePath2 != null) {
+      map['mensaje_fundadores_image_path2'] = Variable<String>(
+        mensajeFundadoresImagePath2,
+      );
+    }
+    if (!nullToAbsent || mensajeFundadoresImagePath3 != null) {
+      map['mensaje_fundadores_image_path3'] = Variable<String>(
+        mensajeFundadoresImagePath3,
+      );
+    }
+    if (!nullToAbsent || mensajeFundadoresImagePath4 != null) {
+      map['mensaje_fundadores_image_path4'] = Variable<String>(
+        mensajeFundadoresImagePath4,
+      );
+    }
+    if (!nullToAbsent || mensajeFundadoresImagePath5 != null) {
+      map['mensaje_fundadores_image_path5'] = Variable<String>(
+        mensajeFundadoresImagePath5,
+      );
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
+    return map;
+  }
+
+  CompanyInfoTableCompanion toCompanion(bool nullToAbsent) {
+    return CompanyInfoTableCompanion(
+      uuidCompanyInfo: Value(uuidCompanyInfo),
+      slug: Value(slug),
+      heroTitulo: Value(heroTitulo),
+      heroSubtitulo: Value(heroSubtitulo),
+      heroImagePath: heroImagePath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(heroImagePath),
+      textoEntrada: Value(textoEntrada),
+      quienesSomos: Value(quienesSomos),
+      significadoAiki: Value(significadoAiki),
+      mision: Value(mision),
+      vision: Value(vision),
+      filosofia: Value(filosofia),
+      mensajeFundadoresTitulo: Value(mensajeFundadoresTitulo),
+      mensajeFundadoresTexto: Value(mensajeFundadoresTexto),
+      mensajeFundadoresImagePath1:
+          mensajeFundadoresImagePath1 == null && nullToAbsent
+          ? const Value.absent()
+          : Value(mensajeFundadoresImagePath1),
+      mensajeFundadoresImagePath2:
+          mensajeFundadoresImagePath2 == null && nullToAbsent
+          ? const Value.absent()
+          : Value(mensajeFundadoresImagePath2),
+      mensajeFundadoresImagePath3:
+          mensajeFundadoresImagePath3 == null && nullToAbsent
+          ? const Value.absent()
+          : Value(mensajeFundadoresImagePath3),
+      mensajeFundadoresImagePath4:
+          mensajeFundadoresImagePath4 == null && nullToAbsent
+          ? const Value.absent()
+          : Value(mensajeFundadoresImagePath4),
+      mensajeFundadoresImagePath5:
+          mensajeFundadoresImagePath5 == null && nullToAbsent
+          ? const Value.absent()
+          : Value(mensajeFundadoresImagePath5),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
+    );
+  }
+
+  factory LocalCompanyInfo.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalCompanyInfo(
+      uuidCompanyInfo: serializer.fromJson<String>(json['uuidCompanyInfo']),
+      slug: serializer.fromJson<String>(json['slug']),
+      heroTitulo: serializer.fromJson<String>(json['heroTitulo']),
+      heroSubtitulo: serializer.fromJson<String>(json['heroSubtitulo']),
+      heroImagePath: serializer.fromJson<String?>(json['heroImagePath']),
+      textoEntrada: serializer.fromJson<String>(json['textoEntrada']),
+      quienesSomos: serializer.fromJson<String>(json['quienesSomos']),
+      significadoAiki: serializer.fromJson<String>(json['significadoAiki']),
+      mision: serializer.fromJson<String>(json['mision']),
+      vision: serializer.fromJson<String>(json['vision']),
+      filosofia: serializer.fromJson<String>(json['filosofia']),
+      mensajeFundadoresTitulo: serializer.fromJson<String>(
+        json['mensajeFundadoresTitulo'],
+      ),
+      mensajeFundadoresTexto: serializer.fromJson<String>(
+        json['mensajeFundadoresTexto'],
+      ),
+      mensajeFundadoresImagePath1: serializer.fromJson<String?>(
+        json['mensajeFundadoresImagePath1'],
+      ),
+      mensajeFundadoresImagePath2: serializer.fromJson<String?>(
+        json['mensajeFundadoresImagePath2'],
+      ),
+      mensajeFundadoresImagePath3: serializer.fromJson<String?>(
+        json['mensajeFundadoresImagePath3'],
+      ),
+      mensajeFundadoresImagePath4: serializer.fromJson<String?>(
+        json['mensajeFundadoresImagePath4'],
+      ),
+      mensajeFundadoresImagePath5: serializer.fromJson<String?>(
+        json['mensajeFundadoresImagePath5'],
+      ),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'uuidCompanyInfo': serializer.toJson<String>(uuidCompanyInfo),
+      'slug': serializer.toJson<String>(slug),
+      'heroTitulo': serializer.toJson<String>(heroTitulo),
+      'heroSubtitulo': serializer.toJson<String>(heroSubtitulo),
+      'heroImagePath': serializer.toJson<String?>(heroImagePath),
+      'textoEntrada': serializer.toJson<String>(textoEntrada),
+      'quienesSomos': serializer.toJson<String>(quienesSomos),
+      'significadoAiki': serializer.toJson<String>(significadoAiki),
+      'mision': serializer.toJson<String>(mision),
+      'vision': serializer.toJson<String>(vision),
+      'filosofia': serializer.toJson<String>(filosofia),
+      'mensajeFundadoresTitulo': serializer.toJson<String>(
+        mensajeFundadoresTitulo,
+      ),
+      'mensajeFundadoresTexto': serializer.toJson<String>(
+        mensajeFundadoresTexto,
+      ),
+      'mensajeFundadoresImagePath1': serializer.toJson<String?>(
+        mensajeFundadoresImagePath1,
+      ),
+      'mensajeFundadoresImagePath2': serializer.toJson<String?>(
+        mensajeFundadoresImagePath2,
+      ),
+      'mensajeFundadoresImagePath3': serializer.toJson<String?>(
+        mensajeFundadoresImagePath3,
+      ),
+      'mensajeFundadoresImagePath4': serializer.toJson<String?>(
+        mensajeFundadoresImagePath4,
+      ),
+      'mensajeFundadoresImagePath5': serializer.toJson<String?>(
+        mensajeFundadoresImagePath5,
+      ),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
+    };
+  }
+
+  LocalCompanyInfo copyWith({
+    String? uuidCompanyInfo,
+    String? slug,
+    String? heroTitulo,
+    String? heroSubtitulo,
+    Value<String?> heroImagePath = const Value.absent(),
+    String? textoEntrada,
+    String? quienesSomos,
+    String? significadoAiki,
+    String? mision,
+    String? vision,
+    String? filosofia,
+    String? mensajeFundadoresTitulo,
+    String? mensajeFundadoresTexto,
+    Value<String?> mensajeFundadoresImagePath1 = const Value.absent(),
+    Value<String?> mensajeFundadoresImagePath2 = const Value.absent(),
+    Value<String?> mensajeFundadoresImagePath3 = const Value.absent(),
+    Value<String?> mensajeFundadoresImagePath4 = const Value.absent(),
+    Value<String?> mensajeFundadoresImagePath5 = const Value.absent(),
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
+    Value<DateTime?> syncedAt = const Value.absent(),
+  }) => LocalCompanyInfo(
+    uuidCompanyInfo: uuidCompanyInfo ?? this.uuidCompanyInfo,
+    slug: slug ?? this.slug,
+    heroTitulo: heroTitulo ?? this.heroTitulo,
+    heroSubtitulo: heroSubtitulo ?? this.heroSubtitulo,
+    heroImagePath: heroImagePath.present
+        ? heroImagePath.value
+        : this.heroImagePath,
+    textoEntrada: textoEntrada ?? this.textoEntrada,
+    quienesSomos: quienesSomos ?? this.quienesSomos,
+    significadoAiki: significadoAiki ?? this.significadoAiki,
+    mision: mision ?? this.mision,
+    vision: vision ?? this.vision,
+    filosofia: filosofia ?? this.filosofia,
+    mensajeFundadoresTitulo:
+        mensajeFundadoresTitulo ?? this.mensajeFundadoresTitulo,
+    mensajeFundadoresTexto:
+        mensajeFundadoresTexto ?? this.mensajeFundadoresTexto,
+    mensajeFundadoresImagePath1: mensajeFundadoresImagePath1.present
+        ? mensajeFundadoresImagePath1.value
+        : this.mensajeFundadoresImagePath1,
+    mensajeFundadoresImagePath2: mensajeFundadoresImagePath2.present
+        ? mensajeFundadoresImagePath2.value
+        : this.mensajeFundadoresImagePath2,
+    mensajeFundadoresImagePath3: mensajeFundadoresImagePath3.present
+        ? mensajeFundadoresImagePath3.value
+        : this.mensajeFundadoresImagePath3,
+    mensajeFundadoresImagePath4: mensajeFundadoresImagePath4.present
+        ? mensajeFundadoresImagePath4.value
+        : this.mensajeFundadoresImagePath4,
+    mensajeFundadoresImagePath5: mensajeFundadoresImagePath5.present
+        ? mensajeFundadoresImagePath5.value
+        : this.mensajeFundadoresImagePath5,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+  );
+  LocalCompanyInfo copyWithCompanion(CompanyInfoTableCompanion data) {
+    return LocalCompanyInfo(
+      uuidCompanyInfo: data.uuidCompanyInfo.present
+          ? data.uuidCompanyInfo.value
+          : this.uuidCompanyInfo,
+      slug: data.slug.present ? data.slug.value : this.slug,
+      heroTitulo: data.heroTitulo.present
+          ? data.heroTitulo.value
+          : this.heroTitulo,
+      heroSubtitulo: data.heroSubtitulo.present
+          ? data.heroSubtitulo.value
+          : this.heroSubtitulo,
+      heroImagePath: data.heroImagePath.present
+          ? data.heroImagePath.value
+          : this.heroImagePath,
+      textoEntrada: data.textoEntrada.present
+          ? data.textoEntrada.value
+          : this.textoEntrada,
+      quienesSomos: data.quienesSomos.present
+          ? data.quienesSomos.value
+          : this.quienesSomos,
+      significadoAiki: data.significadoAiki.present
+          ? data.significadoAiki.value
+          : this.significadoAiki,
+      mision: data.mision.present ? data.mision.value : this.mision,
+      vision: data.vision.present ? data.vision.value : this.vision,
+      filosofia: data.filosofia.present ? data.filosofia.value : this.filosofia,
+      mensajeFundadoresTitulo: data.mensajeFundadoresTitulo.present
+          ? data.mensajeFundadoresTitulo.value
+          : this.mensajeFundadoresTitulo,
+      mensajeFundadoresTexto: data.mensajeFundadoresTexto.present
+          ? data.mensajeFundadoresTexto.value
+          : this.mensajeFundadoresTexto,
+      mensajeFundadoresImagePath1: data.mensajeFundadoresImagePath1.present
+          ? data.mensajeFundadoresImagePath1.value
+          : this.mensajeFundadoresImagePath1,
+      mensajeFundadoresImagePath2: data.mensajeFundadoresImagePath2.present
+          ? data.mensajeFundadoresImagePath2.value
+          : this.mensajeFundadoresImagePath2,
+      mensajeFundadoresImagePath3: data.mensajeFundadoresImagePath3.present
+          ? data.mensajeFundadoresImagePath3.value
+          : this.mensajeFundadoresImagePath3,
+      mensajeFundadoresImagePath4: data.mensajeFundadoresImagePath4.present
+          ? data.mensajeFundadoresImagePath4.value
+          : this.mensajeFundadoresImagePath4,
+      mensajeFundadoresImagePath5: data.mensajeFundadoresImagePath5.present
+          ? data.mensajeFundadoresImagePath5.value
+          : this.mensajeFundadoresImagePath5,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalCompanyInfo(')
+          ..write('uuidCompanyInfo: $uuidCompanyInfo, ')
+          ..write('slug: $slug, ')
+          ..write('heroTitulo: $heroTitulo, ')
+          ..write('heroSubtitulo: $heroSubtitulo, ')
+          ..write('heroImagePath: $heroImagePath, ')
+          ..write('textoEntrada: $textoEntrada, ')
+          ..write('quienesSomos: $quienesSomos, ')
+          ..write('significadoAiki: $significadoAiki, ')
+          ..write('mision: $mision, ')
+          ..write('vision: $vision, ')
+          ..write('filosofia: $filosofia, ')
+          ..write('mensajeFundadoresTitulo: $mensajeFundadoresTitulo, ')
+          ..write('mensajeFundadoresTexto: $mensajeFundadoresTexto, ')
+          ..write('mensajeFundadoresImagePath1: $mensajeFundadoresImagePath1, ')
+          ..write('mensajeFundadoresImagePath2: $mensajeFundadoresImagePath2, ')
+          ..write('mensajeFundadoresImagePath3: $mensajeFundadoresImagePath3, ')
+          ..write('mensajeFundadoresImagePath4: $mensajeFundadoresImagePath4, ')
+          ..write('mensajeFundadoresImagePath5: $mensajeFundadoresImagePath5, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('syncedAt: $syncedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hashAll([
+    uuidCompanyInfo,
+    slug,
+    heroTitulo,
+    heroSubtitulo,
+    heroImagePath,
+    textoEntrada,
+    quienesSomos,
+    significadoAiki,
+    mision,
+    vision,
+    filosofia,
+    mensajeFundadoresTitulo,
+    mensajeFundadoresTexto,
+    mensajeFundadoresImagePath1,
+    mensajeFundadoresImagePath2,
+    mensajeFundadoresImagePath3,
+    mensajeFundadoresImagePath4,
+    mensajeFundadoresImagePath5,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    syncedAt,
+  ]);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalCompanyInfo &&
+          other.uuidCompanyInfo == this.uuidCompanyInfo &&
+          other.slug == this.slug &&
+          other.heroTitulo == this.heroTitulo &&
+          other.heroSubtitulo == this.heroSubtitulo &&
+          other.heroImagePath == this.heroImagePath &&
+          other.textoEntrada == this.textoEntrada &&
+          other.quienesSomos == this.quienesSomos &&
+          other.significadoAiki == this.significadoAiki &&
+          other.mision == this.mision &&
+          other.vision == this.vision &&
+          other.filosofia == this.filosofia &&
+          other.mensajeFundadoresTitulo == this.mensajeFundadoresTitulo &&
+          other.mensajeFundadoresTexto == this.mensajeFundadoresTexto &&
+          other.mensajeFundadoresImagePath1 ==
+              this.mensajeFundadoresImagePath1 &&
+          other.mensajeFundadoresImagePath2 ==
+              this.mensajeFundadoresImagePath2 &&
+          other.mensajeFundadoresImagePath3 ==
+              this.mensajeFundadoresImagePath3 &&
+          other.mensajeFundadoresImagePath4 ==
+              this.mensajeFundadoresImagePath4 &&
+          other.mensajeFundadoresImagePath5 ==
+              this.mensajeFundadoresImagePath5 &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.syncedAt == this.syncedAt);
+}
+
+class CompanyInfoTableCompanion extends UpdateCompanion<LocalCompanyInfo> {
+  final Value<String> uuidCompanyInfo;
+  final Value<String> slug;
+  final Value<String> heroTitulo;
+  final Value<String> heroSubtitulo;
+  final Value<String?> heroImagePath;
+  final Value<String> textoEntrada;
+  final Value<String> quienesSomos;
+  final Value<String> significadoAiki;
+  final Value<String> mision;
+  final Value<String> vision;
+  final Value<String> filosofia;
+  final Value<String> mensajeFundadoresTitulo;
+  final Value<String> mensajeFundadoresTexto;
+  final Value<String?> mensajeFundadoresImagePath1;
+  final Value<String?> mensajeFundadoresImagePath2;
+  final Value<String?> mensajeFundadoresImagePath3;
+  final Value<String?> mensajeFundadoresImagePath4;
+  final Value<String?> mensajeFundadoresImagePath5;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
+  final Value<DateTime?> syncedAt;
+  final Value<int> rowid;
+  const CompanyInfoTableCompanion({
+    this.uuidCompanyInfo = const Value.absent(),
+    this.slug = const Value.absent(),
+    this.heroTitulo = const Value.absent(),
+    this.heroSubtitulo = const Value.absent(),
+    this.heroImagePath = const Value.absent(),
+    this.textoEntrada = const Value.absent(),
+    this.quienesSomos = const Value.absent(),
+    this.significadoAiki = const Value.absent(),
+    this.mision = const Value.absent(),
+    this.vision = const Value.absent(),
+    this.filosofia = const Value.absent(),
+    this.mensajeFundadoresTitulo = const Value.absent(),
+    this.mensajeFundadoresTexto = const Value.absent(),
+    this.mensajeFundadoresImagePath1 = const Value.absent(),
+    this.mensajeFundadoresImagePath2 = const Value.absent(),
+    this.mensajeFundadoresImagePath3 = const Value.absent(),
+    this.mensajeFundadoresImagePath4 = const Value.absent(),
+    this.mensajeFundadoresImagePath5 = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CompanyInfoTableCompanion.insert({
+    required String uuidCompanyInfo,
+    this.slug = const Value.absent(),
+    this.heroTitulo = const Value.absent(),
+    this.heroSubtitulo = const Value.absent(),
+    this.heroImagePath = const Value.absent(),
+    this.textoEntrada = const Value.absent(),
+    required String quienesSomos,
+    this.significadoAiki = const Value.absent(),
+    required String mision,
+    required String vision,
+    required String filosofia,
+    this.mensajeFundadoresTitulo = const Value.absent(),
+    this.mensajeFundadoresTexto = const Value.absent(),
+    this.mensajeFundadoresImagePath1 = const Value.absent(),
+    this.mensajeFundadoresImagePath2 = const Value.absent(),
+    this.mensajeFundadoresImagePath3 = const Value.absent(),
+    this.mensajeFundadoresImagePath4 = const Value.absent(),
+    this.mensajeFundadoresImagePath5 = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : uuidCompanyInfo = Value(uuidCompanyInfo),
+       quienesSomos = Value(quienesSomos),
+       mision = Value(mision),
+       vision = Value(vision),
+       filosofia = Value(filosofia);
+  static Insertable<LocalCompanyInfo> custom({
+    Expression<String>? uuidCompanyInfo,
+    Expression<String>? slug,
+    Expression<String>? heroTitulo,
+    Expression<String>? heroSubtitulo,
+    Expression<String>? heroImagePath,
+    Expression<String>? textoEntrada,
+    Expression<String>? quienesSomos,
+    Expression<String>? significadoAiki,
+    Expression<String>? mision,
+    Expression<String>? vision,
+    Expression<String>? filosofia,
+    Expression<String>? mensajeFundadoresTitulo,
+    Expression<String>? mensajeFundadoresTexto,
+    Expression<String>? mensajeFundadoresImagePath1,
+    Expression<String>? mensajeFundadoresImagePath2,
+    Expression<String>? mensajeFundadoresImagePath3,
+    Expression<String>? mensajeFundadoresImagePath4,
+    Expression<String>? mensajeFundadoresImagePath5,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
+    Expression<DateTime>? syncedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (uuidCompanyInfo != null) 'uuid_company_info': uuidCompanyInfo,
+      if (slug != null) 'slug': slug,
+      if (heroTitulo != null) 'hero_titulo': heroTitulo,
+      if (heroSubtitulo != null) 'hero_subtitulo': heroSubtitulo,
+      if (heroImagePath != null) 'hero_image_path': heroImagePath,
+      if (textoEntrada != null) 'texto_entrada': textoEntrada,
+      if (quienesSomos != null) 'quienes_somos': quienesSomos,
+      if (significadoAiki != null) 'significado_aiki': significadoAiki,
+      if (mision != null) 'mision': mision,
+      if (vision != null) 'vision': vision,
+      if (filosofia != null) 'filosofia': filosofia,
+      if (mensajeFundadoresTitulo != null)
+        'mensaje_fundadores_titulo': mensajeFundadoresTitulo,
+      if (mensajeFundadoresTexto != null)
+        'mensaje_fundadores_texto': mensajeFundadoresTexto,
+      if (mensajeFundadoresImagePath1 != null)
+        'mensaje_fundadores_image_path1': mensajeFundadoresImagePath1,
+      if (mensajeFundadoresImagePath2 != null)
+        'mensaje_fundadores_image_path2': mensajeFundadoresImagePath2,
+      if (mensajeFundadoresImagePath3 != null)
+        'mensaje_fundadores_image_path3': mensajeFundadoresImagePath3,
+      if (mensajeFundadoresImagePath4 != null)
+        'mensaje_fundadores_image_path4': mensajeFundadoresImagePath4,
+      if (mensajeFundadoresImagePath5 != null)
+        'mensaje_fundadores_image_path5': mensajeFundadoresImagePath5,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (syncedAt != null) 'synced_at': syncedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CompanyInfoTableCompanion copyWith({
+    Value<String>? uuidCompanyInfo,
+    Value<String>? slug,
+    Value<String>? heroTitulo,
+    Value<String>? heroSubtitulo,
+    Value<String?>? heroImagePath,
+    Value<String>? textoEntrada,
+    Value<String>? quienesSomos,
+    Value<String>? significadoAiki,
+    Value<String>? mision,
+    Value<String>? vision,
+    Value<String>? filosofia,
+    Value<String>? mensajeFundadoresTitulo,
+    Value<String>? mensajeFundadoresTexto,
+    Value<String?>? mensajeFundadoresImagePath1,
+    Value<String?>? mensajeFundadoresImagePath2,
+    Value<String?>? mensajeFundadoresImagePath3,
+    Value<String?>? mensajeFundadoresImagePath4,
+    Value<String?>? mensajeFundadoresImagePath5,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
+    Value<DateTime?>? syncedAt,
+    Value<int>? rowid,
+  }) {
+    return CompanyInfoTableCompanion(
+      uuidCompanyInfo: uuidCompanyInfo ?? this.uuidCompanyInfo,
+      slug: slug ?? this.slug,
+      heroTitulo: heroTitulo ?? this.heroTitulo,
+      heroSubtitulo: heroSubtitulo ?? this.heroSubtitulo,
+      heroImagePath: heroImagePath ?? this.heroImagePath,
+      textoEntrada: textoEntrada ?? this.textoEntrada,
+      quienesSomos: quienesSomos ?? this.quienesSomos,
+      significadoAiki: significadoAiki ?? this.significadoAiki,
+      mision: mision ?? this.mision,
+      vision: vision ?? this.vision,
+      filosofia: filosofia ?? this.filosofia,
+      mensajeFundadoresTitulo:
+          mensajeFundadoresTitulo ?? this.mensajeFundadoresTitulo,
+      mensajeFundadoresTexto:
+          mensajeFundadoresTexto ?? this.mensajeFundadoresTexto,
+      mensajeFundadoresImagePath1:
+          mensajeFundadoresImagePath1 ?? this.mensajeFundadoresImagePath1,
+      mensajeFundadoresImagePath2:
+          mensajeFundadoresImagePath2 ?? this.mensajeFundadoresImagePath2,
+      mensajeFundadoresImagePath3:
+          mensajeFundadoresImagePath3 ?? this.mensajeFundadoresImagePath3,
+      mensajeFundadoresImagePath4:
+          mensajeFundadoresImagePath4 ?? this.mensajeFundadoresImagePath4,
+      mensajeFundadoresImagePath5:
+          mensajeFundadoresImagePath5 ?? this.mensajeFundadoresImagePath5,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      syncedAt: syncedAt ?? this.syncedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (uuidCompanyInfo.present) {
+      map['uuid_company_info'] = Variable<String>(uuidCompanyInfo.value);
+    }
+    if (slug.present) {
+      map['slug'] = Variable<String>(slug.value);
+    }
+    if (heroTitulo.present) {
+      map['hero_titulo'] = Variable<String>(heroTitulo.value);
+    }
+    if (heroSubtitulo.present) {
+      map['hero_subtitulo'] = Variable<String>(heroSubtitulo.value);
+    }
+    if (heroImagePath.present) {
+      map['hero_image_path'] = Variable<String>(heroImagePath.value);
+    }
+    if (textoEntrada.present) {
+      map['texto_entrada'] = Variable<String>(textoEntrada.value);
+    }
+    if (quienesSomos.present) {
+      map['quienes_somos'] = Variable<String>(quienesSomos.value);
+    }
+    if (significadoAiki.present) {
+      map['significado_aiki'] = Variable<String>(significadoAiki.value);
+    }
+    if (mision.present) {
+      map['mision'] = Variable<String>(mision.value);
+    }
+    if (vision.present) {
+      map['vision'] = Variable<String>(vision.value);
+    }
+    if (filosofia.present) {
+      map['filosofia'] = Variable<String>(filosofia.value);
+    }
+    if (mensajeFundadoresTitulo.present) {
+      map['mensaje_fundadores_titulo'] = Variable<String>(
+        mensajeFundadoresTitulo.value,
+      );
+    }
+    if (mensajeFundadoresTexto.present) {
+      map['mensaje_fundadores_texto'] = Variable<String>(
+        mensajeFundadoresTexto.value,
+      );
+    }
+    if (mensajeFundadoresImagePath1.present) {
+      map['mensaje_fundadores_image_path1'] = Variable<String>(
+        mensajeFundadoresImagePath1.value,
+      );
+    }
+    if (mensajeFundadoresImagePath2.present) {
+      map['mensaje_fundadores_image_path2'] = Variable<String>(
+        mensajeFundadoresImagePath2.value,
+      );
+    }
+    if (mensajeFundadoresImagePath3.present) {
+      map['mensaje_fundadores_image_path3'] = Variable<String>(
+        mensajeFundadoresImagePath3.value,
+      );
+    }
+    if (mensajeFundadoresImagePath4.present) {
+      map['mensaje_fundadores_image_path4'] = Variable<String>(
+        mensajeFundadoresImagePath4.value,
+      );
+    }
+    if (mensajeFundadoresImagePath5.present) {
+      map['mensaje_fundadores_image_path5'] = Variable<String>(
+        mensajeFundadoresImagePath5.value,
+      );
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CompanyInfoTableCompanion(')
+          ..write('uuidCompanyInfo: $uuidCompanyInfo, ')
+          ..write('slug: $slug, ')
+          ..write('heroTitulo: $heroTitulo, ')
+          ..write('heroSubtitulo: $heroSubtitulo, ')
+          ..write('heroImagePath: $heroImagePath, ')
+          ..write('textoEntrada: $textoEntrada, ')
+          ..write('quienesSomos: $quienesSomos, ')
+          ..write('significadoAiki: $significadoAiki, ')
+          ..write('mision: $mision, ')
+          ..write('vision: $vision, ')
+          ..write('filosofia: $filosofia, ')
+          ..write('mensajeFundadoresTitulo: $mensajeFundadoresTitulo, ')
+          ..write('mensajeFundadoresTexto: $mensajeFundadoresTexto, ')
+          ..write('mensajeFundadoresImagePath1: $mensajeFundadoresImagePath1, ')
+          ..write('mensajeFundadoresImagePath2: $mensajeFundadoresImagePath2, ')
+          ..write('mensajeFundadoresImagePath3: $mensajeFundadoresImagePath3, ')
+          ..write('mensajeFundadoresImagePath4: $mensajeFundadoresImagePath4, ')
+          ..write('mensajeFundadoresImagePath5: $mensajeFundadoresImagePath5, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $ContentItemsTableTable extends ContentItemsTable
     with TableInfo<$ContentItemsTableTable, LocalContentItem> {
   @override
@@ -4681,6 +6015,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $ProfilesTableTable profilesTable = $ProfilesTableTable(this);
+  late final $CompanyInfoTableTable companyInfoTable = $CompanyInfoTableTable(
+    this,
+  );
   late final $ContentItemsTableTable contentItemsTable =
       $ContentItemsTableTable(this);
   late final $ContentMediaTableTable contentMediaTable =
@@ -4697,6 +6034,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     profilesTable,
+    companyInfoTable,
     contentItemsTable,
     contentMediaTable,
     userContentStatesTable,
@@ -5065,6 +6403,573 @@ typedef $$ProfilesTableTableProcessedTableManager =
         BaseReferences<_$AppDatabase, $ProfilesTableTable, LocalProfile>,
       ),
       LocalProfile,
+      PrefetchHooks Function()
+    >;
+typedef $$CompanyInfoTableTableCreateCompanionBuilder =
+    CompanyInfoTableCompanion Function({
+      required String uuidCompanyInfo,
+      Value<String> slug,
+      Value<String> heroTitulo,
+      Value<String> heroSubtitulo,
+      Value<String?> heroImagePath,
+      Value<String> textoEntrada,
+      required String quienesSomos,
+      Value<String> significadoAiki,
+      required String mision,
+      required String vision,
+      required String filosofia,
+      Value<String> mensajeFundadoresTitulo,
+      Value<String> mensajeFundadoresTexto,
+      Value<String?> mensajeFundadoresImagePath1,
+      Value<String?> mensajeFundadoresImagePath2,
+      Value<String?> mensajeFundadoresImagePath3,
+      Value<String?> mensajeFundadoresImagePath4,
+      Value<String?> mensajeFundadoresImagePath5,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<DateTime?> syncedAt,
+      Value<int> rowid,
+    });
+typedef $$CompanyInfoTableTableUpdateCompanionBuilder =
+    CompanyInfoTableCompanion Function({
+      Value<String> uuidCompanyInfo,
+      Value<String> slug,
+      Value<String> heroTitulo,
+      Value<String> heroSubtitulo,
+      Value<String?> heroImagePath,
+      Value<String> textoEntrada,
+      Value<String> quienesSomos,
+      Value<String> significadoAiki,
+      Value<String> mision,
+      Value<String> vision,
+      Value<String> filosofia,
+      Value<String> mensajeFundadoresTitulo,
+      Value<String> mensajeFundadoresTexto,
+      Value<String?> mensajeFundadoresImagePath1,
+      Value<String?> mensajeFundadoresImagePath2,
+      Value<String?> mensajeFundadoresImagePath3,
+      Value<String?> mensajeFundadoresImagePath4,
+      Value<String?> mensajeFundadoresImagePath5,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<DateTime?> syncedAt,
+      Value<int> rowid,
+    });
+
+class $$CompanyInfoTableTableFilterComposer
+    extends Composer<_$AppDatabase, $CompanyInfoTableTable> {
+  $$CompanyInfoTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get uuidCompanyInfo => $composableBuilder(
+    column: $table.uuidCompanyInfo,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get slug => $composableBuilder(
+    column: $table.slug,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get heroTitulo => $composableBuilder(
+    column: $table.heroTitulo,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get heroSubtitulo => $composableBuilder(
+    column: $table.heroSubtitulo,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get heroImagePath => $composableBuilder(
+    column: $table.heroImagePath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get textoEntrada => $composableBuilder(
+    column: $table.textoEntrada,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get quienesSomos => $composableBuilder(
+    column: $table.quienesSomos,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get significadoAiki => $composableBuilder(
+    column: $table.significadoAiki,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get mision => $composableBuilder(
+    column: $table.mision,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get vision => $composableBuilder(
+    column: $table.vision,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get filosofia => $composableBuilder(
+    column: $table.filosofia,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get mensajeFundadoresTitulo => $composableBuilder(
+    column: $table.mensajeFundadoresTitulo,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get mensajeFundadoresTexto => $composableBuilder(
+    column: $table.mensajeFundadoresTexto,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get mensajeFundadoresImagePath1 => $composableBuilder(
+    column: $table.mensajeFundadoresImagePath1,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get mensajeFundadoresImagePath2 => $composableBuilder(
+    column: $table.mensajeFundadoresImagePath2,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get mensajeFundadoresImagePath3 => $composableBuilder(
+    column: $table.mensajeFundadoresImagePath3,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get mensajeFundadoresImagePath4 => $composableBuilder(
+    column: $table.mensajeFundadoresImagePath4,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get mensajeFundadoresImagePath5 => $composableBuilder(
+    column: $table.mensajeFundadoresImagePath5,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CompanyInfoTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $CompanyInfoTableTable> {
+  $$CompanyInfoTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get uuidCompanyInfo => $composableBuilder(
+    column: $table.uuidCompanyInfo,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get slug => $composableBuilder(
+    column: $table.slug,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get heroTitulo => $composableBuilder(
+    column: $table.heroTitulo,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get heroSubtitulo => $composableBuilder(
+    column: $table.heroSubtitulo,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get heroImagePath => $composableBuilder(
+    column: $table.heroImagePath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get textoEntrada => $composableBuilder(
+    column: $table.textoEntrada,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get quienesSomos => $composableBuilder(
+    column: $table.quienesSomos,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get significadoAiki => $composableBuilder(
+    column: $table.significadoAiki,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get mision => $composableBuilder(
+    column: $table.mision,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get vision => $composableBuilder(
+    column: $table.vision,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get filosofia => $composableBuilder(
+    column: $table.filosofia,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get mensajeFundadoresTitulo => $composableBuilder(
+    column: $table.mensajeFundadoresTitulo,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get mensajeFundadoresTexto => $composableBuilder(
+    column: $table.mensajeFundadoresTexto,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get mensajeFundadoresImagePath1 => $composableBuilder(
+    column: $table.mensajeFundadoresImagePath1,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get mensajeFundadoresImagePath2 => $composableBuilder(
+    column: $table.mensajeFundadoresImagePath2,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get mensajeFundadoresImagePath3 => $composableBuilder(
+    column: $table.mensajeFundadoresImagePath3,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get mensajeFundadoresImagePath4 => $composableBuilder(
+    column: $table.mensajeFundadoresImagePath4,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get mensajeFundadoresImagePath5 => $composableBuilder(
+    column: $table.mensajeFundadoresImagePath5,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CompanyInfoTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CompanyInfoTableTable> {
+  $$CompanyInfoTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get uuidCompanyInfo => $composableBuilder(
+    column: $table.uuidCompanyInfo,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get slug =>
+      $composableBuilder(column: $table.slug, builder: (column) => column);
+
+  GeneratedColumn<String> get heroTitulo => $composableBuilder(
+    column: $table.heroTitulo,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get heroSubtitulo => $composableBuilder(
+    column: $table.heroSubtitulo,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get heroImagePath => $composableBuilder(
+    column: $table.heroImagePath,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get textoEntrada => $composableBuilder(
+    column: $table.textoEntrada,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get quienesSomos => $composableBuilder(
+    column: $table.quienesSomos,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get significadoAiki => $composableBuilder(
+    column: $table.significadoAiki,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get mision =>
+      $composableBuilder(column: $table.mision, builder: (column) => column);
+
+  GeneratedColumn<String> get vision =>
+      $composableBuilder(column: $table.vision, builder: (column) => column);
+
+  GeneratedColumn<String> get filosofia =>
+      $composableBuilder(column: $table.filosofia, builder: (column) => column);
+
+  GeneratedColumn<String> get mensajeFundadoresTitulo => $composableBuilder(
+    column: $table.mensajeFundadoresTitulo,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get mensajeFundadoresTexto => $composableBuilder(
+    column: $table.mensajeFundadoresTexto,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get mensajeFundadoresImagePath1 => $composableBuilder(
+    column: $table.mensajeFundadoresImagePath1,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get mensajeFundadoresImagePath2 => $composableBuilder(
+    column: $table.mensajeFundadoresImagePath2,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get mensajeFundadoresImagePath3 => $composableBuilder(
+    column: $table.mensajeFundadoresImagePath3,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get mensajeFundadoresImagePath4 => $composableBuilder(
+    column: $table.mensajeFundadoresImagePath4,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get mensajeFundadoresImagePath5 => $composableBuilder(
+    column: $table.mensajeFundadoresImagePath5,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+}
+
+class $$CompanyInfoTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CompanyInfoTableTable,
+          LocalCompanyInfo,
+          $$CompanyInfoTableTableFilterComposer,
+          $$CompanyInfoTableTableOrderingComposer,
+          $$CompanyInfoTableTableAnnotationComposer,
+          $$CompanyInfoTableTableCreateCompanionBuilder,
+          $$CompanyInfoTableTableUpdateCompanionBuilder,
+          (
+            LocalCompanyInfo,
+            BaseReferences<
+              _$AppDatabase,
+              $CompanyInfoTableTable,
+              LocalCompanyInfo
+            >,
+          ),
+          LocalCompanyInfo,
+          PrefetchHooks Function()
+        > {
+  $$CompanyInfoTableTableTableManager(
+    _$AppDatabase db,
+    $CompanyInfoTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CompanyInfoTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CompanyInfoTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CompanyInfoTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> uuidCompanyInfo = const Value.absent(),
+                Value<String> slug = const Value.absent(),
+                Value<String> heroTitulo = const Value.absent(),
+                Value<String> heroSubtitulo = const Value.absent(),
+                Value<String?> heroImagePath = const Value.absent(),
+                Value<String> textoEntrada = const Value.absent(),
+                Value<String> quienesSomos = const Value.absent(),
+                Value<String> significadoAiki = const Value.absent(),
+                Value<String> mision = const Value.absent(),
+                Value<String> vision = const Value.absent(),
+                Value<String> filosofia = const Value.absent(),
+                Value<String> mensajeFundadoresTitulo = const Value.absent(),
+                Value<String> mensajeFundadoresTexto = const Value.absent(),
+                Value<String?> mensajeFundadoresImagePath1 =
+                    const Value.absent(),
+                Value<String?> mensajeFundadoresImagePath2 =
+                    const Value.absent(),
+                Value<String?> mensajeFundadoresImagePath3 =
+                    const Value.absent(),
+                Value<String?> mensajeFundadoresImagePath4 =
+                    const Value.absent(),
+                Value<String?> mensajeFundadoresImagePath5 =
+                    const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CompanyInfoTableCompanion(
+                uuidCompanyInfo: uuidCompanyInfo,
+                slug: slug,
+                heroTitulo: heroTitulo,
+                heroSubtitulo: heroSubtitulo,
+                heroImagePath: heroImagePath,
+                textoEntrada: textoEntrada,
+                quienesSomos: quienesSomos,
+                significadoAiki: significadoAiki,
+                mision: mision,
+                vision: vision,
+                filosofia: filosofia,
+                mensajeFundadoresTitulo: mensajeFundadoresTitulo,
+                mensajeFundadoresTexto: mensajeFundadoresTexto,
+                mensajeFundadoresImagePath1: mensajeFundadoresImagePath1,
+                mensajeFundadoresImagePath2: mensajeFundadoresImagePath2,
+                mensajeFundadoresImagePath3: mensajeFundadoresImagePath3,
+                mensajeFundadoresImagePath4: mensajeFundadoresImagePath4,
+                mensajeFundadoresImagePath5: mensajeFundadoresImagePath5,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String uuidCompanyInfo,
+                Value<String> slug = const Value.absent(),
+                Value<String> heroTitulo = const Value.absent(),
+                Value<String> heroSubtitulo = const Value.absent(),
+                Value<String?> heroImagePath = const Value.absent(),
+                Value<String> textoEntrada = const Value.absent(),
+                required String quienesSomos,
+                Value<String> significadoAiki = const Value.absent(),
+                required String mision,
+                required String vision,
+                required String filosofia,
+                Value<String> mensajeFundadoresTitulo = const Value.absent(),
+                Value<String> mensajeFundadoresTexto = const Value.absent(),
+                Value<String?> mensajeFundadoresImagePath1 =
+                    const Value.absent(),
+                Value<String?> mensajeFundadoresImagePath2 =
+                    const Value.absent(),
+                Value<String?> mensajeFundadoresImagePath3 =
+                    const Value.absent(),
+                Value<String?> mensajeFundadoresImagePath4 =
+                    const Value.absent(),
+                Value<String?> mensajeFundadoresImagePath5 =
+                    const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CompanyInfoTableCompanion.insert(
+                uuidCompanyInfo: uuidCompanyInfo,
+                slug: slug,
+                heroTitulo: heroTitulo,
+                heroSubtitulo: heroSubtitulo,
+                heroImagePath: heroImagePath,
+                textoEntrada: textoEntrada,
+                quienesSomos: quienesSomos,
+                significadoAiki: significadoAiki,
+                mision: mision,
+                vision: vision,
+                filosofia: filosofia,
+                mensajeFundadoresTitulo: mensajeFundadoresTitulo,
+                mensajeFundadoresTexto: mensajeFundadoresTexto,
+                mensajeFundadoresImagePath1: mensajeFundadoresImagePath1,
+                mensajeFundadoresImagePath2: mensajeFundadoresImagePath2,
+                mensajeFundadoresImagePath3: mensajeFundadoresImagePath3,
+                mensajeFundadoresImagePath4: mensajeFundadoresImagePath4,
+                mensajeFundadoresImagePath5: mensajeFundadoresImagePath5,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CompanyInfoTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CompanyInfoTableTable,
+      LocalCompanyInfo,
+      $$CompanyInfoTableTableFilterComposer,
+      $$CompanyInfoTableTableOrderingComposer,
+      $$CompanyInfoTableTableAnnotationComposer,
+      $$CompanyInfoTableTableCreateCompanionBuilder,
+      $$CompanyInfoTableTableUpdateCompanionBuilder,
+      (
+        LocalCompanyInfo,
+        BaseReferences<_$AppDatabase, $CompanyInfoTableTable, LocalCompanyInfo>,
+      ),
+      LocalCompanyInfo,
       PrefetchHooks Function()
     >;
 typedef $$ContentItemsTableTableCreateCompanionBuilder =
@@ -6951,6 +8856,8 @@ class $AppDatabaseManager {
   $AppDatabaseManager(this._db);
   $$ProfilesTableTableTableManager get profilesTable =>
       $$ProfilesTableTableTableManager(_db, _db.profilesTable);
+  $$CompanyInfoTableTableTableManager get companyInfoTable =>
+      $$CompanyInfoTableTableTableManager(_db, _db.companyInfoTable);
   $$ContentItemsTableTableTableManager get contentItemsTable =>
       $$ContentItemsTableTableTableManager(_db, _db.contentItemsTable);
   $$ContentMediaTableTableTableManager get contentMediaTable =>

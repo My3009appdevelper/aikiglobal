@@ -9,11 +9,13 @@ class ContentHorizontalList extends StatelessWidget {
     super.key,
     required this.items,
     this.cardWidth = 174,
+    this.showBadges = false,
     this.onItemTap,
   });
 
   final List<ContentItem> items;
   final double cardWidth;
+  final bool showBadges;
   final ValueChanged<ContentItem>? onItemTap;
 
   @override
@@ -32,6 +34,7 @@ class ContentHorizontalList extends StatelessWidget {
           return ContentCard(
             item: item,
             width: cardWidth,
+            showBadge: showBadges,
             onTap: onItemTap == null ? null : () => onItemTap!(item),
           );
         },

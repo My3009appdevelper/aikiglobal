@@ -28,7 +28,7 @@ class AppCategoryChip extends StatelessWidget {
         foregroundColor ??
         (color.computeLuminance() > 0.48
             ? AppColors.primaryDeep
-            : AppColors.white);
+            : AppColors.background);
 
     return AppInteractive(
       tooltip: 'Abrir $label',
@@ -44,10 +44,7 @@ class AppCategoryChip extends StatelessWidget {
             Container(
               width: 54,
               height: 54,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.92),
-                shape: BoxShape.circle,
-              ),
+              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
               child: Icon(icon, color: iconColor, size: 28),
             ),
             const SizedBox(height: 8),

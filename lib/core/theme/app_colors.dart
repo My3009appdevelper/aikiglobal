@@ -7,14 +7,20 @@ class AppColors {
   static const white = Color(0xFFFFFFFF);
   static const black = Color(0xFF000000);
 
-  static const primary = Color(0xFF5C332A);
-  static const primaryDeep = Color(0xFF532624);
-  static const ivory = Color(0xFFFFFAF1);
+  static const gold = Color(0xFFB6814E);
+  static const gold31 = Color(0x4FB6814E);
+  static const wine = Color(0xFF532624);
+  static const background = Color(0xFFE5E2DB);
+  static const darkWine = Color(0xFF3E1C1A);
+
+  static const primary = gold;
+  static const primaryDeep = wine;
+  static const ivory = background;
   static const warmIvory = Color(0xFFF8F0E4);
   static const sand = Color(0xFFEADCC9);
   static const sandLight = Color(0xFFF5ECDF);
   static const textPrimary = primaryDeep;
-  static const textSecondary = primary;
+  static const textSecondary = primaryDeep;
   static const textMuted = Color(0xFF9A897D);
   static const stroke = Color(0xFFE3D6C8);
   static const danger = Color(0xFFB64839);
@@ -31,26 +37,26 @@ class AppColors {
     primary: primary,
     onPrimary: white,
     secondary: primaryDeep,
-    onSecondary: white,
-    tertiary: primary,
-    onTertiary: white,
+    onSecondary: background,
+    tertiary: gold31,
+    onTertiary: primaryDeep,
     error: danger,
     onError: white,
-    surface: ivory,
+    surface: background,
     onSurface: textPrimary,
   );
 
   static const darkScheme = ColorScheme(
     brightness: Brightness.dark,
-    primary: sand,
-    onPrimary: primaryDeep,
-    secondary: sandLight,
-    onSecondary: darkBackground,
-    tertiary: sand,
-    onTertiary: darkBackground,
+    primary: primary,
+    onPrimary: white,
+    secondary: primary,
+    onSecondary: background,
+    tertiary: primaryDeep,
+    onTertiary: white,
     error: danger,
     onError: white,
-    surface: darkBackground,
-    onSurface: darkText,
+    surface: darkWine,
+    onSurface: background,
   );
 }

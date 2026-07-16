@@ -8,7 +8,7 @@ class AppTypography {
   static const primaryFont = 'Poppins';
   static const secondaryFont = 'Poppins';
   static const displayFont = 'BegumSans';
-  static const fallbackFonts = <String>['Poppins', 'Arial', 'sans-serif'];
+  static const fallbackFonts = <String>['Poppins'];
 
   static TextTheme textTheme(Brightness brightness) {
     final textColor = brightness == Brightness.dark
@@ -48,6 +48,14 @@ class AppTypography {
         fontFamilyFallback: fallbackFonts,
         fontSize: 26,
         height: 1.18,
+        fontWeight: FontWeight.w500,
+        color: textColor,
+      ),
+      headlineSmall: TextStyle(
+        fontFamily: displayFont,
+        fontFamilyFallback: fallbackFonts,
+        fontSize: 22,
+        height: 1.2,
         fontWeight: FontWeight.w500,
         color: textColor,
       ),
@@ -104,6 +112,14 @@ class AppTypography {
         fontFamilyFallback: fallbackFonts,
         fontSize: 13,
         height: 1.2,
+        fontWeight: FontWeight.w600,
+        color: textColor,
+      ),
+      labelSmall: TextStyle(
+        fontFamily: primaryFont,
+        fontFamilyFallback: fallbackFonts,
+        fontSize: 11,
+        height: 1.15,
         fontWeight: FontWeight.w600,
         color: textColor,
       ),

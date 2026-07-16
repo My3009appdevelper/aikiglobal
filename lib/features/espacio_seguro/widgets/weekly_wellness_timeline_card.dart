@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/constants/app_assets.dart';
 import '../../../core/data/models/app_wellness_daily_log.dart';
 import '../../../core/data/providers/app_data_scope.dart';
 import '../../../core/data/providers/wellness_profile_stats_controller.dart';
@@ -7,6 +8,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_shadows.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../shared/widgets/app_background.dart';
 import '../../../shared/widgets/app_interactive.dart';
 import '../../../shared/widgets/app_progress_celebration_overlay.dart';
 import '../../../shared/widgets/app_tertiary_button.dart';
@@ -117,7 +119,7 @@ class _WeeklyWellnessTimelineContent extends StatelessWidget {
     final brightness = Theme.of(context).brightness;
     final surface = brightness == Brightness.dark
         ? AppColors.darkSurface
-        : AppColors.white;
+        : AppColors.background;
     final stroke = brightness == Brightness.dark
         ? AppColors.darkStroke
         : AppColors.stroke;
@@ -527,16 +529,20 @@ void _showStreakCelebrationDialog(
     barrierColor: Colors.transparent,
     transitionDuration: const Duration(milliseconds: 220),
     pageBuilder: (dialogContext, _, _) {
-      return AppProgressCelebrationOverlay(
-        data: AppProgressCelebrationData(
-          title: 'Racha actualizada',
-          body: 'Ya llevas ${_streakDaysLabel(event.streak)} cuidando de ti.',
-          icon: Icons.local_fire_department_rounded,
-          fromValue: event.previousStreak,
-          toValue: event.streak,
-          valueLabel: 'días',
+      return AppBackground(
+        imageAsset: AppAssets.backgroundGarden,
+        imageOpacity: 0.045,
+        child: AppProgressCelebrationOverlay(
+          data: AppProgressCelebrationData(
+            title: 'Racha actualizada',
+            body: 'Ya llevas ${_streakDaysLabel(event.streak)} cuidando de ti.',
+            icon: Icons.local_fire_department_rounded,
+            fromValue: event.previousStreak,
+            toValue: event.streak,
+            valueLabel: 'días',
+          ),
+          onClose: () => Navigator.of(dialogContext).pop(),
         ),
-        onClose: () => Navigator.of(dialogContext).pop(),
       );
     },
   );
@@ -577,7 +583,7 @@ class _MetricTile extends StatelessWidget {
     final brightness = Theme.of(context).brightness;
     final color = brightness == Brightness.dark
         ? AppColors.darkSurface
-        : AppColors.white.withValues(alpha: 0.72);
+        : AppColors.background.withValues(alpha: 0.72);
     final textColor = Theme.of(context).colorScheme.onSurface;
 
     return Container(
@@ -624,7 +630,7 @@ class _DayInfoTile extends StatelessWidget {
         : AppColors.textMuted;
     final fill = brightness == Brightness.dark
         ? AppColors.darkSurface
-        : AppColors.white.withValues(alpha: 0.72);
+        : AppColors.background.withValues(alpha: 0.72);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),

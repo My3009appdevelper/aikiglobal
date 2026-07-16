@@ -7,6 +7,7 @@ import '../../core/data/models/content_media_file_metadata.dart';
 import '../../core/data/providers/app_data_scope.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
+import '../../core/theme/app_typography.dart';
 import '../../shared/widgets/app_cover_image.dart';
 import '../../shared/widgets/app_interactive.dart';
 import '../../shared/widgets/app_primary_button.dart';
@@ -25,9 +26,10 @@ class ContentDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final showsMediaStages = contentItemShowsMediaStages(item);
+    final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: scheme.surface,
       body: Stack(
         children: [
           CustomScrollView(
@@ -74,6 +76,12 @@ class ContentDetailPage extends StatelessWidget {
             bottom: 26,
             child: AppPrimaryButton(
               label: showsMediaStages ? 'Comenzar curso' : 'Reproducir ahora',
+              backgroundColor: scheme.primary,
+              foregroundColor: scheme.onPrimary,
+              labelStyle: const TextStyle(
+                fontFamily: AppTypography.displayFont,
+                fontWeight: FontWeight.w300,
+              ),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute<void>(
@@ -98,6 +106,7 @@ class _DetailHero extends StatelessWidget {
   Widget build(BuildContext context) {
     final profileController = AppDataScope.currentProfile(context);
     final userContentStatesController = AppDataScope.userContentStates(context);
+    final scheme = Theme.of(context).colorScheme;
 
     return SizedBox(
       height: 430,
@@ -124,9 +133,7 @@ class _DetailHero extends StatelessWidget {
                   context,
                 ).resolveCoverImageUrl,
                 fallback: Container(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? AppColors.darkSurface
-                      : AppColors.sandLight,
+                  color: scheme.surface,
                   alignment: Alignment.center,
                   child: AppLogo(
                     width: 168,
@@ -193,7 +200,7 @@ class _DetailHero extends StatelessWidget {
                       Text(
                         item.type.toUpperCase(),
                         style: Theme.of(context).textTheme.labelMedium
-                            ?.copyWith(color: AppColors.sand),
+                            ?.copyWith(color: AppColors.white),
                       ),
                     ],
                   ),
@@ -329,23 +336,21 @@ class _Stat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final circleColor = brightness == Brightness.dark
-        ? AppColors.darkSurfaceSoft
-        : AppColors.sandLight;
-    final iconColor = Theme.of(context).colorScheme.primary;
+    final scheme = Theme.of(context).colorScheme;
 
     return Column(
       children: [
         CircleAvatar(
-          backgroundColor: circleColor,
-          child: Icon(icon, color: iconColor),
+          backgroundColor: scheme.surface,
+          child: Icon(icon, color: scheme.onSurface),
         ),
         const SizedBox(height: 8),
         Text(
           label,
           textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodySmall,
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(color: scheme.onSurface),
         ),
       ],
     );

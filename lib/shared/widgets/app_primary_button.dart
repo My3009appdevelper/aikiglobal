@@ -12,6 +12,9 @@ class AppPrimaryButton extends StatelessWidget {
     this.icon = Icons.arrow_forward_rounded,
     this.expand = true,
     this.height = 62,
+    this.backgroundColor,
+    this.foregroundColor,
+    this.labelStyle,
   });
 
   final String label;
@@ -19,13 +22,23 @@ class AppPrimaryButton extends StatelessWidget {
   final IconData? icon;
   final bool expand;
   final double height;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
+  final TextStyle? labelStyle;
 
   @override
   Widget build(BuildContext context) {
     final enabled = onPressed != null;
     final brightness = Theme.of(context).brightness;
     final scheme = Theme.of(context).colorScheme;
-    final foreground = scheme.onPrimary;
+    final background = backgroundColor ?? scheme.primary;
+    final foreground = foregroundColor ?? scheme.onPrimary;
+    final baseLabelStyle = Theme.of(context).textTheme.labelLarge;
+    final effectiveLabelStyle =
+        (baseLabelStyle?.merge(labelStyle) ?? labelStyle)?.copyWith(
+          color: foreground,
+          fontSize: labelStyle?.fontSize ?? 18,
+        );
     final content = AnimatedOpacity(
       duration: const Duration(milliseconds: 180),
       opacity: enabled ? 1 : 0.55,
@@ -38,12 +51,8 @@ class AppPrimaryButton extends StatelessWidget {
           height: height,
           padding: const EdgeInsets.symmetric(horizontal: 26),
           decoration: BoxDecoration(
+            color: background,
             borderRadius: AppRadius.full,
-            gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [scheme.primary, scheme.secondary],
-            ),
             boxShadow: AppShadows.soft(brightness),
           ),
           child: Row(
@@ -55,10 +64,7 @@ class AppPrimaryButton extends StatelessWidget {
                   label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: foreground,
-                    fontSize: 18,
-                  ),
+                  style: effectiveLabelStyle,
                 ),
               ),
               if (icon != null) ...[

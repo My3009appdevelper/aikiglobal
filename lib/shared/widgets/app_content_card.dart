@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_shadows.dart';
+import '../../core/theme/app_typography.dart';
 import 'app_cover_image.dart';
 import 'app_interactive.dart';
 import 'app_logo.dart';
@@ -36,12 +37,8 @@ class AppContentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
-    final cardColor = brightness == Brightness.dark
-        ? AppColors.darkSurface
-        : AppColors.white;
-    final stroke = brightness == Brightness.dark
-        ? AppColors.darkStroke
-        : AppColors.stroke;
+    final scheme = Theme.of(context).colorScheme;
+    final cardColor = scheme.surface;
 
     return SizedBox(
       width: width,
@@ -55,7 +52,6 @@ class AppContentCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: cardColor.withValues(alpha: 0.88),
             borderRadius: AppRadius.medium,
-            border: Border.all(color: stroke.withValues(alpha: 0.7)),
             boxShadow: AppShadows.soft(brightness),
           ),
           clipBehavior: Clip.antiAlias,
@@ -72,11 +68,12 @@ class AppContentCard extends StatelessWidget {
                       imagePath: imagePath,
                       resolveImageUrl: resolveImageUrl,
                       fallback: Container(
-                        color: brightness == Brightness.dark
-                            ? AppColors.darkSurface
-                            : AppColors.sandLight,
+                        color: scheme.surface,
                         alignment: Alignment.center,
-                        child: AppLogo(width: 96, light: brightness == Brightness.dark),
+                        child: AppLogo(
+                          width: 96,
+                          light: brightness == Brightness.dark,
+                        ),
                       ),
                     ),
                     DecoratedBox(
@@ -109,14 +106,20 @@ class AppContentCard extends StatelessWidget {
                       title,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontFamily: AppTypography.displayFont,
+                        color: scheme.onSurface,
+                      ),
                     ),
                     const SizedBox(height: 6),
                     Text(
                       subtitle,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodySmall,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        fontFamily: AppTypography.displayFont,
+                        color: scheme.onSurface,
+                      ),
                     ),
                     const SizedBox(height: 12),
                     Row(
@@ -124,9 +127,7 @@ class AppContentCard extends StatelessWidget {
                         Icon(
                           Icons.access_time_rounded,
                           size: 16,
-                          color: brightness == Brightness.dark
-                              ? AppColors.darkTextMuted
-                              : AppColors.textSecondary,
+                          color: scheme.onSurface.withValues(alpha: 0.72),
                         ),
                         const SizedBox(width: 4),
                         Expanded(
@@ -134,7 +135,11 @@ class AppContentCard extends StatelessWidget {
                             subtitle.split(' · ').last,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.bodySmall,
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  fontFamily: AppTypography.displayFont,
+                                  color: scheme.onSurface,
+                                ),
                           ),
                         ),
                         _FavoriteActionIcon(initialIcon: favoriteIcon),
@@ -179,10 +184,9 @@ class _FavoriteActionIconState extends State<_FavoriteActionIcon> {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final idleColor = brightness == Brightness.dark
-        ? AppColors.darkTextMuted
-        : AppColors.textSecondary;
+    final idleColor = Theme.of(
+      context,
+    ).colorScheme.onSurface.withValues(alpha: 0.72);
 
     return AppInteractive(
       tooltip: _selected ? 'Quitar de favoritos' : 'Guardar en favoritos',
@@ -216,13 +220,14 @@ class _Badge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.white.withValues(alpha: 0.88),
+        color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.88),
         borderRadius: AppRadius.full,
       ),
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelMedium?.copyWith(
-          color: AppColors.primary,
+          fontFamily: AppTypography.displayFont,
+          color: Theme.of(context).colorScheme.onSurface,
           fontSize: 11,
         ),
       ),

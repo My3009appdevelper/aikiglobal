@@ -67,7 +67,7 @@ class _WellnessCheckInSheetState extends State<WellnessCheckInSheet> {
     final brightness = Theme.of(context).brightness;
     final surface = brightness == Brightness.dark
         ? AppColors.darkSurface
-        : AppColors.white;
+        : AppColors.background;
     final muted = brightness == Brightness.dark
         ? AppColors.darkTextMuted
         : AppColors.textSecondary;

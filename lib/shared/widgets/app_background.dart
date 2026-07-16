@@ -114,6 +114,7 @@ class _AppBackgroundState extends State<AppBackground>
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return DecoratedBox(
@@ -121,17 +122,7 @@ class _AppBackgroundState extends State<AppBackground>
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: isDark
-              ? const [
-                  AppColors.darkBackground,
-                  AppColors.darkSurface,
-                  AppColors.primaryDeep,
-                ]
-              : const [
-                  AppColors.ivory,
-                  AppColors.warmIvory,
-                  AppColors.sandLight,
-                ],
+          colors: [scheme.tertiary, scheme.tertiary],
         ),
       ),
       child: Stack(

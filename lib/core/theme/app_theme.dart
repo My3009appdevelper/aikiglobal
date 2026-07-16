@@ -11,7 +11,7 @@ class AppTheme {
     brightness: Brightness.light,
     scheme: AppColors.lightScheme,
     scaffold: AppColors.ivory,
-    card: AppColors.white,
+    card: AppColors.background,
   );
 
   static ThemeData get dark => _build(
@@ -49,7 +49,7 @@ class AppTheme {
         filled: true,
         fillColor: brightness == Brightness.dark
             ? AppColors.darkSurfaceSoft
-            : AppColors.white.withValues(alpha: 0.78),
+            : AppColors.background.withValues(alpha: 0.96),
         hintStyle: textTheme.bodyMedium?.copyWith(
           color: brightness == Brightness.dark
               ? AppColors.darkTextMuted.withValues(alpha: 0.72)

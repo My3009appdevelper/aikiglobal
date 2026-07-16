@@ -191,6 +191,10 @@ class _MeditationTimerPageState extends State<MeditationTimerPage> {
 
   @override
   Widget build(BuildContext context) {
+    final showStreakOnlyBackground =
+        _showCompletionOverlay &&
+        (_progressOverlayData?.hasValueTransition ?? false);
+
     return Scaffold(
       body: AppBackground(
         imageAsset: AppAssets.backgroundMeditation,
@@ -199,112 +203,129 @@ class _MeditationTimerPageState extends State<MeditationTimerPage> {
           bottom: false,
           child: Stack(
             children: [
-              AppResponsiveContainer(
-                child: CustomScrollView(
-                  slivers: [
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 16, 0, 124),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _TimerHeader(
-                              onBack: () => Navigator.of(context).pop(),
-                            ),
-                            const SizedBox(height: AppSpacing.xl),
-                            Center(
-                              child: _TimerRing(
-                                remainingSeconds: _remainingSeconds,
-                                durationSeconds: _durationMinutes * 60,
-                              ),
-                            ),
-                            const SizedBox(height: AppSpacing.xl),
-                            _DurationSection(
-                              enabled: !_isRunning,
-                              minutes: _durationMinutes,
-                              onChanged: _updateDuration,
-                            ),
-                            const SizedBox(height: AppSpacing.lg),
-                            Builder(
-                              builder: (context) {
-                                final contentController =
-                                    AppDataScope.contentItems(context);
-                                final selectedSound = _selectedSound(
-                                  _timerSounds,
-                                );
+              AnimatedOpacity(
+                duration: const Duration(milliseconds: 260),
+                curve: Curves.easeOutCubic,
+                opacity: showStreakOnlyBackground ? 0 : 1,
+                child: IgnorePointer(
+                  ignoring: showStreakOnlyBackground,
+                  child: AppResponsiveContainer(
+                    child: CustomScrollView(
+                      slivers: [
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 16, 0, 124),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _TimerHeader(
+                                  onBack: () => Navigator.of(context).pop(),
+                                ),
+                                const SizedBox(height: AppSpacing.xl),
+                                Center(
+                                  child: _TimerRing(
+                                    remainingSeconds: _remainingSeconds,
+                                    durationSeconds: _durationMinutes * 60,
+                                  ),
+                                ),
+                                const SizedBox(height: AppSpacing.xl),
+                                _DurationSection(
+                                  enabled: !_isRunning,
+                                  minutes: _durationMinutes,
+                                  onChanged: _updateDuration,
+                                ),
+                                const SizedBox(height: AppSpacing.lg),
+                                Builder(
+                                  builder: (context) {
+                                    final contentController =
+                                        AppDataScope.contentItems(context);
+                                    final selectedSound = _selectedSound(
+                                      _timerSounds,
+                                    );
 
-                                return Column(
-                                  children: [
-                                    _SoundSection(
-                                      sounds: _timerSounds,
-                                      selectedSoundId:
-                                          selectedSound?.uuidContentItem,
-                                      isLoading:
-                                          _isLoadingTimerSounds ||
-                                          _isLoadingSoundMedia,
-                                      enabled: !_isRunning,
-                                      resolveCoverImageUrl: contentController
-                                          .resolveCoverImageUrl,
-                                      onSelected: (sound) {
-                                        setState(() {
-                                          _selectedSoundId =
-                                              sound.uuidContentItem;
-                                        });
-                                        unawaited(_loadSoundMedia(sound));
-                                      },
-                                    ),
-                                    const SizedBox(height: AppSpacing.lg),
-                                    _SelectedSoundNote(
-                                      sound: selectedSound,
-                                      hasAudio: _selectedSoundMedia != null,
-                                      isLoading:
-                                          _isLoadingTimerSounds ||
-                                          _isLoadingSoundMedia,
-                                      error:
-                                          _ambientSoundError ??
-                                          _soundMediaError ??
-                                          _timerSoundsError,
-                                    ),
-                                  ],
-                                );
-                              },
+                                    return Column(
+                                      children: [
+                                        _SoundSection(
+                                          sounds: _timerSounds,
+                                          selectedSoundId:
+                                              selectedSound?.uuidContentItem,
+                                          isLoading:
+                                              _isLoadingTimerSounds ||
+                                              _isLoadingSoundMedia,
+                                          enabled: !_isRunning,
+                                          resolveCoverImageUrl:
+                                              contentController
+                                                  .resolveCoverImageUrl,
+                                          onSelected: (sound) {
+                                            setState(() {
+                                              _selectedSoundId =
+                                                  sound.uuidContentItem;
+                                            });
+                                            unawaited(_loadSoundMedia(sound));
+                                          },
+                                        ),
+                                        const SizedBox(height: AppSpacing.lg),
+                                        _SelectedSoundNote(
+                                          sound: selectedSound,
+                                          hasAudio: _selectedSoundMedia != null,
+                                          isLoading:
+                                              _isLoadingTimerSounds ||
+                                              _isLoadingSoundMedia,
+                                          error:
+                                              _ambientSoundError ??
+                                              _soundMediaError ??
+                                              _timerSoundsError,
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
               Positioned(
                 left: 24,
                 right: 24,
                 bottom: 24,
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 520),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (_canStopSession)
-                          Row(
-                            children: [
-                              Expanded(child: _buildPrimaryTimerAction()),
-                              const SizedBox(width: AppSpacing.sm),
-                              Expanded(
-                                child: AppPrimaryButton(
-                                  label: 'Detener',
-                                  icon: Icons.stop_rounded,
-                                  expand: true,
-                                  height: 56,
-                                  onPressed: _stopTimerAndRecordPartial,
-                                ),
-                              ),
-                            ],
-                          )
-                        else
-                          _buildPrimaryTimerAction(),
-                      ],
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 260),
+                  curve: Curves.easeOutCubic,
+                  opacity: showStreakOnlyBackground ? 0 : 1,
+                  child: IgnorePointer(
+                    ignoring: showStreakOnlyBackground,
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 520),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (_canStopSession)
+                              Row(
+                                children: [
+                                  Expanded(child: _buildPrimaryTimerAction()),
+                                  const SizedBox(width: AppSpacing.sm),
+                                  Expanded(
+                                    child: AppPrimaryButton(
+                                      label: 'Detener',
+                                      icon: Icons.stop_rounded,
+                                      expand: true,
+                                      height: 56,
+                                      onPressed: _stopTimerAndRecordPartial,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            else
+                              _buildPrimaryTimerAction(),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -656,7 +677,7 @@ class _TimerRing extends StatelessWidget {
         shape: BoxShape.circle,
         color: brightness == Brightness.dark
             ? AppColors.darkSurface
-            : AppColors.white.withValues(alpha: 0.88),
+            : AppColors.background.withValues(alpha: 0.88),
         boxShadow: AppShadows.soft(brightness),
       ),
       child: Stack(
@@ -685,7 +706,7 @@ class _TimerRing extends StatelessWidget {
                   time,
                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
                     fontSize: 42,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -860,7 +881,7 @@ class _SoundCoverCard extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final surface = brightness == Brightness.dark
         ? AppColors.darkSurfaceSoft
-        : AppColors.white;
+        : AppColors.background;
     final stroke = selected
         ? scheme.primary
         : brightness == Brightness.dark
@@ -999,7 +1020,7 @@ class _TimerSection extends StatelessWidget {
     final brightness = Theme.of(context).brightness;
     final surface = brightness == Brightness.dark
         ? AppColors.darkSurface
-        : AppColors.white;
+        : AppColors.background;
     final stroke = brightness == Brightness.dark
         ? AppColors.darkStroke
         : AppColors.stroke;

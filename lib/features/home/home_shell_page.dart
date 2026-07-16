@@ -7,6 +7,7 @@ import '../../app/app_router.dart';
 import '../../shared/widgets/app_background.dart';
 import '../../shared/widgets/app_bottom_nav_bar.dart';
 import '../../shared/widgets/app_progress_celebration_overlay.dart';
+import '../admin/admin_company_info/admin_company_info_page.dart';
 import '../admin/admin_content/admin_content_page.dart';
 import '../admin/admin_users/admin_users_page.dart';
 import '../espacio_seguro/espacio_seguro_page.dart';
@@ -31,6 +32,7 @@ class _HomeShellPageState extends State<HomeShellPage> {
 
   static const _adminPages = [
     AdminContentPage(),
+    AdminCompanyInfoPage(),
     AdminUsersPage(),
     PerfilPage(),
   ];
@@ -58,6 +60,11 @@ class _HomeShellPageState extends State<HomeShellPage> {
       label: 'Contenido',
       icon: Icons.inventory_2_outlined,
       activeIcon: Icons.inventory_2_rounded,
+    ),
+    AppBottomNavItem(
+      label: 'Empresa',
+      icon: Icons.business_outlined,
+      activeIcon: Icons.business_rounded,
     ),
     AppBottomNavItem(
       label: 'Usuarios',
@@ -150,58 +157,70 @@ class _HomeShellPageState extends State<HomeShellPage> {
             : _currentIndex;
 
         return Scaffold(
-          body: Stack(
-            children: [
-              AppBackground(
-                animateEntry: true,
-                entryDuration: const Duration(milliseconds: 3000),
-                contentDelay: const Duration(milliseconds: 2000),
-                imageAsset: AppAssets.backgroundGarden,
-                imageOpacity: 0.045,
-                child: IndexedStack(index: safeIndex, children: pages),
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 560),
-                  child: AppBottomNavBar(
-                    items: items,
-                    currentIndex: safeIndex,
-                    onTap: (index) {
-                      setState(() => _currentIndex = index);
-                    },
+          body: AppBackground(
+            animateEntry: true,
+            entryDuration: const Duration(milliseconds: 3000),
+            contentDelay: const Duration(milliseconds: 2000),
+            imageAsset: AppAssets.backgroundGarden,
+            imageOpacity: 0.045,
+            child: Stack(
+              children: [
+                AnimatedOpacity(
+                  duration: const Duration(milliseconds: 260),
+                  curve: Curves.easeOutCubic,
+                  opacity: _showStreakOverlay ? 0 : 1,
+                  child: IgnorePointer(
+                    ignoring: _showStreakOverlay,
+                    child: Stack(
+                      children: [
+                        IndexedStack(index: safeIndex, children: pages),
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 560),
+                            child: AppBottomNavBar(
+                              items: items,
+                              currentIndex: safeIndex,
+                              onTap: (index) {
+                                setState(() => _currentIndex = index);
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Positioned.fill(
-                child: IgnorePointer(
-                  ignoring: !_showStreakOverlay,
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 280),
-                    switchInCurve: Curves.easeOutCubic,
-                    switchOutCurve: Curves.easeInCubic,
-                    transitionBuilder: (child, animation) {
-                      final scale = Tween<double>(
-                        begin: 0.96,
-                        end: 1,
-                      ).animate(animation);
+                Positioned.fill(
+                  child: IgnorePointer(
+                    ignoring: !_showStreakOverlay,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 280),
+                      switchInCurve: Curves.easeOutCubic,
+                      switchOutCurve: Curves.easeInCubic,
+                      transitionBuilder: (child, animation) {
+                        final scale = Tween<double>(
+                          begin: 0.96,
+                          end: 1,
+                        ).animate(animation);
 
-                      return FadeTransition(
-                        opacity: animation,
-                        child: ScaleTransition(scale: scale, child: child),
-                      );
-                    },
-                    child: _showStreakOverlay
-                        ? AppProgressCelebrationOverlay(
-                            key: ValueKey(_streakOverlayData),
-                            data: _streakOverlayData!,
-                            onClose: _closeStreakCelebration,
-                          )
-                        : const SizedBox.shrink(key: ValueKey('empty')),
+                        return FadeTransition(
+                          opacity: animation,
+                          child: ScaleTransition(scale: scale, child: child),
+                        );
+                      },
+                      child: _showStreakOverlay
+                          ? AppProgressCelebrationOverlay(
+                              key: ValueKey(_streakOverlayData),
+                              data: _streakOverlayData!,
+                              onClose: _closeStreakCelebration,
+                            )
+                          : const SizedBox.shrink(key: ValueKey('empty')),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

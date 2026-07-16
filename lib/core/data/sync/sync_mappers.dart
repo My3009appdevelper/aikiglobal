@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import '../local/app_database.dart';
+import '../models/app_company_info.dart';
 import '../models/app_content_media.dart';
 import '../models/app_content_item.dart';
 import '../models/app_profile.dart';
@@ -144,6 +145,124 @@ String _dateOnlyFromDateTime(DateTime date) {
   final day = local.day.toString().padLeft(2, '0');
 
   return '${local.year}-$month-$day';
+}
+
+Map<String, dynamic> companyInfoToRemote(LocalCompanyInfo info) {
+  return {
+    'uuid_company_info': info.uuidCompanyInfo,
+    'slug': info.slug,
+    'hero_titulo': info.heroTitulo,
+    'hero_subtitulo': info.heroSubtitulo,
+    'hero_image_path': info.heroImagePath,
+    'texto_entrada': info.textoEntrada,
+    'quienes_somos': info.quienesSomos,
+    'significado_aiki': info.significadoAiki,
+    'mision': info.mision,
+    'vision': info.vision,
+    'filosofia': info.filosofia,
+    'mensaje_fundadores_titulo': info.mensajeFundadoresTitulo,
+    'mensaje_fundadores_texto': info.mensajeFundadoresTexto,
+    'mensaje_fundadores_image_path1': info.mensajeFundadoresImagePath1,
+    'mensaje_fundadores_image_path2': info.mensajeFundadoresImagePath2,
+    'mensaje_fundadores_image_path3': info.mensajeFundadoresImagePath3,
+    'mensaje_fundadores_image_path4': info.mensajeFundadoresImagePath4,
+    'mensaje_fundadores_image_path5': info.mensajeFundadoresImagePath5,
+    'created_at': _dateToRemote(info.createdAt),
+    'updated_at': _dateToRemote(info.updatedAt),
+    'deleted_at': _dateToRemote(info.deletedAt),
+    'synced_at': _dateToRemote(info.syncedAt),
+  };
+}
+
+CompanyInfoTableCompanion companyInfoRemoteToCompanion(
+  Map<String, dynamic> json,
+) {
+  final syncedAt = DateTime.now().toUtc();
+  return CompanyInfoTableCompanion.insert(
+    uuidCompanyInfo: _stringValue(json, 'uuid_company_info'),
+    slug: Value(_stringValue(json, 'slug', fallback: 'main')),
+    heroTitulo: Value(_stringValue(json, 'hero_titulo')),
+    heroSubtitulo: Value(_stringValue(json, 'hero_subtitulo')),
+    heroImagePath: Value(_nullableStringValue(json, 'hero_image_path')),
+    textoEntrada: Value(_stringValue(json, 'texto_entrada')),
+    quienesSomos: _stringValue(json, 'quienes_somos'),
+    significadoAiki: Value(_stringValue(json, 'significado_aiki')),
+    mision: _stringValue(json, 'mision'),
+    vision: _stringValue(json, 'vision'),
+    filosofia: _stringValue(json, 'filosofia'),
+    mensajeFundadoresTitulo: Value(
+      _stringValue(json, 'mensaje_fundadores_titulo'),
+    ),
+    mensajeFundadoresTexto: Value(
+      _stringValue(json, 'mensaje_fundadores_texto'),
+    ),
+    mensajeFundadoresImagePath1: Value(
+      _nullableStringValue(json, 'mensaje_fundadores_image_path1'),
+    ),
+    mensajeFundadoresImagePath2: Value(
+      _nullableStringValue(json, 'mensaje_fundadores_image_path2'),
+    ),
+    mensajeFundadoresImagePath3: Value(
+      _nullableStringValue(json, 'mensaje_fundadores_image_path3'),
+    ),
+    mensajeFundadoresImagePath4: Value(
+      _nullableStringValue(json, 'mensaje_fundadores_image_path4'),
+    ),
+    mensajeFundadoresImagePath5: Value(
+      _nullableStringValue(json, 'mensaje_fundadores_image_path5'),
+    ),
+    createdAt: Value(_dateTimeValue(json, 'created_at')),
+    updatedAt: Value(_dateTimeValue(json, 'updated_at')),
+    deletedAt: Value(_nullableDateTimeValue(json, 'deleted_at')),
+    syncedAt: Value(syncedAt),
+  );
+}
+
+AppCompanyInfo companyInfoRemoteToApp(Map<String, dynamic> json) {
+  return AppCompanyInfo(
+    uuidCompanyInfo: _stringValue(json, 'uuid_company_info'),
+    slug: _stringValue(json, 'slug', fallback: 'main'),
+    heroTitulo: _stringValue(json, 'hero_titulo'),
+    heroSubtitulo: _stringValue(json, 'hero_subtitulo'),
+    heroImagePath: _nullableStringValue(json, 'hero_image_path'),
+    textoEntrada: _stringValue(json, 'texto_entrada'),
+    quienesSomos: _stringValue(json, 'quienes_somos'),
+    significadoAiki: _stringValue(json, 'significado_aiki'),
+    mision: _stringValue(json, 'mision'),
+    vision: _stringValue(json, 'vision'),
+    filosofia: _stringValue(json, 'filosofia'),
+    mensajeFundadoresTitulo: _stringValue(
+      json,
+      'mensaje_fundadores_titulo',
+    ),
+    mensajeFundadoresTexto: _stringValue(json, 'mensaje_fundadores_texto'),
+    mensajeFundadoresImagePath1: _nullableStringValue(
+      json,
+      'mensaje_fundadores_image_path1',
+    ),
+    mensajeFundadoresImagePath2: _nullableStringValue(
+      json,
+      'mensaje_fundadores_image_path2',
+    ),
+    mensajeFundadoresImagePath3: _nullableStringValue(
+      json,
+      'mensaje_fundadores_image_path3',
+    ),
+    mensajeFundadoresImagePath4: _nullableStringValue(
+      json,
+      'mensaje_fundadores_image_path4',
+    ),
+    mensajeFundadoresImagePath5: _nullableStringValue(
+      json,
+      'mensaje_fundadores_image_path5',
+    ),
+    createdAt: _dateTimeValue(json, 'created_at'),
+    updatedAt: _dateTimeValue(json, 'updated_at'),
+    deletedAt: _nullableDateTimeValue(json, 'deleted_at'),
+    syncedAt:
+        _nullableDateTimeValue(json, 'synced_at') ??
+        _dateTimeValue(json, 'updated_at'),
+  );
 }
 
 Map<String, dynamic> profileToRemote(LocalProfile profile) {

@@ -43,7 +43,7 @@ class AppProgressCelebrationOverlay extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final surface = brightness == Brightness.dark
         ? AppColors.darkSurface
-        : AppColors.white;
+        : AppColors.background;
     final muted = brightness == Brightness.dark
         ? AppColors.darkTextMuted
         : AppColors.textSecondary;
@@ -95,7 +95,7 @@ class AppProgressCelebrationOverlay extends StatelessWidget {
                   data.title,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -230,7 +230,7 @@ class _ValuePill extends StatelessWidget {
               style: Theme.of(context).textTheme.displayMedium?.copyWith(
                 color: foreground,
                 fontSize: active ? 42 : 32,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 height: 0.96,
               ),
             ),
