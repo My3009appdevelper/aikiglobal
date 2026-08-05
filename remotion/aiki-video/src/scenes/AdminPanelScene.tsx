@@ -34,6 +34,7 @@ export const AdminPanelScene: React.FC<AikiVideoProps> = (props) => {
             height={phoneHeight}
             accentColor={props.accentColor}
             objectFit="cover"
+            contentFadeInOut={false}
             centerVertically
           />
         </div>
