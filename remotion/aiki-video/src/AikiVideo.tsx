@@ -19,7 +19,7 @@ import {
 
 const userExploreDurationInFrames = 390;
 const contentDurationInFrames = 255;
-const userMySpaceDurationInFrames = 600;
+const userMySpaceDurationInFrames = 570;
 const userProfileDurationInFrames = 360;
 const adminPanelDurationInFrames = 420;
 const bosquesStartAtSeconds = 12.5;

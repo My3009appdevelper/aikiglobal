@@ -19,6 +19,7 @@ export const AikiVideoSchema = z.object({
     explore: calloutSchema,
     content: calloutSchema,
     mySpace: calloutSchema,
+    mySpaceStreak: calloutSchema,
     profile: calloutSchema,
     adminPanel: calloutSchema,
   }),

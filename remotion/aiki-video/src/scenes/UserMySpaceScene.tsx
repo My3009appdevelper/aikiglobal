@@ -11,6 +11,11 @@ export const UserMySpaceScene: React.FC<AikiVideoProps> = (props) => {
   const callout = props.callouts.mySpace;
   const calloutStartFrame = Math.round(callout.startAtSeconds * fps);
   const calloutEndFrame = Math.round((callout.startAtSeconds + callout.durationInSeconds) * fps);
+  const streakCallout = props.callouts.mySpaceStreak;
+  const streakCalloutStartFrame = Math.round(streakCallout.startAtSeconds * fps);
+  const streakCalloutEndFrame = Math.round(
+    (streakCallout.startAtSeconds + streakCallout.durationInSeconds) * fps,
+  );
 
   return (
     <SceneCanvas name="04 - Mi espacio" accentColor={props.accentColor} backgroundTone="gold31">
@@ -41,6 +46,13 @@ export const UserMySpaceScene: React.FC<AikiVideoProps> = (props) => {
           side={callout.side}
           startFrame={calloutStartFrame}
           endFrame={calloutEndFrame}
+        />
+        <ZenCallout
+          text={streakCallout.text}
+          position={streakCallout.position}
+          side={streakCallout.side}
+          startFrame={streakCalloutStartFrame}
+          endFrame={streakCalloutEndFrame}
         />
       </div>
     </SceneCanvas>
