@@ -142,9 +142,6 @@ export const AikiVideo: React.FC<AikiVideoProps> = (props) => (
       >
         <UserProfileScene {...props} />
       </TransitionSeries.Sequence>
-      <TransitionSeries.Overlay durationInFrames={sceneTransitionDurationInFrames}>
-        <AikiLightTransition name="Transicion luz Perfil - Panel Admin" />
-      </TransitionSeries.Overlay>
       <TransitionSeries.Sequence
         name="07 - Panel Admin"
         durationInFrames={adminPanelDurationInFrames}
