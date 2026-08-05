@@ -11,6 +11,11 @@ export const AdminPanelScene: React.FC<AikiVideoProps> = (props) => {
   const callout = props.callouts.adminPanel;
   const calloutStartFrame = Math.round(callout.startAtSeconds * fps);
   const calloutEndFrame = Math.round((callout.startAtSeconds + callout.durationInSeconds) * fps);
+  const module2Callout = props.callouts.adminPanelModule2;
+  const module2StartFrame = Math.round(module2Callout.startAtSeconds * fps);
+  const module2EndFrame = Math.round(
+    (module2Callout.startAtSeconds + module2Callout.durationInSeconds) * fps,
+  );
 
   return (
     <SceneCanvas name="07 - Panel Admin" accentColor={props.accentColor} backgroundTone="gold31">
@@ -38,6 +43,13 @@ export const AdminPanelScene: React.FC<AikiVideoProps> = (props) => {
           side={callout.side}
           startFrame={calloutStartFrame}
           endFrame={calloutEndFrame}
+        />
+        <ZenCallout
+          text={module2Callout.text}
+          position={module2Callout.position}
+          side={module2Callout.side}
+          startFrame={module2StartFrame}
+          endFrame={module2EndFrame}
         />
       </div>
     </SceneCanvas>

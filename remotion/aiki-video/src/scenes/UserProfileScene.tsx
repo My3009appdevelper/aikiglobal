@@ -11,6 +11,16 @@ export const UserProfileScene: React.FC<AikiVideoProps> = (props) => {
   const callout = props.callouts.profile;
   const calloutStartFrame = Math.round(callout.startAtSeconds * fps);
   const calloutEndFrame = Math.round((callout.startAtSeconds + callout.durationInSeconds) * fps);
+  const module2Callout = props.callouts.profileModule2;
+  const module2StartFrame = Math.round(module2Callout.startAtSeconds * fps);
+  const module2EndFrame = Math.round(
+    (module2Callout.startAtSeconds + module2Callout.durationInSeconds) * fps,
+  );
+  const module3Callout = props.callouts.profileModule3;
+  const module3StartFrame = Math.round(module3Callout.startAtSeconds * fps);
+  const module3EndFrame = Math.round(
+    (module3Callout.startAtSeconds + module3Callout.durationInSeconds) * fps,
+  );
 
   return (
     <SceneCanvas name="06 - Perfil" accentColor={props.accentColor} backgroundTone="gold31">
@@ -37,6 +47,20 @@ export const UserProfileScene: React.FC<AikiVideoProps> = (props) => {
           side={callout.side}
           startFrame={calloutStartFrame}
           endFrame={calloutEndFrame}
+        />
+        <ZenCallout
+          text={module2Callout.text}
+          position={module2Callout.position}
+          side={module2Callout.side}
+          startFrame={module2StartFrame}
+          endFrame={module2EndFrame}
+        />
+        <ZenCallout
+          text={module3Callout.text}
+          position={module3Callout.position}
+          side={module3Callout.side}
+          startFrame={module3StartFrame}
+          endFrame={module3EndFrame}
         />
       </div>
     </SceneCanvas>
