@@ -37,7 +37,7 @@ export const UserExploreScene: React.FC<AikiVideoProps> = (props) => {
   return (
     <SceneCanvas name="02 Â· Usuario explora" accentColor={props.accentColor} backgroundTone="gold31">
       <div style={{ position: "relative", display: "flex", flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <ZenAmbientGlow intensity={0.18} />
+        <ZenAmbientGlow intensity={0.18} startFrame={focusStart} />
         <div
           style={{
             position: "relative",

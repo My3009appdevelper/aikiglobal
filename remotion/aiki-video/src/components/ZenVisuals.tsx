@@ -4,6 +4,8 @@ import { aikiPalette, begumSansFamily } from "../theme";
 type ZenAmbientGlowProps = {
   intensity?: number;
   scale?: number;
+  startFrame?: number;
+  endFrame?: number;
 };
 
 type ZenCalloutProps = {
@@ -14,7 +16,12 @@ type ZenCalloutProps = {
   bottom?: number;
 };
 
-export const ZenAmbientGlow: React.FC<ZenAmbientGlowProps> = ({ intensity = 0.22, scale = 1 }) => {
+export const ZenAmbientGlow: React.FC<ZenAmbientGlowProps> = ({
+  intensity = 0.22,
+  scale = 1,
+  startFrame = 0,
+  endFrame,
+}) => {
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
   const breathScale = interpolate(
@@ -27,6 +34,12 @@ export const ZenAmbientGlow: React.FC<ZenAmbientGlowProps> = ({ intensity = 0.22
       easing: Easing.inOut(Easing.sin),
     },
   );
+  const glowEndFrame = endFrame ?? durationInFrames;
+  const opacity = interpolate(frame, [startFrame, startFrame + 12, glowEndFrame - 12, glowEndFrame], [0, intensity, intensity, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: Easing.bezier(0.16, 1, 0.3, 1),
+  });
 
   return (
     <div
@@ -38,7 +51,7 @@ export const ZenAmbientGlow: React.FC<ZenAmbientGlowProps> = ({ intensity = 0.22
         borderRadius: "50%",
         background: `radial-gradient(ellipse at 50% 48%, ${aikiPalette.gold}28 0%, ${aikiPalette.gold31Surface}14 38%, transparent 72%)`,
         filter: "blur(24px)",
-        opacity: intensity,
+        opacity,
         pointerEvents: "none",
         transform: `scale(${breathScale * scale})`,
       }}

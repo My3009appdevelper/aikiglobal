@@ -37,6 +37,8 @@ Implementar dos componentes puros de presentación:
 type ZenAmbientGlowProps = {
   intensity?: number;
   scale?: number;
+  startFrame?: number;
+  endFrame?: number;
 };
 
 type ZenCalloutProps = {
@@ -48,7 +50,7 @@ type ZenCalloutProps = {
 };
 ```
 
-`ZenAmbientGlow` debe ocupar el canvas completo detrás del teléfono, usar un `radial-gradient` con `aikiPalette.gold` y una respiración lenta entre escala `1` y `1.035`, con opacidad máxima de `intensity` (por defecto `0.22`).
+`ZenAmbientGlow` debe ocupar el canvas completo detrás del teléfono, usar un `radial-gradient` con `aikiPalette.gold` y una respiración lenta entre escala `1` y `1.035`, con opacidad máxima de `intensity` (por defecto `0.22`). Si se recibe `startFrame`, debe permanecer invisible hasta ese frame; esto permite conservar intactos los primeros 16 segundos de Explorar.
 
 `ZenCallout` debe:
 
