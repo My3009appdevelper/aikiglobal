@@ -21,18 +21,28 @@ export const UserProfileScene: React.FC<AikiVideoProps> = (props) => {
   const module3EndFrame = Math.round(
     (module3Callout.startAtSeconds + module3Callout.durationInSeconds) * fps,
   );
+  const adminCallout = props.callouts.adminPanel;
+  const adminCalloutStartFrame = Math.round(adminCallout.startAtSeconds * fps);
+  const adminCalloutEndFrame = Math.round(
+    (adminCallout.startAtSeconds + adminCallout.durationInSeconds) * fps,
+  );
+  const adminModule2Callout = props.callouts.adminPanelModule2;
+  const adminModule2StartFrame = Math.round(adminModule2Callout.startAtSeconds * fps);
+  const adminModule2EndFrame = Math.round(
+    (adminModule2Callout.startAtSeconds + adminModule2Callout.durationInSeconds) * fps,
+  );
 
   return (
-    <SceneCanvas name="06 - Perfil" accentColor={props.accentColor} backgroundTone="gold31">
+    <SceneCanvas name="06 - Perfil y Panel Admin" accentColor={props.accentColor} backgroundTone="gold31">
       <div style={{ position: "relative", display: "flex", flex: 1, alignItems: "center", justifyContent: "center" }}>
         <ZenAmbientGlow intensity={0.16} />
         <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
           <PhoneMockup
-            name="Pantalla de usuario - Perfil"
-            label="Perfil"
-            side="Usuario"
-            detail="La persona reconoce su recorrido y ajusta su experiencia en Aiki."
-            source={props.userProfileRecording}
+            name="Pantalla de usuario y administrador - Perfil y Panel Admin"
+            label="Perfil y Panel Admin"
+            side="Administrador"
+            detail="Perfil, empresa, usuarios y avisos en una sola grabación continua."
+            source={props.userProfileRecording || props.adminPanelRecording}
             sourceStartAtSeconds={0}
             width={phoneWidth}
             height={phoneHeight}
@@ -62,6 +72,20 @@ export const UserProfileScene: React.FC<AikiVideoProps> = (props) => {
           side={module3Callout.side}
           startFrame={module3StartFrame}
           endFrame={module3EndFrame}
+        />
+        <ZenCallout
+          text={adminCallout.text}
+          position={adminCallout.position}
+          side={adminCallout.side}
+          startFrame={adminCalloutStartFrame}
+          endFrame={adminCalloutEndFrame}
+        />
+        <ZenCallout
+          text={adminModule2Callout.text}
+          position={adminModule2Callout.position}
+          side={adminModule2Callout.side}
+          startFrame={adminModule2StartFrame}
+          endFrame={adminModule2EndFrame}
         />
       </div>
     </SceneCanvas>

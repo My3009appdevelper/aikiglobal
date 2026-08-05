@@ -8,7 +8,6 @@ import { UserExploreScene } from "./scenes/UserExploreScene";
 import { ContentScene } from "./scenes/ContentScene";
 import { UserMySpaceScene } from "./scenes/UserMySpaceScene";
 import { UserProfileScene } from "./scenes/UserProfileScene";
-import { AdminPanelScene } from "./scenes/AdminPanelScene";
 import { aikiPalette } from "./theme";
 import {
   compositionFps,
@@ -21,11 +20,9 @@ import {
 const userExploreDurationInFrames = 390;
 const contentDurationInFrames = 255;
 const userMySpaceDurationInFrames = 570;
-const userProfileDurationInFrames = 360;
 const profileAdminRecordingDurationInSeconds = 33.8625;
-const adminPanelRecordingStartAtSeconds = 17;
-const adminPanelDurationInFrames = Math.round(
-  (profileAdminRecordingDurationInSeconds - adminPanelRecordingStartAtSeconds) * compositionFps,
+const profileAdminDurationInFrames = Math.round(
+  profileAdminRecordingDurationInSeconds * compositionFps,
 );
 const bosquesStartAtSeconds = 12.5;
 
@@ -35,8 +32,7 @@ export const aikiVideoDurationInFrames =
   userExploreDurationInFrames +
   contentDurationInFrames +
   userMySpaceDurationInFrames +
-  userProfileDurationInFrames +
-  adminPanelDurationInFrames;
+  profileAdminDurationInFrames;
 
 const AikiLightTransition: React.FC<{ name: string }> = ({ name }) => {
   const frame = useCurrentFrame();
@@ -142,16 +138,10 @@ export const AikiVideo: React.FC<AikiVideoProps> = (props) => (
         <AikiLightTransition name="Transicion luz Mi espacio - Perfil" />
       </TransitionSeries.Overlay>
       <TransitionSeries.Sequence
-        name="06 - Perfil"
-        durationInFrames={userProfileDurationInFrames}
+        name="06 - Perfil y Panel Admin"
+        durationInFrames={profileAdminDurationInFrames}
       >
         <UserProfileScene {...props} />
-      </TransitionSeries.Sequence>
-      <TransitionSeries.Sequence
-        name="07 - Panel Admin"
-        durationInFrames={adminPanelDurationInFrames}
-      >
-        <AdminPanelScene {...props} />
       </TransitionSeries.Sequence>
     </TransitionSeries>
     <BosquesAudio />
