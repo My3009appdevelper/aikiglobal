@@ -1,54 +1,23 @@
-import { AikiVideoProps } from "../types";
-import { Easing, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
+import type { AikiVideoProps } from "../types";
+import { useVideoConfig } from "remotion";
 import { SceneCanvas } from "../components/SceneCanvas";
 import { PhoneMockup } from "../components/PhoneMockup";
 import { ZenAmbientGlow, ZenCallout } from "../components/ZenVisuals";
-import { phoneMockupSize } from "../phoneSpec";
+import { getPhoneMockupFrameSize } from "../phoneSpec";
 
 export const UserExploreScene: React.FC<AikiVideoProps> = (props) => {
-  const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const explorePhoneWidth = phoneMockupSize.width + 50;
-  const explorePhoneHeight = Math.round((explorePhoneWidth / phoneMockupSize.width) * phoneMockupSize.height);
+  const { width: phoneWidth, height: phoneHeight } = getPhoneMockupFrameSize(props.phoneScale);
+  const callout = props.callouts.explore;
+  const calloutStartFrame = Math.round(callout.startAtSeconds * fps);
+  const calloutEndFrame = Math.round((callout.startAtSeconds + callout.durationInSeconds) * fps);
   const exploreIntroPlaybackRate = 1.35;
-  const focusStart = Math.round(1.9 * fps);
-  const focusEnd = Math.round(4.2 * fps);
-  const phoneScale = interpolate(
-    frame,
-    [focusStart, focusStart + 18, focusEnd, focusEnd + 18],
-    [1, 1.055, 1.055, 1],
-    {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-      easing: Easing.bezier(0.16, 1, 0.3, 1),
-    },
-  );
-  const phoneTranslateY = interpolate(
-    frame,
-    [focusStart, focusStart + 18, focusEnd, focusEnd + 18],
-    [0, -8, -8, 0],
-    {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-      easing: Easing.bezier(0.16, 1, 0.3, 1),
-    },
-  );
 
   return (
     <SceneCanvas name="02 Â· Usuario explora" accentColor={props.accentColor} backgroundTone="gold31">
       <div style={{ position: "relative", display: "flex", flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <ZenAmbientGlow intensity={0.18} startFrame={focusStart} />
-        <div
-          style={{
-            position: "relative",
-            zIndex: 1,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            transform: `translateY(${phoneTranslateY}px) scale(${phoneScale})`,
-            transformOrigin: "50% 50%",
-          }}
-        >
+        <ZenAmbientGlow intensity={0.18} startFrame={calloutStartFrame} />
+        <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
           <PhoneMockup
             name="Pantalla de usuario Â· Explorar"
             label="Explorar contenido"
@@ -56,8 +25,8 @@ export const UserExploreScene: React.FC<AikiVideoProps> = (props) => {
             detail="GrabaciÃ³n de Explorar y selecciÃ³n de una meditaciÃ³n."
             source={props.userExploreRecording}
             demoKind="explore"
-            width={explorePhoneWidth}
-            height={explorePhoneHeight}
+            width={phoneWidth}
+            height={phoneHeight}
             accentColor={props.accentColor}
             objectFit="cover"
             sourceSegments={[
@@ -67,7 +36,13 @@ export const UserExploreScene: React.FC<AikiVideoProps> = (props) => {
             centerVertically
           />
         </div>
-        <ZenCallout text="Descubre tu momento" startFrame={60} endFrame={150} />
+        <ZenCallout
+          text={callout.text}
+          position={callout.position}
+          side={callout.side}
+          startFrame={calloutStartFrame}
+          endFrame={calloutEndFrame}
+        />
       </div>
     </SceneCanvas>
   );

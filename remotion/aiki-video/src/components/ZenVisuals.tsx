@@ -12,8 +12,8 @@ type ZenCalloutProps = {
   text: string;
   startFrame: number;
   endFrame: number;
-  align?: "left" | "center" | "right";
-  bottom?: number;
+  position?: "top" | "middle" | "bottom";
+  side?: "left" | "center" | "right";
 };
 
 export const ZenAmbientGlow: React.FC<ZenAmbientGlowProps> = ({
@@ -63,10 +63,13 @@ export const ZenCallout: React.FC<ZenCalloutProps> = ({
   text,
   startFrame,
   endFrame,
-  align = "center",
-  bottom = 32,
+  position = "bottom",
+  side = "center",
 }) => {
   const frame = useCurrentFrame();
+  if (!text.trim()) {
+    return null;
+  }
   const enterEnd = Math.min(startFrame + 12, endFrame);
   const exitStart = Math.max(startFrame, endFrame - 12);
   const opacity = interpolate(frame, [startFrame, enterEnd, exitStart, endFrame], [0, 1, 1, 0], {
@@ -79,15 +82,26 @@ export const ZenCallout: React.FC<ZenCalloutProps> = ({
     extrapolateRight: "clamp",
     easing: Easing.bezier(0.16, 1, 0.3, 1),
   });
+  const horizontalStyle =
+    side === "left"
+      ? { left: 40, width: "38%" }
+      : side === "right"
+        ? { right: 40, width: "38%" }
+        : { right: 40, left: 40 };
+  const verticalStyle =
+    position === "top"
+      ? { top: 84, transform: `translateY(${translateY}px)` }
+      : position === "middle"
+        ? { top: "50%", transform: `translateY(calc(-50% + ${translateY}px))` }
+        : { bottom: 32, transform: `translateY(${translateY}px)` };
 
   return (
     <div
       aria-hidden="true"
       style={{
         position: "absolute",
-        right: 40,
-        bottom,
-        left: 40,
+        ...horizontalStyle,
+        ...verticalStyle,
         zIndex: 2,
         display: "flex",
         alignItems: "center",
@@ -100,8 +114,7 @@ export const ZenCallout: React.FC<ZenCalloutProps> = ({
         lineHeight: 1.08,
         opacity,
         pointerEvents: "none",
-        textAlign: align,
-        transform: `translateY(${translateY}px)`,
+        textAlign: side,
       }}
     >
       <div style={{ width: 54, height: 2, borderRadius: 999, backgroundColor: aikiPalette.gold }} />

@@ -1,40 +1,22 @@
 import type { AikiVideoProps } from "../types";
-import { Easing, interpolate, useCurrentFrame } from "remotion";
+import { useVideoConfig } from "remotion";
 import { SceneCanvas } from "../components/SceneCanvas";
 import { PhoneMockup } from "../components/PhoneMockup";
 import { ZenAmbientGlow, ZenCallout } from "../components/ZenVisuals";
-import { phoneMockupSize } from "../phoneSpec";
+import { getPhoneMockupFrameSize } from "../phoneSpec";
 
 export const UserProfileScene: React.FC<AikiVideoProps> = (props) => {
-  const frame = useCurrentFrame();
-  const phoneWidth = phoneMockupSize.width + 50;
-  const phoneHeight = Math.round((phoneWidth / phoneMockupSize.width) * phoneMockupSize.height);
-  const phoneScale = interpolate(frame, [0, 45, 150, 210, 360], [1, 1.035, 1.035, 1.015, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: Easing.bezier(0.16, 1, 0.3, 1),
-  });
-  const phoneTranslateY = interpolate(frame, [0, 45, 180, 270, 360], [0, -4, -4, 0, 0], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: Easing.bezier(0.16, 1, 0.3, 1),
-  });
+  const { fps } = useVideoConfig();
+  const { width: phoneWidth, height: phoneHeight } = getPhoneMockupFrameSize(props.phoneScale);
+  const callout = props.callouts.profile;
+  const calloutStartFrame = Math.round(callout.startAtSeconds * fps);
+  const calloutEndFrame = Math.round((callout.startAtSeconds + callout.durationInSeconds) * fps);
 
   return (
     <SceneCanvas name="06 - Perfil" accentColor={props.accentColor} backgroundTone="gold31">
       <div style={{ position: "relative", display: "flex", flex: 1, alignItems: "center", justifyContent: "center" }}>
         <ZenAmbientGlow intensity={0.16} />
-        <div
-          style={{
-            position: "relative",
-            zIndex: 1,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            transform: `translateY(${phoneTranslateY}px) scale(${phoneScale})`,
-            transformOrigin: "50% 50%",
-          }}
-        >
+        <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
           <PhoneMockup
             name="Pantalla de usuario - Perfil"
             label="Perfil"
@@ -49,7 +31,13 @@ export const UserProfileScene: React.FC<AikiVideoProps> = (props) => {
             centerVertically
           />
         </div>
-        <ZenCallout text="Tu espacio, a tu medida" startFrame={36} endFrame={186} />
+        <ZenCallout
+          text={callout.text}
+          position={callout.position}
+          side={callout.side}
+          startFrame={calloutStartFrame}
+          endFrame={calloutEndFrame}
+        />
       </div>
     </SceneCanvas>
   );
