@@ -23,8 +23,9 @@ const contentDurationInFrames = 255;
 const userMySpaceDurationInFrames = 570;
 const userProfileDurationInFrames = 360;
 const profileAdminRecordingDurationInSeconds = 33.8625;
+const adminPanelRecordingStartAtSeconds = 17;
 const adminPanelDurationInFrames = Math.round(
-  (profileAdminRecordingDurationInSeconds - userProfileDurationInFrames / compositionFps) * compositionFps,
+  (profileAdminRecordingDurationInSeconds - adminPanelRecordingStartAtSeconds) * compositionFps,
 );
 const bosquesStartAtSeconds = 12.5;
 
