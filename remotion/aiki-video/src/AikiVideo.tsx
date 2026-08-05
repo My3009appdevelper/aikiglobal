@@ -11,6 +11,7 @@ import { UserProfileScene } from "./scenes/UserProfileScene";
 import { AdminPanelScene } from "./scenes/AdminPanelScene";
 import { aikiPalette } from "./theme";
 import {
+  compositionFps,
   introDurationInFrames,
   sceneTransitionDurationInFrames,
   timerDurationInFrames,
@@ -21,7 +22,10 @@ const userExploreDurationInFrames = 390;
 const contentDurationInFrames = 255;
 const userMySpaceDurationInFrames = 570;
 const userProfileDurationInFrames = 360;
-const adminPanelDurationInFrames = 420;
+const profileAdminRecordingDurationInSeconds = 33.8625;
+const adminPanelDurationInFrames = Math.round(
+  (profileAdminRecordingDurationInSeconds - userProfileDurationInFrames / compositionFps) * compositionFps,
+);
 const bosquesStartAtSeconds = 12.5;
 
 export const aikiVideoDurationInFrames =

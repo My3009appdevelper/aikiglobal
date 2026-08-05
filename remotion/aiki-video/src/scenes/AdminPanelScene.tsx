@@ -28,8 +28,8 @@ export const AdminPanelScene: React.FC<AikiVideoProps> = (props) => {
             side="Administrador"
             detail="La plataforma permite administrar contenido y operación desde un flujo claro."
             source={props.adminPanelRecording}
-            sourceStartAtSeconds={17}
-            playbackRate={1.05}
+            sourceStartAtSeconds={12}
+            playbackRate={1}
             width={phoneWidth}
             height={phoneHeight}
             accentColor={props.accentColor}
