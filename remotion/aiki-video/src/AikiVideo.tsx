@@ -8,12 +8,7 @@ import { UserExploreScene } from "./scenes/UserExploreScene";
 import { ContentScene } from "./scenes/ContentScene";
 import { UserMySpaceScene } from "./scenes/UserMySpaceScene";
 import { UserProfileScene } from "./scenes/UserProfileScene";
-import { UserNotificationScene } from "./scenes/UserNotificationScene";
 import { aikiPalette } from "./theme";
-import {
-  notificationRecordingDurationInSeconds,
-  notificationSoundAbsoluteFrame,
-} from "./notificationLayout";
 import {
   compositionFps,
   introDurationInFrames,
@@ -29,23 +24,24 @@ const profileAdminRecordingDurationInSeconds = 33.8625;
 const profileAdminDurationInFrames = Math.round(
   profileAdminRecordingDurationInSeconds * compositionFps,
 );
-const notificationDurationInFrames = Math.ceil(
-  notificationRecordingDurationInSeconds * compositionFps,
-);
 const bosquesStartAtSeconds = 12.5;
 // Keep the musical phrase that was already timed for the video: the MP3
 // begins at 13.5 s, while its playback starts at 00:12.50 of the timeline.
 const bosquesSourceOffsetAtSeconds = 13.5;
-const bosquesStopAtFrame = notificationSoundAbsoluteFrame;
-
-export const aikiVideoDurationInFrames =
+const videoEndFrame = 2650;
+const finalFadeDurationInFrames = Math.round(compositionFps * 1.5);
+const preProfileDurationInFrames =
   introDurationInFrames +
   timerDurationInFrames +
   userExploreDurationInFrames +
   contentDurationInFrames +
-  userMySpaceDurationInFrames +
-  profileAdminDurationInFrames +
-  notificationDurationInFrames;
+  userMySpaceDurationInFrames;
+const finalProfileDurationInFrames = Math.min(
+  profileAdminDurationInFrames,
+  Math.max(1, videoEndFrame - preProfileDurationInFrames),
+);
+
+export const aikiVideoDurationInFrames = videoEndFrame;
 
 const AikiLightTransition: React.FC<{ name: string }> = ({ name }) => {
   const frame = useCurrentFrame();
@@ -80,7 +76,7 @@ const AikiLightTransition: React.FC<{ name: string }> = ({ name }) => {
 const BosquesAudio: React.FC = () => {
   const { fps } = useVideoConfig();
   const startFrame = Math.round(bosquesStartAtSeconds * fps);
-  const durationInFrames = Math.max(1, bosquesStopAtFrame - startFrame);
+  const durationInFrames = Math.max(1, videoEndFrame - startFrame);
 
   return (
     <Sequence name="Audio - Bosques" from={startFrame} durationInFrames={durationInFrames} layout="none">
@@ -92,7 +88,7 @@ const BosquesAudio: React.FC = () => {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
           });
-          const fadeOutStartFrame = Math.max(0, durationInFrames - Math.round(fps * 0.28));
+          const fadeOutStartFrame = Math.max(0, durationInFrames - finalFadeDurationInFrames);
           const fadeOut = interpolate(frame, [fadeOutStartFrame, durationInFrames], [0.55, 0], {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
@@ -101,6 +97,28 @@ const BosquesAudio: React.FC = () => {
         }}
       />
     </Sequence>
+  );
+};
+
+const FinalFade: React.FC = () => {
+  const frame = useCurrentFrame();
+  const fadeStartFrame = Math.max(0, videoEndFrame - finalFadeDurationInFrames);
+  const opacity = interpolate(frame, [fadeStartFrame, videoEndFrame], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: Easing.inOut(Easing.cubic),
+  });
+
+  return (
+    <AbsoluteFill
+      name="Cierre Aiki"
+      style={{
+        zIndex: 20,
+        pointerEvents: "none",
+        backgroundColor: aikiPalette.warmIvory,
+        opacity,
+      }}
+    />
   );
 };
 
@@ -154,20 +172,12 @@ export const AikiVideo: React.FC<AikiVideoProps> = (props) => (
       </TransitionSeries.Overlay>
       <TransitionSeries.Sequence
         name="06 - Perfil y Panel Admin"
-        durationInFrames={profileAdminDurationInFrames}
+        durationInFrames={finalProfileDurationInFrames}
       >
         <UserProfileScene {...props} />
       </TransitionSeries.Sequence>
-      <TransitionSeries.Overlay durationInFrames={sceneTransitionDurationInFrames}>
-        <AikiLightTransition name="Transicion luz Perfil y Panel Admin - Notificaciones" />
-      </TransitionSeries.Overlay>
-      <TransitionSeries.Sequence
-        name="07 - Notificaciones"
-        durationInFrames={notificationDurationInFrames}
-      >
-        <UserNotificationScene {...props} />
-      </TransitionSeries.Sequence>
     </TransitionSeries>
     <BosquesAudio />
+    <FinalFade />
   </>
 );
