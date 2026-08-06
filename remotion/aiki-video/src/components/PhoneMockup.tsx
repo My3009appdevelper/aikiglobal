@@ -34,6 +34,7 @@ type PhoneMockupProps = {
   objectFit?: "cover" | "contain";
   demoKind?: AikiDemoScreenKind;
   screenOverlay?: ReactNode;
+  screenContent?: ReactNode;
   phoneOpacity?: number;
   contentFadeInOut?: boolean;
   contentFadeOutStartAtSeconds?: number;
@@ -58,6 +59,7 @@ export const PhoneMockup: React.FC<PhoneMockupProps> = ({
   objectFit = "cover",
   demoKind,
   screenOverlay,
+  screenContent,
   phoneOpacity = 1,
   contentFadeInOut = true,
   contentFadeOutStartAtSeconds,
@@ -68,6 +70,7 @@ export const PhoneMockup: React.FC<PhoneMockupProps> = ({
   const frame = useCurrentFrame();
   const { durationInFrames, fps } = useVideoConfig();
   const usableSource = source?.trim();
+  const hasScreenContent = screenContent !== undefined;
   const baseContentOpacity = contentFadeInOut
     ? interpolate(frame, [0, 18, durationInFrames - 18, durationInFrames], [0, 1, 1, 0], {
         extrapolateLeft: "clamp",
@@ -157,7 +160,7 @@ export const PhoneMockup: React.FC<PhoneMockupProps> = ({
             opacity: contentOpacity,
           }}
         >
-          {!usableSource && (
+          {!usableSource && !hasScreenContent && (
             <div
               style={{
                 display: "flex",
@@ -180,10 +183,12 @@ export const PhoneMockup: React.FC<PhoneMockupProps> = ({
               position: "relative",
               display: "flex",
               minHeight: 0,
-              height: usableSource ? "100%" : "calc(100% - 64px)",
+              height: usableSource || hasScreenContent ? "100%" : "calc(100% - 64px)",
             }}
           >
-            {usableSource ? (
+            {hasScreenContent ? (
+              screenContent
+            ) : usableSource ? (
               sourceSegments && sourceSegments.length > 0 ? (
                 <SegmentedRecording
                   name={`Grabacion real - ${label}`}

@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import {
   notificationRecordingDurationInSeconds,
   notificationReframeAtSeconds,
+  notificationTrayHeightAtSeconds,
+  notificationTrayMaxHeightPercent,
   scenePhoneStageCalloutHeight,
   scenePhoneStageGap,
 } from "../src/notificationLayout.ts";
@@ -21,3 +23,6 @@ assert.equal(finished.translateY, focused.translateY);
 assert.equal(scenePhoneStageGap, 40);
 assert.equal(scenePhoneStageCalloutHeight, 150);
 assert.equal(notificationRecordingDurationInSeconds, 5.561778);
+assert.equal(notificationTrayHeightAtSeconds(0), 0);
+assert.ok(notificationTrayHeightAtSeconds(0.8) > notificationTrayHeightAtSeconds(0.4));
+assert.equal(notificationTrayHeightAtSeconds(2), notificationTrayMaxHeightPercent);

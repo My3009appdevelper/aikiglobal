@@ -1,18 +1,13 @@
 import type { AikiVideoProps } from "../types";
-import { useCurrentFrame, useVideoConfig } from "remotion";
 import { SceneCanvas } from "../components/SceneCanvas";
-import { NotificationScreenMask } from "../components/NotificationScreenMask";
+import { NotificationTrayScreen } from "../components/NotificationTrayScreen";
 import { PhoneMockup } from "../components/PhoneMockup";
 import { ScenePhoneStage } from "../components/ScenePhoneStage";
 import { ZenAmbientGlow } from "../components/ZenVisuals";
 import { getPhoneMockupFrameSize } from "../phoneSpec";
-import { notificationReframeAtSeconds } from "../notificationLayout";
 
 export const UserNotificationScene: React.FC<AikiVideoProps> = (props) => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
   const { width: phoneWidth, height: phoneHeight } = getPhoneMockupFrameSize(props.phoneScale);
-  const reframe = notificationReframeAtSeconds(frame / fps);
 
   return (
     <SceneCanvas name="07 - Notificaciones" accentColor={props.accentColor} backgroundTone="gold31">
@@ -25,17 +20,11 @@ export const UserNotificationScene: React.FC<AikiVideoProps> = (props) => {
               label="Notificaciones"
               side="Usuario"
               detail="Cinco avisos de Aiki dentro de la bandeja real del teléfono."
-              source={props.userNotificationRecording}
-              sourceStartAtSeconds={0}
               width={phoneWidth}
               height={phoneHeight}
               accentColor={props.accentColor}
-              objectFit="cover"
               contentFadeInOut={false}
-              contentScale={reframe.scale}
-              contentTranslateY={reframe.translateY}
-              screenOverlay={<NotificationScreenMask />}
-              centerVertically
+              screenContent={<NotificationTrayScreen source={props.userNotificationRecording ?? ""} />}
             />
           }
         />
