@@ -8,7 +8,9 @@ import { UserExploreScene } from "./scenes/UserExploreScene";
 import { ContentScene } from "./scenes/ContentScene";
 import { UserMySpaceScene } from "./scenes/UserMySpaceScene";
 import { UserProfileScene } from "./scenes/UserProfileScene";
+import { UserNotificationScene } from "./scenes/UserNotificationScene";
 import { aikiPalette } from "./theme";
+import { notificationRecordingDurationInSeconds } from "./notificationLayout";
 import {
   compositionFps,
   introDurationInFrames,
@@ -24,6 +26,9 @@ const profileAdminRecordingDurationInSeconds = 33.8625;
 const profileAdminDurationInFrames = Math.round(
   profileAdminRecordingDurationInSeconds * compositionFps,
 );
+const notificationDurationInFrames = Math.ceil(
+  notificationRecordingDurationInSeconds * compositionFps,
+);
 const bosquesStartAtSeconds = 12.5;
 
 export const aikiVideoDurationInFrames =
@@ -32,7 +37,8 @@ export const aikiVideoDurationInFrames =
   userExploreDurationInFrames +
   contentDurationInFrames +
   userMySpaceDurationInFrames +
-  profileAdminDurationInFrames;
+  profileAdminDurationInFrames +
+  notificationDurationInFrames;
 
 const AikiLightTransition: React.FC<{ name: string }> = ({ name }) => {
   const frame = useCurrentFrame();
@@ -142,6 +148,15 @@ export const AikiVideo: React.FC<AikiVideoProps> = (props) => (
         durationInFrames={profileAdminDurationInFrames}
       >
         <UserProfileScene {...props} />
+      </TransitionSeries.Sequence>
+      <TransitionSeries.Overlay durationInFrames={sceneTransitionDurationInFrames}>
+        <AikiLightTransition name="Transicion luz Perfil y Panel Admin - Notificaciones" />
+      </TransitionSeries.Overlay>
+      <TransitionSeries.Sequence
+        name="07 - Notificaciones"
+        durationInFrames={notificationDurationInFrames}
+      >
+        <UserNotificationScene {...props} />
       </TransitionSeries.Sequence>
     </TransitionSeries>
     <BosquesAudio />
