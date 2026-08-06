@@ -67,7 +67,7 @@
 
 **Files:**
 - Modify: `remotion/aiki-video/src/scenes/UserNotificationScene.tsx`
-- Inspect only: `remotion/aiki-video/src/AikiVideo.tsx`
+- Modify: `remotion/aiki-video/src/AikiVideo.tsx`
 
 **Interfaces:**
 - `UserNotificationScene` uses the existing `ScenePhoneStage` and `PhoneMockup` with `screenContent={<NotificationTrayScreen />}`.
@@ -76,7 +76,8 @@
 - [ ] **Step 1: Remove** the notification scene’s dependency on the source recording and legacy crop/reframe behavior.
 - [ ] **Step 2: Keep** the phone dimensions, scale, centered positioning, and outer Aiki background unchanged.
 - [ ] **Step 3: Preserve** the existing timeline sequence and light transition in `AikiVideo.tsx`; do not add a second phone or a second scene transition.
-- [ ] **Step 4: Commit** with `feat(video): recreate aiki notification tray`.
+- [ ] **Step 4: Cut** the `BosquesAudio` sequence at the exact global frame where the notification chime starts, so Bosques has no overlap with the notification sound.
+- [ ] **Step 5: Commit** with `feat(video): recreate aiki notification tray`.
 
 ### Task 5: Verify the motion and live editor
 
