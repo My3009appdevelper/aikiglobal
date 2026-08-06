@@ -100,7 +100,14 @@ export const PhoneMockup: React.FC<PhoneMockupProps> = ({
       playbackRate={playbackRate}
       trimBefore={sourceStartAtSeconds === undefined ? undefined : Math.round(sourceStartAtSeconds * fps)}
       objectFit={objectFit}
-      style={{ width: "100%", height: "100%", backgroundColor: aikiPalette.background }}
+      style={{
+        width: "100%",
+        height: "100%",
+        backgroundColor: aikiPalette.background,
+        scale: contentScale,
+        translate: `0px ${contentTranslateY}px`,
+        transformOrigin: "50% 50%",
+      }}
     />
   ) : null;
 
@@ -148,9 +155,6 @@ export const PhoneMockup: React.FC<PhoneMockupProps> = ({
             borderRadius: 47,
             backgroundColor: aikiPalette.warmIvory,
             opacity: contentOpacity,
-            scale: contentScale,
-            translate: `0px ${contentTranslateY}px`,
-            transformOrigin: "50% 50%",
           }}
         >
           {!usableSource && (
