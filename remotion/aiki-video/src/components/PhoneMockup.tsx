@@ -38,6 +38,8 @@ type PhoneMockupProps = {
   contentFadeInOut?: boolean;
   contentFadeOutStartAtSeconds?: number;
   contentFadeOutEndAtSeconds?: number;
+  contentScale?: number;
+  contentTranslateY?: number;
 };
 
 export const PhoneMockup: React.FC<PhoneMockupProps> = ({
@@ -60,6 +62,8 @@ export const PhoneMockup: React.FC<PhoneMockupProps> = ({
   contentFadeInOut = true,
   contentFadeOutStartAtSeconds,
   contentFadeOutEndAtSeconds,
+  contentScale = 1,
+  contentTranslateY = 0,
 }) => {
   const frame = useCurrentFrame();
   const { durationInFrames, fps } = useVideoConfig();
@@ -144,6 +148,9 @@ export const PhoneMockup: React.FC<PhoneMockupProps> = ({
             borderRadius: 47,
             backgroundColor: aikiPalette.warmIvory,
             opacity: contentOpacity,
+            scale: contentScale,
+            translate: `0px ${contentTranslateY}px`,
+            transformOrigin: "50% 50%",
           }}
         >
           {!usableSource && (

@@ -24,22 +24,24 @@ export const ScenePhoneStage: React.FC<ScenePhoneStageProps> = ({ phone, callout
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        gap: scenePhoneStageGap,
+        gap: callouts.length > 0 ? scenePhoneStageGap : 0,
       }}
     >
       <div style={{ position: "relative", flexShrink: 0 }}>{phone}</div>
-      <div
-        style={{
-          position: "relative",
-          width: "100%",
-          height: scenePhoneStageCalloutHeight,
-          flexShrink: 0,
-        }}
-      >
-        {callouts.map((callout, index) => (
-          <ZenCallout key={`${callout.text}-${index}`} {...callout} layout="slot" />
-        ))}
-      </div>
+      {callouts.length > 0 && (
+        <div
+          style={{
+            position: "relative",
+            width: "100%",
+            height: scenePhoneStageCalloutHeight,
+            flexShrink: 0,
+          }}
+        >
+          {callouts.map((callout, index) => (
+            <ZenCallout key={`${callout.text}-${index}`} {...callout} layout="slot" />
+          ))}
+        </div>
+      )}
     </div>
   </div>
 );

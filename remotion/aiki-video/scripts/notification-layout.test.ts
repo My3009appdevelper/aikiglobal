@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import {
+  notificationRecordingDurationInSeconds,
   notificationReframeAtSeconds,
   scenePhoneStageCalloutHeight,
   scenePhoneStageGap,
@@ -19,3 +20,4 @@ assert.equal(finished.translateY, focused.translateY);
 
 assert.equal(scenePhoneStageGap, 40);
 assert.equal(scenePhoneStageCalloutHeight, 150);
+assert.equal(notificationRecordingDurationInSeconds, 5.561778);
