@@ -1,0 +1,14 @@
+import assert from "node:assert/strict";
+import { notificationReframeAtSeconds } from "../src/notificationLayout.ts";
+
+const start = notificationReframeAtSeconds(0);
+assert.equal(start.scale, 1);
+assert.equal(start.translateY, 0);
+
+const focused = notificationReframeAtSeconds(2);
+assert.ok(focused.scale > 1);
+assert.ok(focused.translateY < 0);
+
+const finished = notificationReframeAtSeconds(5.5);
+assert.equal(finished.scale, focused.scale);
+assert.equal(finished.translateY, focused.translateY);
