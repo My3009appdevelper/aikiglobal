@@ -3,6 +3,7 @@ import {
   notificationRecordingDurationInSeconds,
   notificationReframeAtSeconds,
   notificationCardTimings,
+  notificationSoundAbsoluteFrame,
   notificationSoundStartInSeconds,
   notificationTrayOpenDurationInSeconds,
   notificationTrayHeightAtSeconds,
@@ -28,13 +29,14 @@ assert.equal(scenePhoneStageCalloutHeight, 150);
 assert.equal(notificationRecordingDurationInSeconds, 5.561778);
 assert.equal(notificationTrayHeightAtSeconds(0), 0);
 assert.ok(notificationTrayHeightAtSeconds(0.8) > notificationTrayHeightAtSeconds(0.4));
-assert.equal(notificationTrayHeightAtSeconds(2), notificationTrayMaxHeightPercent);
-assert.equal(notificationSoundStartInSeconds, 0.55);
-assert.equal(notificationTrayOpenDurationInSeconds, 1.65);
+assert.equal(notificationTrayHeightAtSeconds(2.32), notificationTrayMaxHeightPercent);
+assert.equal(notificationSoundStartInSeconds, 0.2);
+assert.equal(notificationSoundAbsoluteFrame, 2660);
+assert.equal(notificationTrayOpenDurationInSeconds, 2.32);
 assert.equal(notificationCardTimings.length, 5);
 assert.deepEqual(
   notificationCardTimings.map((timing) => timing.startInSeconds),
-  [0.75, 1.15, 1.55, 1.95, 2.35],
+  [0.72, 1.12, 1.52, 1.92, 2.32],
 );
 assert.ok(notificationCardTimings.every((timing, index) =>
   timing.endInSeconds > timing.startInSeconds &&

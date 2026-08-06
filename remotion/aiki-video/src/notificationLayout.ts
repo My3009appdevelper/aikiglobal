@@ -1,13 +1,16 @@
 export const notificationRecordingDurationInSeconds = 5.561778;
-export const notificationSoundStartInSeconds = 0.55;
+// The notification scene starts at frame 2654. At 30 fps, 0.20 s later is
+// frame 2660, which is the requested absolute cue at 01:28:20.
+export const notificationSoundStartInSeconds = 0.2;
+export const notificationSoundAbsoluteFrame = 2660;
 export const notificationFocusStartInSeconds = 1.15;
 export const notificationFocusEndInSeconds = 1.65;
 export const notificationFocusScale = 1.3;
 export const notificationFocusTranslateY = -26;
 export const scenePhoneStageGap = 40;
 export const scenePhoneStageCalloutHeight = 150;
-export const notificationTrayOpenDurationInSeconds = 1.65;
-export const notificationTrayMaxHeightPercent = 74;
+export const notificationTrayOpenDurationInSeconds = 2.32;
+export const notificationTrayMaxHeightPercent = 49;
 
 export type NotificationCardTiming = {
   startInSeconds: number;
@@ -15,18 +18,25 @@ export type NotificationCardTiming = {
 };
 
 export const notificationCardTimings: NotificationCardTiming[] = [
-  { startInSeconds: 0.75, endInSeconds: 1.75 },
-  { startInSeconds: 1.15, endInSeconds: 2.15 },
-  { startInSeconds: 1.55, endInSeconds: 2.55 },
-  { startInSeconds: 1.95, endInSeconds: 2.95 },
-  { startInSeconds: 2.35, endInSeconds: 3.35 },
+  { startInSeconds: 0.72, endInSeconds: 1.42 },
+  { startInSeconds: 1.12, endInSeconds: 1.82 },
+  { startInSeconds: 1.52, endInSeconds: 2.22 },
+  { startInSeconds: 1.92, endInSeconds: 2.62 },
+  { startInSeconds: 2.32, endInSeconds: 3.02 },
 ];
 
 const trayHeightKeyframes = [
   { seconds: 0, heightPercent: 0 },
-  { seconds: 0.35, heightPercent: 10 },
-  { seconds: 0.75, heightPercent: 28 },
-  { seconds: 1.25, heightPercent: 58 },
+  { seconds: 0.56, heightPercent: 0 },
+  { seconds: 0.66, heightPercent: 8 },
+  { seconds: 0.94, heightPercent: 13 },
+  { seconds: 1.06, heightPercent: 13 },
+  { seconds: 1.34, heightPercent: 22 },
+  { seconds: 1.46, heightPercent: 22 },
+  { seconds: 1.74, heightPercent: 31 },
+  { seconds: 1.86, heightPercent: 31 },
+  { seconds: 2.14, heightPercent: 40 },
+  { seconds: 2.26, heightPercent: 40 },
   { seconds: notificationTrayOpenDurationInSeconds, heightPercent: notificationTrayMaxHeightPercent },
 ] as const;
 

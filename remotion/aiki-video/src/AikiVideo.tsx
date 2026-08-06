@@ -12,7 +12,7 @@ import { UserNotificationScene } from "./scenes/UserNotificationScene";
 import { aikiPalette } from "./theme";
 import {
   notificationRecordingDurationInSeconds,
-  notificationSoundStartInSeconds,
+  notificationSoundAbsoluteFrame,
 } from "./notificationLayout";
 import {
   compositionFps,
@@ -33,15 +33,10 @@ const notificationDurationInFrames = Math.ceil(
   notificationRecordingDurationInSeconds * compositionFps,
 );
 const bosquesStartAtSeconds = 12.5;
-const notificationSceneStartInFrames =
-  introDurationInFrames +
-  timerDurationInFrames +
-  userExploreDurationInFrames +
-  contentDurationInFrames +
-  userMySpaceDurationInFrames +
-  profileAdminDurationInFrames;
-const bosquesStopAtFrame =
-  notificationSceneStartInFrames + Math.round(notificationSoundStartInSeconds * compositionFps);
+// Keep the musical phrase that was already timed for the video: the MP3
+// begins at 13.5 s, while its playback starts at 00:12.50 of the timeline.
+const bosquesSourceOffsetAtSeconds = 13.5;
+const bosquesStopAtFrame = notificationSoundAbsoluteFrame;
 
 export const aikiVideoDurationInFrames =
   introDurationInFrames +
@@ -91,6 +86,7 @@ const BosquesAudio: React.FC = () => {
     <Sequence name="Audio - Bosques" from={startFrame} durationInFrames={durationInFrames} layout="none">
       <Audio
         src={staticFile("audio/Bosques.mp3")}
+        trimBefore={Math.round(bosquesSourceOffsetAtSeconds * fps)}
         volume={(frame) => {
           const fadeIn = interpolate(frame, [0, fps], [0, 0.55], {
             extrapolateLeft: "clamp",
