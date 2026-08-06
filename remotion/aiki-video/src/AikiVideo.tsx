@@ -10,7 +10,10 @@ import { UserMySpaceScene } from "./scenes/UserMySpaceScene";
 import { UserProfileScene } from "./scenes/UserProfileScene";
 import { UserNotificationScene } from "./scenes/UserNotificationScene";
 import { aikiPalette } from "./theme";
-import { notificationRecordingDurationInSeconds } from "./notificationLayout";
+import {
+  notificationRecordingDurationInSeconds,
+  notificationSoundStartInSeconds,
+} from "./notificationLayout";
 import {
   compositionFps,
   introDurationInFrames,
@@ -30,6 +33,15 @@ const notificationDurationInFrames = Math.ceil(
   notificationRecordingDurationInSeconds * compositionFps,
 );
 const bosquesStartAtSeconds = 12.5;
+const notificationSceneStartInFrames =
+  introDurationInFrames +
+  timerDurationInFrames +
+  userExploreDurationInFrames +
+  contentDurationInFrames +
+  userMySpaceDurationInFrames +
+  profileAdminDurationInFrames;
+const bosquesStopAtFrame =
+  notificationSceneStartInFrames + Math.round(notificationSoundStartInSeconds * compositionFps);
 
 export const aikiVideoDurationInFrames =
   introDurationInFrames +
@@ -73,7 +85,7 @@ const AikiLightTransition: React.FC<{ name: string }> = ({ name }) => {
 const BosquesAudio: React.FC = () => {
   const { fps } = useVideoConfig();
   const startFrame = Math.round(bosquesStartAtSeconds * fps);
-  const durationInFrames = Math.max(1, aikiVideoDurationInFrames - startFrame);
+  const durationInFrames = Math.max(1, bosquesStopAtFrame - startFrame);
 
   return (
     <Sequence name="Audio - Bosques" from={startFrame} durationInFrames={durationInFrames} layout="none">
@@ -84,7 +96,8 @@ const BosquesAudio: React.FC = () => {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
           });
-          const fadeOut = interpolate(frame, [durationInFrames - fps * 2, durationInFrames], [0.55, 0], {
+          const fadeOutStartFrame = Math.max(0, durationInFrames - Math.round(fps * 0.28));
+          const fadeOut = interpolate(frame, [fadeOutStartFrame, durationInFrames], [0.55, 0], {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
           });

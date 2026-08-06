@@ -24,7 +24,7 @@ export const UserNotificationScene: React.FC<AikiVideoProps> = (props) => {
               height={phoneHeight}
               accentColor={props.accentColor}
               contentFadeInOut={false}
-              screenContent={<NotificationTrayScreen source={props.userNotificationRecording ?? ""} />}
+              screenContent={<NotificationTrayScreen />}
             />
           }
         />
