@@ -25,9 +25,6 @@ const profileAdminDurationInFrames = Math.round(
   profileAdminRecordingDurationInSeconds * compositionFps,
 );
 const bosquesStartAtSeconds = 12.5;
-// Keep the musical phrase that was already timed for the video: the MP3
-// begins at 13.5 s, while its playback starts at 00:12.50 of the timeline.
-const bosquesSourceOffsetAtSeconds = 13.5;
 const videoEndFrame = 2650;
 const finalFadeDurationInFrames = Math.round(compositionFps * 1.5);
 const preProfileDurationInFrames =
@@ -82,7 +79,6 @@ const BosquesAudio: React.FC = () => {
     <Sequence name="Audio - Bosques" from={startFrame} durationInFrames={durationInFrames} layout="none">
       <Audio
         src={staticFile("audio/Bosques.mp3")}
-        trimBefore={Math.round(bosquesSourceOffsetAtSeconds * fps)}
         volume={(frame) => {
           const fadeIn = interpolate(frame, [0, fps], [0, 0.55], {
             extrapolateLeft: "clamp",
