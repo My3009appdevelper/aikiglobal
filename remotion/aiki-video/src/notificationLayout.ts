@@ -1,12 +1,26 @@
 export const notificationRecordingDurationInSeconds = 5.561778;
+export const notificationSoundStartInSeconds = 0.55;
 export const notificationFocusStartInSeconds = 1.15;
 export const notificationFocusEndInSeconds = 1.65;
 export const notificationFocusScale = 1.3;
 export const notificationFocusTranslateY = -26;
 export const scenePhoneStageGap = 40;
 export const scenePhoneStageCalloutHeight = 150;
-export const notificationTrayOpenDurationInSeconds = 1.8;
+export const notificationTrayOpenDurationInSeconds = 1.65;
 export const notificationTrayMaxHeightPercent = 74;
+
+export type NotificationCardTiming = {
+  startInSeconds: number;
+  endInSeconds: number;
+};
+
+export const notificationCardTimings: NotificationCardTiming[] = [
+  { startInSeconds: 0.75, endInSeconds: 1.75 },
+  { startInSeconds: 1.15, endInSeconds: 2.15 },
+  { startInSeconds: 1.55, endInSeconds: 2.55 },
+  { startInSeconds: 1.95, endInSeconds: 2.95 },
+  { startInSeconds: 2.35, endInSeconds: 3.35 },
+];
 
 const trayHeightKeyframes = [
   { seconds: 0, heightPercent: 0 },

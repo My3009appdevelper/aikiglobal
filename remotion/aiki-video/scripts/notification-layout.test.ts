@@ -2,6 +2,9 @@ import assert from "node:assert/strict";
 import {
   notificationRecordingDurationInSeconds,
   notificationReframeAtSeconds,
+  notificationCardTimings,
+  notificationSoundStartInSeconds,
+  notificationTrayOpenDurationInSeconds,
   notificationTrayHeightAtSeconds,
   notificationTrayMaxHeightPercent,
   scenePhoneStageCalloutHeight,
@@ -26,3 +29,14 @@ assert.equal(notificationRecordingDurationInSeconds, 5.561778);
 assert.equal(notificationTrayHeightAtSeconds(0), 0);
 assert.ok(notificationTrayHeightAtSeconds(0.8) > notificationTrayHeightAtSeconds(0.4));
 assert.equal(notificationTrayHeightAtSeconds(2), notificationTrayMaxHeightPercent);
+assert.equal(notificationSoundStartInSeconds, 0.55);
+assert.equal(notificationTrayOpenDurationInSeconds, 1.65);
+assert.equal(notificationCardTimings.length, 5);
+assert.deepEqual(
+  notificationCardTimings.map((timing) => timing.startInSeconds),
+  [0.75, 1.15, 1.55, 1.95, 2.35],
+);
+assert.ok(notificationCardTimings.every((timing, index) =>
+  timing.endInSeconds > timing.startInSeconds &&
+  (index === 0 || timing.startInSeconds > notificationCardTimings[index - 1].startInSeconds),
+));
