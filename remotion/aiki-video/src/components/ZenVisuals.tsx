@@ -8,12 +8,16 @@ type ZenAmbientGlowProps = {
   endFrame?: number;
 };
 
-type ZenCalloutProps = {
+export type ZenCalloutConfig = {
   text: string;
   startFrame: number;
   endFrame: number;
   position?: "top" | "middle" | "bottom";
   side?: "left" | "center" | "right";
+};
+
+type ZenCalloutProps = ZenCalloutConfig & {
+  layout?: "overlay" | "slot";
 };
 
 export const ZenAmbientGlow: React.FC<ZenAmbientGlowProps> = ({
@@ -65,6 +69,7 @@ export const ZenCallout: React.FC<ZenCalloutProps> = ({
   endFrame,
   position = "bottom",
   side = "center",
+  layout = "overlay",
 }) => {
   const frame = useCurrentFrame();
   if (!text.trim()) {
@@ -83,13 +88,17 @@ export const ZenCallout: React.FC<ZenCalloutProps> = ({
     easing: Easing.bezier(0.16, 1, 0.3, 1),
   });
   const horizontalStyle =
-    side === "left"
-      ? { left: 40, width: "38%" }
-      : side === "right"
-        ? { right: 40, width: "38%" }
-        : { right: 40, left: 40 };
+    layout === "slot"
+      ? { left: 0, right: 0 }
+      : side === "left"
+        ? { left: 40, width: "38%" }
+        : side === "right"
+          ? { right: 40, width: "38%" }
+          : { right: 40, left: 40 };
   const verticalStyle =
-    position === "top"
+    layout === "slot"
+      ? { top: 0, bottom: 0, transform: `translateY(${translateY}px)` }
+      : position === "top"
       ? { top: 84, transform: `translateY(${translateY}px)` }
       : position === "middle"
         ? { top: "50%", transform: `translateY(calc(-50% + ${translateY}px))` }
