@@ -38,47 +38,62 @@ class QuickCategoryRow extends StatelessWidget {
         border: Border.all(color: scheme.onSurface.withValues(alpha: 0.12)),
         boxShadow: AppShadows.soft(brightness),
       ),
-      child: SizedBox(
-        height: 172,
-        child: Row(
-          children: [
-            _QuickActionCard(
-              type: QuickCategoryType.meditations,
-              icon: Icons.self_improvement_rounded,
-              label: 'Meditaciones',
-              caption: _countLabel(meditationCount, 'práctica', 'prácticas'),
-              selected: selectedType == QuickCategoryType.meditations,
-              onTap: () => onSelected?.call(QuickCategoryType.meditations),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          const spacing = 8.0;
+          final cardWidth = (constraints.maxWidth - spacing) / 2;
+          final cardHeight = cardWidth < 150 ? 150.0 : 158.0;
+          final gridHeight = cardHeight * 2 + spacing;
+
+          return SizedBox(
+            height: gridHeight,
+            child: GridView.count(
+              crossAxisCount: 2,
+              crossAxisSpacing: spacing,
+              mainAxisSpacing: spacing,
+              physics: const NeverScrollableScrollPhysics(),
+              childAspectRatio: cardWidth / cardHeight,
+              children: [
+                _QuickActionCard(
+                  type: QuickCategoryType.meditations,
+                  icon: Icons.self_improvement_rounded,
+                  label: 'Meditaciones',
+                  caption: _countLabel(
+                    meditationCount,
+                    'práctica',
+                    'prácticas',
+                  ),
+                  selected: selectedType == QuickCategoryType.meditations,
+                  onTap: () => onSelected?.call(QuickCategoryType.meditations),
+                ),
+                _QuickActionCard(
+                  type: QuickCategoryType.favorites,
+                  icon: Icons.bookmark_border_rounded,
+                  label: 'Favoritos',
+                  caption: _countLabel(favoriteCount, 'guardado', 'guardados'),
+                  selected: selectedType == QuickCategoryType.favorites,
+                  onTap: () => onSelected?.call(QuickCategoryType.favorites),
+                ),
+                _QuickActionCard(
+                  type: QuickCategoryType.audios,
+                  icon: Icons.headphones_rounded,
+                  label: 'Audios',
+                  caption: _countLabel(audioCount, 'audio', 'audios'),
+                  selected: selectedType == QuickCategoryType.audios,
+                  onTap: () => onSelected?.call(QuickCategoryType.audios),
+                ),
+                _QuickActionCard(
+                  type: QuickCategoryType.sounds,
+                  icon: Icons.graphic_eq_rounded,
+                  label: 'Sonidos',
+                  caption: _countLabel(soundCount, 'sonido', 'sonidos'),
+                  selected: selectedType == QuickCategoryType.sounds,
+                  onTap: () => onSelected?.call(QuickCategoryType.sounds),
+                ),
+              ],
             ),
-            const SizedBox(width: 8),
-            _QuickActionCard(
-              type: QuickCategoryType.audios,
-              icon: Icons.headphones_rounded,
-              label: 'Audios',
-              caption: _countLabel(audioCount, 'audio', 'audios'),
-              selected: selectedType == QuickCategoryType.audios,
-              onTap: () => onSelected?.call(QuickCategoryType.audios),
-            ),
-            const SizedBox(width: 8),
-            _QuickActionCard(
-              type: QuickCategoryType.sounds,
-              icon: Icons.graphic_eq_rounded,
-              label: 'Sonidos',
-              caption: _countLabel(soundCount, 'sonido', 'sonidos'),
-              selected: selectedType == QuickCategoryType.sounds,
-              onTap: () => onSelected?.call(QuickCategoryType.sounds),
-            ),
-            const SizedBox(width: 8),
-            _QuickActionCard(
-              type: QuickCategoryType.favorites,
-              icon: Icons.bookmark_border_rounded,
-              label: 'Favoritos',
-              caption: _countLabel(favoriteCount, 'guardado', 'guardados'),
-              selected: selectedType == QuickCategoryType.favorites,
-              onTap: () => onSelected?.call(QuickCategoryType.favorites),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -110,73 +125,71 @@ class _QuickActionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
-    return Expanded(
-      child: AppInteractive(
-        tooltip: 'Abrir $label',
-        borderRadius: AppRadius.medium,
-        hoverScale: 1.015,
-        pressedScale: 0.98,
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          curve: Curves.easeOutCubic,
-          padding: const EdgeInsets.fromLTRB(10, 12, 10, 10),
-          decoration: BoxDecoration(
-            color: scheme.surface,
-            borderRadius: AppRadius.medium,
-            border: Border.all(
-              color: selected
-                  ? scheme.secondary
-                  : scheme.onSurface.withValues(alpha: 0.13),
-              width: selected ? 1.4 : 1,
+    return AppInteractive(
+      tooltip: 'Abrir $label',
+      borderRadius: AppRadius.medium,
+      hoverScale: 1.015,
+      pressedScale: 0.98,
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOutCubic,
+        padding: const EdgeInsets.fromLTRB(10, 12, 10, 10),
+        decoration: BoxDecoration(
+          color: scheme.surface,
+          borderRadius: AppRadius.medium,
+          border: Border.all(
+            color: selected
+                ? scheme.secondary
+                : scheme.onSurface.withValues(alpha: 0.13),
+            width: selected ? 1.4 : 1,
+          ),
+        ),
+        child: Column(
+          children: [
+            _QuickActionIllustration(type: type, icon: icon),
+            const SizedBox(height: 8),
+            SizedBox(
+              width: double.infinity,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontFamily: AppTypography.displayFont,
+                    fontWeight: FontWeight.w300,
+                    color: scheme.onSurface,
+                  ),
+                ),
+              ),
             ),
-          ),
-          child: Column(
-            children: [
-              _QuickActionIllustration(type: type, icon: icon),
-              const SizedBox(height: 8),
-              SizedBox(
-                width: double.infinity,
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    label,
-                    maxLines: 1,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontFamily: AppTypography.displayFont,
-                      fontWeight: FontWeight.w300,
-                      color: scheme.onSurface,
-                    ),
+            const SizedBox(height: 3),
+            SizedBox(
+              width: double.infinity,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  caption,
+                  maxLines: 1,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: scheme.onSurface.withValues(alpha: 0.72),
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
-              const SizedBox(height: 3),
-              SizedBox(
-                width: double.infinity,
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    caption,
-                    maxLines: 1,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: scheme.onSurface.withValues(alpha: 0.72),
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
+            ),
+            const Spacer(),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              width: selected ? 42 : 28,
+              height: 2,
+              decoration: BoxDecoration(
+                color: scheme.primary,
+                borderRadius: AppRadius.full,
               ),
-              const Spacer(),
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 180),
-                width: selected ? 42 : 28,
-                height: 2,
-                decoration: BoxDecoration(
-                  color: scheme.primary,
-                  borderRadius: AppRadius.full,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

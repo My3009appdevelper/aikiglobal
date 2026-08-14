@@ -19,6 +19,8 @@ class AppTextField extends StatelessWidget {
     this.minLines,
     this.maxLines = 1,
     this.fillColor,
+    this.enabled,
+    this.readOnly = false,
   });
 
   final String hintText;
@@ -37,6 +39,8 @@ class AppTextField extends StatelessWidget {
   final int? minLines;
   final int? maxLines;
   final Color? fillColor;
+  final bool? enabled;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +52,8 @@ class AppTextField extends StatelessWidget {
       focusNode: focusNode,
       keyboardType: keyboardType,
       obscureText: obscureText,
+      enabled: enabled,
+      readOnly: readOnly,
       minLines: obscureText ? 1 : minLines,
       maxLines: obscureText ? 1 : maxLines,
       textInputAction: textInputAction,

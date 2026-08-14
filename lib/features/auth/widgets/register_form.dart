@@ -1,8 +1,9 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../app/app_router.dart';
 import '../../../core/data/providers/app_data_scope.dart';
+import '../../../core/data/providers/app_load_coordinator.dart';
 import '../../../shared/widgets/app_primary_button.dart';
 import '../../../shared/widgets/app_text_field.dart';
 
@@ -89,7 +90,7 @@ class _RegisterFormState extends State<RegisterForm> {
     }
 
     final profileController = AppDataScope.currentProfile(context);
-    final contentController = AppDataScope.contentItems(context);
+    final loadCoordinator = AppDataScope.loadCoordinator(context);
 
     setState(() {
       _isSubmitting = true;
@@ -111,20 +112,9 @@ class _RegisterFormState extends State<RegisterForm> {
 
       await profileController.markOnboardingCompleted();
 
-      try {
-        await contentController.pullFromRemote();
-        if (contentController.hasRemote) {
-          await contentController.loadPublished();
-        }
-      } catch (error) {
-        if (!mounted) return;
-        final syncError = _userFriendlySyncError(error);
-        if (syncError != null) {
-          setState(() {
-            _errorMessage = syncError;
-          });
-        }
-      }
+      await loadCoordinator.syncWithRemote(
+        scope: AppLoadScope.authenticatedEntry,
+      );
 
       if (!mounted) return;
       Navigator.of(
@@ -289,6 +279,7 @@ class _RegisterFormState extends State<RegisterForm> {
     return 'No se pudo crear la cuenta. Inténtalo nuevamente.';
   }
 
+  // ignore: unused_element
   String? _userFriendlySyncError(Object error) {
     final rawError = error.toString().toLowerCase();
 
@@ -428,5 +419,3 @@ class _RegisterFormState extends State<RegisterForm> {
     );
   }
 }
-
-

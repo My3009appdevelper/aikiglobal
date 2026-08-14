@@ -30,4 +30,15 @@ class WellnessProfileStatsRemoteService extends BaseService {
       apply: (query) => query.eq('uuid_profile', uuidProfile.trim()),
     );
   }
+
+  Future<List<Map<String, dynamic>>> getForProfilesOnline(
+    Iterable<String> uuidProfiles,
+  ) {
+    final ids = uuidProfiles
+        .map((uuid) => uuid.trim())
+        .where((uuid) => uuid.isNotEmpty)
+        .toSet()
+        .toList(growable: false);
+    return getByIdsOnline(ids, filterColumn: 'uuid_profile');
+  }
 }

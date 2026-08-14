@@ -43,3 +43,14 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Supabase local secrets
+/supabase/.env
+/supabase/.env.*
+!/supabase/.env.example
+/supabase/functions/**/.env*
+!/supabase/functions/**/.env.example
+
+# Local Codex attachments and Supabase CLI state
+.codex-remote-attachments/
+/supabase/.temp/

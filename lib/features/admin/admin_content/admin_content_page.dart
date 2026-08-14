@@ -1,13 +1,17 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../../core/data/models/app_content_item.dart';
 import '../../../core/data/providers/app_data_scope.dart';
+import '../../../core/data/providers/app_load_coordinator.dart';
 import '../../../core/data/providers/content_items_controller.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_shadows.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_typography.dart';
 import '../../../shared/widgets/app_interactive.dart';
 import '../../../shared/widgets/app_logo.dart';
 import '../../../shared/widgets/app_primary_button.dart';
@@ -49,12 +53,17 @@ class _AdminContentPageState extends State<AdminContentPage> {
 
     _initialized = true;
     AppDataScope.contentItems(context).watchAdminAll();
+    unawaited(
+      AppDataScope.loadCoordinator(
+        context,
+      ).syncWithRemote(scope: AppLoadScope.adminContent),
+    );
   }
 
   Future<void> _refresh() {
-    return AppDataScope.contentItems(
+    return AppDataScope.loadCoordinator(
       context,
-    ).refreshFromRemote(includeAdminPush: true);
+    ).syncWithRemote(scope: AppLoadScope.adminContent);
   }
 
   Future<void> _openForm({AppContentItem? item}) async {
@@ -87,7 +96,7 @@ class _AdminContentPageState extends State<AdminContentPage> {
                         const SizedBox(height: AppSpacing.md),
                         const AppLogo(width: 148),
                         const SizedBox(height: AppSpacing.lg),
-                        _AdminContentHeader(
+                        AdminContentHeader(
                           total: controller.items.length,
                           published: _countByStatus(
                             controller.items,
@@ -100,17 +109,14 @@ class _AdminContentPageState extends State<AdminContentPage> {
                           ),
                         ),
                         const SizedBox(height: AppSpacing.lg),
-                        AppPrimaryButton(
-                          label: 'Nuevo contenido',
-                          icon: Icons.add_rounded,
-                          onPressed: () => _openForm(),
-                        ),
+                        AdminContentNewButton(onPressed: () => _openForm()),
                         const SizedBox(height: AppSpacing.lg),
                         AppTextField(
                           controller: _searchController,
                           hintText: 'Buscar contenido',
                           prefixIcon: Icons.search_rounded,
                           textInputAction: TextInputAction.search,
+                          fillColor: Theme.of(context).colorScheme.surface,
                           onChanged: (_) => setState(() {}),
                         ),
                         const SizedBox(height: AppSpacing.md),
@@ -153,7 +159,7 @@ class _AdminContentPageState extends State<AdminContentPage> {
                               padding: const EdgeInsets.only(
                                 bottom: AppSpacing.md,
                               ),
-                              child: _AdminContentCard(
+                              child: AdminContentCard(
                                 item: item,
                                 onEdit: () => _openForm(item: item),
                                 onPublish: () =>
@@ -235,8 +241,9 @@ class _AdminContentPageState extends State<AdminContentPage> {
   }
 }
 
-class _AdminContentHeader extends StatelessWidget {
-  const _AdminContentHeader({
+class AdminContentHeader extends StatelessWidget {
+  const AdminContentHeader({
+    super.key,
     required this.total,
     required this.published,
     required this.drafts,
@@ -250,10 +257,8 @@ class _AdminContentHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     final brightness = Theme.of(context).brightness;
-    final surface = brightness == Brightness.dark
-        ? AppColors.darkSurface
-        : AppColors.background;
     final stroke = brightness == Brightness.dark
         ? AppColors.darkStroke
         : AppColors.stroke;
@@ -262,7 +267,7 @@ class _AdminContentHeader extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: surface.withValues(alpha: 0.9),
+        color: scheme.surface,
         borderRadius: AppRadius.large,
         border: Border.all(color: stroke),
         boxShadow: AppShadows.soft(brightness),
@@ -270,21 +275,36 @@ class _AdminContentHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Contenido', style: Theme.of(context).textTheme.headlineMedium),
+          Text(
+            'Contenido',
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              color: scheme.onSurface,
+              fontFamily: AppTypography.displayFont,
+              fontFamilyFallback: AppTypography.fallbackFonts,
+            ),
+          ),
           const SizedBox(height: 6),
           Text(
             'Administra publicaciones, borradores y contenido archivado.',
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: scheme.onSurface,
+              fontFamily: AppTypography.primaryFont,
+              fontFamilyFallback: AppTypography.fallbackFonts,
+            ),
           ),
           const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
-                child: _AdminContentStat(label: 'Total', value: total),
+                child: AdminContentStat(label: 'Total', value: total),
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: _AdminContentStat(label: 'Publicado', value: published),
+                child: AdminContentStat(
+                  label: 'Publicado',
+                  value: published,
+                  highlight: true,
+                ),
               ),
             ],
           ),
@@ -292,11 +312,11 @@ class _AdminContentHeader extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: _AdminContentStat(label: 'Borradores', value: drafts),
+                child: AdminContentStat(label: 'Borradores', value: drafts),
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: _AdminContentStat(label: 'Archivado', value: archived),
+                child: AdminContentStat(label: 'Archivado', value: archived),
               ),
             ],
           ),
@@ -306,14 +326,24 @@ class _AdminContentHeader extends StatelessWidget {
   }
 }
 
-class _AdminContentStat extends StatelessWidget {
-  const _AdminContentStat({required this.label, required this.value});
+class AdminContentStat extends StatelessWidget {
+  const AdminContentStat({
+    super.key,
+    required this.label,
+    required this.value,
+    this.highlight = false,
+  });
 
   final String label;
   final int value;
+  final bool highlight;
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final color = highlight ? scheme.primary : scheme.onSurface;
+    final weight = highlight ? FontWeight.w700 : FontWeight.w300;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -321,17 +351,43 @@ class _AdminContentStat extends StatelessWidget {
         Text(
           value.toString(),
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            color: Theme.of(context).colorScheme.primary,
-            fontWeight: FontWeight.w900,
+            color: color,
+            fontFamily: AppTypography.displayFont,
+            fontFamilyFallback: AppTypography.fallbackFonts,
+            fontWeight: weight,
           ),
         ),
         const SizedBox(height: 2),
         Text(
           label,
-          style: Theme.of(context).textTheme.bodySmall,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: color,
+            fontFamily: AppTypography.displayFont,
+            fontFamilyFallback: AppTypography.fallbackFonts,
+            fontWeight: weight,
+          ),
           textAlign: TextAlign.center,
         ),
       ],
+    );
+  }
+}
+
+class AdminContentNewButton extends StatelessWidget {
+  const AdminContentNewButton({super.key, required this.onPressed});
+
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppPrimaryButton(
+      label: 'Nuevo contenido',
+      icon: Icons.add_rounded,
+      onPressed: onPressed,
+      labelStyle: const TextStyle(
+        fontFamily: AppTypography.displayFont,
+        fontFamilyFallback: AppTypography.fallbackFonts,
+      ),
     );
   }
 }
@@ -351,7 +407,7 @@ class _AdminContentFilters extends StatelessWidget {
           final isSelected = selected == filter;
           return Padding(
             padding: const EdgeInsets.only(right: 10),
-            child: _FilterChipButton(
+            child: AdminContentFilterChip(
               label: _filterLabel(filter),
               selected: isSelected,
               onTap: () => onChanged(filter),
@@ -381,7 +437,7 @@ class _AdminContentTypeFilters extends StatelessWidget {
           final isSelected = selected == filter;
           return Padding(
             padding: const EdgeInsets.only(right: 10),
-            child: _FilterChipButton(
+            child: AdminContentFilterChip(
               label: _typeFilterLabel(filter),
               selected: isSelected,
               onTap: () => onChanged(filter),
@@ -393,8 +449,9 @@ class _AdminContentTypeFilters extends StatelessWidget {
   }
 }
 
-class _FilterChipButton extends StatelessWidget {
-  const _FilterChipButton({
+class AdminContentFilterChip extends StatelessWidget {
+  const AdminContentFilterChip({
+    super.key,
     required this.label,
     required this.selected,
     required this.onTap,
@@ -406,15 +463,9 @@ class _FilterChipButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final background = selected
-        ? Theme.of(context).colorScheme.primary
-        : (brightness == Brightness.dark
-              ? AppColors.darkSurfaceSoft
-              : AppColors.sandLight);
-    final foreground = selected
-        ? Theme.of(context).colorScheme.onPrimary
-        : Theme.of(context).colorScheme.onSurface;
+    final scheme = Theme.of(context).colorScheme;
+    final background = selected ? scheme.primary : scheme.surface;
+    final foreground = selected ? scheme.onPrimary : scheme.onSurface;
 
     return AppInteractive(
       tooltip: label,
@@ -431,7 +482,9 @@ class _FilterChipButton extends StatelessWidget {
           label,
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
             color: foreground,
-            fontWeight: FontWeight.w800,
+            fontFamily: AppTypography.displayFont,
+            fontFamilyFallback: AppTypography.fallbackFonts,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),
@@ -439,8 +492,9 @@ class _FilterChipButton extends StatelessWidget {
   }
 }
 
-class _AdminContentCard extends StatelessWidget {
-  const _AdminContentCard({
+class AdminContentCard extends StatelessWidget {
+  const AdminContentCard({
+    super.key,
     required this.item,
     required this.onEdit,
     required this.onPublish,
@@ -456,18 +510,20 @@ class _AdminContentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     final brightness = Theme.of(context).brightness;
-    final surface = brightness == Brightness.dark
-        ? AppColors.darkSurface
-        : AppColors.background;
     final stroke = brightness == Brightness.dark
         ? AppColors.darkStroke
         : AppColors.stroke;
+    final coverPath = _coverPath(item);
+    final resolveCoverImageUrl = coverPath == null
+        ? null
+        : AppDataScope.contentItems(context).resolveCoverImageUrl;
 
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: surface.withValues(alpha: 0.92),
+        color: scheme.surface,
         borderRadius: AppRadius.large,
         border: Border.all(color: stroke),
         boxShadow: AppShadows.soft(brightness),
@@ -477,10 +533,8 @@ class _AdminContentCard extends StatelessWidget {
         children: [
           MyImage(
             initials: _typeInitials(item.tipo),
-            imagePath: _coverPath(item),
-            resolveImageUrl: AppDataScope.contentItems(
-              context,
-            ).resolveCoverImageUrl,
+            imagePath: coverPath,
+            resolveImageUrl: resolveCoverImageUrl,
             size: 78,
             circle: false,
             borderRadius: AppRadius.medium,
@@ -506,7 +560,11 @@ class _AdminContentCard extends StatelessWidget {
                   item.titulo,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.titleMedium,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontFamily: AppTypography.displayFont,
+                    fontFamilyFallback: AppTypography.fallbackFonts,
+                    color: scheme.onSurface,
+                  ),
                 ),
                 if ((item.subtitulo ?? '').trim().isNotEmpty) ...[
                   const SizedBox(height: 4),
@@ -578,7 +636,9 @@ class _SmallBadge extends StatelessWidget {
         child: Text(
           label,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.primary,
+            fontFamily: AppTypography.displayFont,
+            fontFamilyFallback: AppTypography.fallbackFonts,
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w800,
           ),
         ),

@@ -53,6 +53,7 @@ const _contentTypeByType = {
   'm4v': 'video/x-m4v',
   'mp3': 'audio/mpeg',
   'm4a': 'audio/mp4',
+  'mp4a': 'audio/mp4',
   'aac': 'audio/aac',
   'wav': 'audio/wav',
   'ogg': 'audio/ogg',

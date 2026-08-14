@@ -11,12 +11,14 @@ class ContentHorizontalList extends StatelessWidget {
     this.cardWidth = 174,
     this.showBadges = false,
     this.onItemTap,
+    this.onFavoriteTap,
   });
 
   final List<ContentItem> items;
   final double cardWidth;
   final bool showBadges;
   final ValueChanged<ContentItem>? onItemTap;
+  final ValueChanged<ContentItem>? onFavoriteTap;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +38,9 @@ class ContentHorizontalList extends StatelessWidget {
             width: cardWidth,
             showBadge: showBadges,
             onTap: onItemTap == null ? null : () => onItemTap!(item),
+            onFavoriteTap: onFavoriteTap == null
+                ? null
+                : () => onFavoriteTap!(item),
           );
         },
       ),

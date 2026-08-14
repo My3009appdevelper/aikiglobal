@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 
 import '../../core/constants/app_assets.dart';
 import '../../core/data/models/app_content_item.dart';
+import '../../core/data/models/app_user_content_state.dart';
 import '../../core/data/providers/app_data_scope.dart';
+import '../../core/data/providers/app_load_coordinator.dart';
 import '../../core/data/providers/content_items_controller.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
@@ -16,8 +18,10 @@ import '../../shared/widgets/app_section_header.dart';
 import '../../shared/widgets/app_text_field.dart';
 import '../empresa/company_info_page.dart';
 import 'content_detail_page.dart';
+import 'content_playback_progress.dart';
 import 'data/mock_explore_data.dart';
 import 'models/content_item.dart';
+import 'widgets/content_card.dart';
 import 'widgets/content_horizontal_list.dart';
 import 'widgets/explore_hero_card.dart';
 import 'widgets/quick_category_row.dart';
@@ -54,12 +58,14 @@ class _ExplorarPageState extends State<ExplorarPage> {
     _isInitialized = true;
     final contentController = AppDataScope.contentItems(context);
     final profileController = AppDataScope.currentProfile(context);
+    final companyInfoController = AppDataScope.companyInfo(context);
 
     if (profileController.isAdminView) {
       contentController.watchAdminAll();
     } else {
       contentController.watchPublished();
     }
+    companyInfoController.watch();
   }
 
   void _openContent(BuildContext context, ContentItem item) {
@@ -72,6 +78,45 @@ class _ExplorarPageState extends State<ExplorarPage> {
     Navigator.of(
       context,
     ).push(MaterialPageRoute<void>(builder: (_) => const CompanyInfoPage()));
+  }
+
+  Future<void> _toggleFavorite(ContentItem item) async {
+    final profile = AppDataScope.currentProfile(context).profile;
+    final uuidProfile = profile?.uuidProfile;
+    final uuidContentItem = item.uuidContentItem;
+
+    if (uuidProfile == null) {
+      _showFavoriteError('Inicia sesión para guardar favoritos.');
+      return;
+    }
+
+    if (uuidContentItem == null || uuidContentItem.trim().isEmpty) {
+      _showFavoriteError('Este contenido todavía no se puede guardar.');
+      return;
+    }
+
+    try {
+      await AppDataScope.userContentStates(
+        context,
+      ).toggleFavorito(uuidProfile, uuidContentItem);
+    } catch (_) {
+      if (!mounted) {
+        return;
+      }
+      _showFavoriteError('No se pudo actualizar el favorito.');
+    }
+  }
+
+  void _showFavoriteError(String message) {
+    if (!mounted) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(behavior: SnackBarBehavior.floating, content: Text(message)),
+      );
   }
 
   Future<void> _search(String query) async {
@@ -133,18 +178,9 @@ class _ExplorarPageState extends State<ExplorarPage> {
   }
 
   Future<void> _refreshExplore() async {
-    final contentController = AppDataScope.contentItems(context);
-    final profileController = AppDataScope.currentProfile(context);
-    final userContentStatesController = AppDataScope.userContentStates(context);
-    final profile = profileController.profile;
-
-    await contentController.refreshFromRemote();
-
-    if (profile != null) {
-      await userContentStatesController.syncWithRemote(
-        uuidProfile: profile.uuidProfile,
-      );
-    }
+    await AppDataScope.loadCoordinator(
+      context,
+    ).syncWithRemote(scope: AppLoadScope.explore);
 
     final query = _searchController.text.trim();
     if (query.isNotEmpty) {
@@ -156,6 +192,7 @@ class _ExplorarPageState extends State<ExplorarPage> {
   Widget build(BuildContext context) {
     final contentController = AppDataScope.contentItems(context);
     final userContentStatesController = AppDataScope.userContentStates(context);
+    final companyInfoController = AppDataScope.companyInfo(context);
 
     return SafeArea(
       bottom: false,
@@ -164,12 +201,15 @@ class _ExplorarPageState extends State<ExplorarPage> {
           animation: Listenable.merge([
             contentController,
             userContentStatesController,
+            companyInfoController,
           ]),
           builder: (context, _) {
+            final companyInfo = companyInfoController.item;
             final data = _ExploreViewData.fromController(
               contentController,
               favoriteContentIds:
                   userContentStatesController.favoriteContentIds,
+              contentStatesById: userContentStatesController.statesByContentId,
               fallbackQuery: _searchController.text,
               allowMockFallback: !contentController.hasRemote,
             );
@@ -190,7 +230,14 @@ class _ExplorarPageState extends State<ExplorarPage> {
                           const _AdminViewBanner(),
                         ],
                         const SizedBox(height: AppSpacing.lg),
-                        ExploreHeroCard(onTap: () => _openCompanyInfo(context)),
+                        ExploreHeroCard(
+                          title: companyInfo.heroTitulo,
+                          subtitle: companyInfo.heroSubtitulo,
+                          imagePath: companyInfo.heroImagePath,
+                          resolveImageUrl:
+                              companyInfoController.resolveInfoImageUrl,
+                          onTap: () => _openCompanyInfo(context),
+                        ),
                         const SizedBox(height: AppSpacing.lg),
                         _ExploreSearchBar(
                           controller: _searchController,
@@ -231,15 +278,13 @@ class _ExplorarPageState extends State<ExplorarPage> {
                           ContentHorizontalList(
                             items: data.searchResults,
                             onItemTap: (item) => _openContent(context, item),
+                            onFavoriteTap: (item) =>
+                                unawaited(_toggleFavorite(item)),
                           ),
                         ] else if (_selectedCategory != null) ...[
                           const SizedBox(height: AppSpacing.xl),
                           AppSectionHeader(
-                            title: data.titleForCategory(_selectedCategory!),
-                            actionLabel: 'Ver todo',
-                            onAction: () {
-                              setState(() => _selectedCategory = null);
-                            },
+                            title: data.allTitleForCategory(_selectedCategory!),
                           ),
                           const SizedBox(height: AppSpacing.md),
                           if (data.itemsForCategory(_selectedCategory!).isEmpty)
@@ -247,35 +292,53 @@ class _ExplorarPageState extends State<ExplorarPage> {
                               title: data.titleForCategory(_selectedCategory!),
                             )
                           else
-                            ContentHorizontalList(
+                            _ContentGrid(
                               items: data.itemsForCategory(_selectedCategory!),
                               onItemTap: (item) => _openContent(context, item),
+                              onFavoriteTap: (item) =>
+                                  unawaited(_toggleFavorite(item)),
                             ),
                         ] else ...[
                           _Section(
                             title: 'Cursos disponibles',
                             items: data.courses,
                             onItemTap: (item) => _openContent(context, item),
+                            onFavoriteTap: (item) =>
+                                unawaited(_toggleFavorite(item)),
                           ),
                           _Section(
                             title: 'Meditaciones',
                             items: data.meditations,
+                            onViewAll: () =>
+                                _selectCategory(QuickCategoryType.meditations),
                             onItemTap: (item) => _openContent(context, item),
+                            onFavoriteTap: (item) =>
+                                unawaited(_toggleFavorite(item)),
                           ),
                           _Section(
                             title: 'Eventos',
                             items: data.events,
                             onItemTap: (item) => _openContent(context, item),
+                            onFavoriteTap: (item) =>
+                                unawaited(_toggleFavorite(item)),
                           ),
                           _Section(
                             title: 'Audios',
                             items: data.audios,
+                            onViewAll: () =>
+                                _selectCategory(QuickCategoryType.audios),
                             onItemTap: (item) => _openContent(context, item),
+                            onFavoriteTap: (item) =>
+                                unawaited(_toggleFavorite(item)),
                           ),
                           _Section(
                             title: 'Sonidos',
                             items: data.sounds,
+                            onViewAll: () =>
+                                _selectCategory(QuickCategoryType.sounds),
                             onItemTap: (item) => _openContent(context, item),
+                            onFavoriteTap: (item) =>
+                                unawaited(_toggleFavorite(item)),
                           ),
                           _Section(
                             title: 'Recomendados para ti',
@@ -283,6 +346,8 @@ class _ExplorarPageState extends State<ExplorarPage> {
                             cardWidth: 172,
                             showBadges: true,
                             onItemTap: (item) => _openContent(context, item),
+                            onFavoriteTap: (item) =>
+                                unawaited(_toggleFavorite(item)),
                           ),
                         ],
                         const SizedBox(height: 130),
@@ -304,6 +369,8 @@ class _Section extends StatelessWidget {
     required this.title,
     required this.items,
     required this.onItemTap,
+    required this.onFavoriteTap,
+    this.onViewAll,
     this.cardWidth = 174,
     this.showBadges = false,
   });
@@ -311,6 +378,8 @@ class _Section extends StatelessWidget {
   final String title;
   final List<ContentItem> items;
   final ValueChanged<ContentItem> onItemTap;
+  final ValueChanged<ContentItem> onFavoriteTap;
+  final VoidCallback? onViewAll;
   final double cardWidth;
   final bool showBadges;
 
@@ -326,8 +395,8 @@ class _Section extends StatelessWidget {
         const SizedBox(height: AppSpacing.xl),
         AppSectionHeader(
           title: title,
-          actionLabel: 'Ver todo',
-          onAction: () {},
+          actionLabel: onViewAll == null ? null : 'Ver todo',
+          onAction: onViewAll,
         ),
         const SizedBox(height: AppSpacing.md),
         ContentHorizontalList(
@@ -335,8 +404,48 @@ class _Section extends StatelessWidget {
           cardWidth: cardWidth,
           showBadges: showBadges,
           onItemTap: onItemTap,
+          onFavoriteTap: onFavoriteTap,
         ),
       ],
+    );
+  }
+}
+
+class _ContentGrid extends StatelessWidget {
+  const _ContentGrid({
+    required this.items,
+    required this.onItemTap,
+    required this.onFavoriteTap,
+  });
+
+  final List<ContentItem> items;
+  final ValueChanged<ContentItem> onItemTap;
+  final ValueChanged<ContentItem> onFavoriteTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const spacing = AppSpacing.md;
+        final columns = constraints.maxWidth >= 360 ? 2 : 1;
+        final cardWidth = columns == 1
+            ? constraints.maxWidth
+            : (constraints.maxWidth - spacing) / columns;
+
+        return Wrap(
+          spacing: spacing,
+          runSpacing: AppSpacing.lg,
+          children: [
+            for (final item in items)
+              ContentCard(
+                item: item,
+                width: cardWidth,
+                onTap: () => onItemTap(item),
+                onFavoriteTap: () => onFavoriteTap(item),
+              ),
+          ],
+        );
+      },
     );
   }
 }
@@ -456,6 +565,7 @@ class _ExploreViewData {
   factory _ExploreViewData.fromController(
     ContentItemsController controller, {
     required Set<String> favoriteContentIds,
+    required Map<String, AppUserContentState> contentStatesById,
     required String fallbackQuery,
     required bool allowMockFallback,
   }) {
@@ -481,25 +591,36 @@ class _ExploreViewData {
         entry.value,
         entry.key,
         favoriteContentIds: favoriteContentIds,
+        contentStatesById: contentStatesById,
       );
     }).toList();
 
     return _ExploreViewData(
-      courses: _mapContentItemsByType(realItems, {
-        'course',
-      }, favoriteContentIds: favoriteContentIds),
-      meditations: _mapContentItemsByType(realItems, {
-        'meditation',
-      }, favoriteContentIds: favoriteContentIds),
+      courses: _mapContentItemsByType(
+        realItems,
+        {'course'},
+        favoriteContentIds: favoriteContentIds,
+        contentStatesById: contentStatesById,
+      ),
+      meditations: _mapContentItemsByType(
+        realItems,
+        {'meditation'},
+        favoriteContentIds: favoriteContentIds,
+        contentStatesById: contentStatesById,
+      ),
       events: const [],
-      audios: _mapContentItemsByType(realItems, {
-        'audio',
-      }, favoriteContentIds: favoriteContentIds),
-      sounds: _mapContentItemsByType(realItems, {
-        'sound',
-        'ambient_sound',
-        'sonido',
-      }, favoriteContentIds: favoriteContentIds),
+      audios: _mapContentItemsByType(
+        realItems,
+        {'audio'},
+        favoriteContentIds: favoriteContentIds,
+        contentStatesById: contentStatesById,
+      ),
+      sounds: _mapContentItemsByType(
+        realItems,
+        {'sound', 'ambient_sound', 'sonido'},
+        favoriteContentIds: favoriteContentIds,
+        contentStatesById: contentStatesById,
+      ),
       favorites: visualItems.where((item) => item.isFavorite).toList(),
       recommended: controller.featuredItems.isEmpty
           ? visualItems.take(8).toList()
@@ -508,6 +629,7 @@ class _ExploreViewData {
                 entry.value,
                 entry.key,
                 favoriteContentIds: favoriteContentIds,
+                contentStatesById: contentStatesById,
               );
             }).toList(),
       searchResults: visualItems,
@@ -591,10 +713,20 @@ class _ExploreViewData {
     };
   }
 
+  String allTitleForCategory(QuickCategoryType type) {
+    return switch (type) {
+      QuickCategoryType.meditations => 'Todas las meditaciones',
+      QuickCategoryType.audios => 'Todos los audios',
+      QuickCategoryType.sounds => 'Todos los sonidos',
+      QuickCategoryType.favorites => 'Favoritos guardados',
+    };
+  }
+
   static List<ContentItem> _mapContentItemsByType(
     List<AppContentItem> items,
     Set<String> acceptedTypes, {
     required Set<String> favoriteContentIds,
+    required Map<String, AppUserContentState> contentStatesById,
   }) {
     return items
         .asMap()
@@ -607,6 +739,7 @@ class _ExploreViewData {
             entry.value,
             entry.key,
             favoriteContentIds: favoriteContentIds,
+            contentStatesById: contentStatesById,
           );
         })
         .toList();
@@ -616,7 +749,10 @@ class _ExploreViewData {
     AppContentItem item,
     int index, {
     required Set<String> favoriteContentIds,
+    required Map<String, AppUserContentState> contentStatesById,
   }) {
+    final contentState = contentStatesById[item.uuidContentItem];
+
     return ContentItem(
       uuidContentItem: item.uuidContentItem,
       title: item.titulo,
@@ -627,6 +763,14 @@ class _ExploreViewData {
       description: item.descripcion ?? item.subtitulo,
       isNew: item.destacado,
       isFavorite: favoriteContentIds.contains(item.uuidContentItem),
+      descargable: item.descargable,
+      progressPercentage: contentState == null
+          ? null
+          : contentCardProgressPercentage(
+              progresoPorcentaje: contentState.progresoPorcentaje,
+              ultimaPosicionSegundos: contentState.ultimaPosicionSegundos,
+              completado: contentState.completado,
+            ),
     );
   }
 

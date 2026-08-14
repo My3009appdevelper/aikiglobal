@@ -15,6 +15,7 @@ class AppPrimaryButton extends StatelessWidget {
     this.backgroundColor,
     this.foregroundColor,
     this.labelStyle,
+    this.disabledOpacity = 0.55,
   });
 
   final String label;
@@ -25,6 +26,7 @@ class AppPrimaryButton extends StatelessWidget {
   final Color? backgroundColor;
   final Color? foregroundColor;
   final TextStyle? labelStyle;
+  final double disabledOpacity;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +43,7 @@ class AppPrimaryButton extends StatelessWidget {
         );
     final content = AnimatedOpacity(
       duration: const Duration(milliseconds: 180),
-      opacity: enabled ? 1 : 0.55,
+      opacity: enabled ? 1 : disabledOpacity,
       child: AppInteractive(
         tooltip: enabled ? label : null,
         borderRadius: AppRadius.full,

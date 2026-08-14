@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:math' as math;
-import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/data/common/supabase_error_messages.dart';
@@ -13,10 +13,13 @@ import '../../../core/data/models/content_media_file_metadata.dart';
 import '../../../core/data/models/content_media_upload_limits.dart';
 import '../../../core/data/models/pending_content_media_upload.dart';
 import '../../../core/data/providers/app_data_scope.dart';
+import '../../../core/data/providers/app_load_coordinator.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_shadows.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_typography.dart';
+import '../../../shared/widgets/app_back_button.dart';
 import '../../../shared/widgets/app_background.dart';
 import '../../../shared/widgets/app_interactive.dart';
 import '../../../shared/widgets/app_primary_button.dart';
@@ -30,6 +33,8 @@ import '../../../shared/widgets/my_image_picker.dart';
 import 'content_media_duration_text.dart';
 import 'content_media_form_draft.dart';
 import 'content_media_metadata_policy.dart';
+import '../admin_notifications/admin_notification_event_form_page.dart'
+    show NotificationFormSelect;
 
 class AdminContentFormPage extends StatefulWidget {
   const AdminContentFormPage({super.key, this.item});
@@ -116,11 +121,21 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
     }
 
     _mediaWatchInitialized = true;
-    final mediaController = AppDataScope.contentMedia(context);
-    mediaController.watchForContent(_uuidContentItem);
-    if (_isEditing) {
-      unawaited(mediaController.pullFromRemote());
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+
+      final mediaController = AppDataScope.contentMedia(context);
+      mediaController.watchForContent(_uuidContentItem);
+      unawaited(
+        AppDataScope.loadCoordinator(context).syncWithRemote(
+          scope: _isEditing
+              ? AppLoadScope.adminContentForm
+              : AppLoadScope.adminContent,
+        ),
+      );
+    });
   }
 
   @override
@@ -278,14 +293,11 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
                             onTap: _pickCover,
                           ),
                           const SizedBox(height: AppSpacing.lg),
-                          _FormCard(
+                          AdminContentFormCard(
                             child: Column(
                               children: [
-                                _DropdownField(
-                                  label: 'Tipo',
+                                AdminContentTypeSelector(
                                   value: _type,
-                                  items: _contentTypes,
-                                  labelFor: _typeLabel,
                                   onChanged: (value) {
                                     if (value != null) {
                                       setState(() {
@@ -351,10 +363,10 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
                             ),
                           ),
                           const SizedBox(height: AppSpacing.lg),
-                          _FormCard(
+                          AdminContentFormCard(
                             child: Column(
                               children: [
-                                _SwitchRow(
+                                AdminContentSwitchRow(
                                   title: 'Destacado',
                                   subtitle:
                                       'Puede aparecer en espacios recomendados.',
@@ -363,7 +375,7 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
                                       setState(() => _featured = value),
                                 ),
                                 const SizedBox(height: AppSpacing.sm),
-                                _SwitchRow(
+                                AdminContentSwitchRow(
                                   title: 'Descargable',
                                   subtitle:
                                       'Disponible para descarga cuando se conecte media.',
@@ -381,7 +393,7 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
                               final mediaDraft = _mediaDraft(
                                 contentMediaController.items,
                               );
-                              return _MediaFilesCard(
+                              return AdminContentMediaFilesCard(
                                 items: mediaDraft.visiblePersistedMedia,
                                 pendingItems: mediaDraft.visiblePendingUploads,
                                 mediaEdits: _mediaEdits,
@@ -423,13 +435,12 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
                             ),
                           ],
                           const SizedBox(height: AppSpacing.lg),
-                          AppPrimaryButton(
+                          AdminContentSaveButton(
                             label: _isSaving
                                 ? 'Guardando...'
                                 : (_isEditing
                                       ? 'Guardar cambios'
                                       : 'Guardar borrador'),
-                            icon: Icons.check_rounded,
                             onPressed: _isSaving || !_hasChanges
                                 ? null
                                 : () => _save(_draftStatusForSave()),
@@ -496,11 +507,12 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
         'm4v',
         'mp3',
         'm4a',
+        'mp4a',
         'aac',
         'wav',
         'ogg',
       ],
-      withData: false,
+      withData: kIsWeb,
     );
     if (picked == null || picked.files.isEmpty || !mounted) {
       return;
@@ -525,7 +537,7 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
       return;
     }
 
-    final localPath = file.path?.trim();
+    final localPath = kIsWeb ? null : file.path?.trim();
     final bytes = file.bytes;
     if ((localPath == null || localPath.isEmpty) &&
         (bytes == null || bytes.isEmpty)) {
@@ -672,6 +684,10 @@ class _AdminContentFormPageState extends State<AdminContentFormPage> {
     bool validateMediaForPublish = true,
     bool showSavingState = true,
   }) async {
+    if (_isSaving) {
+      return false;
+    }
+
     final title = _titleController.text.trim();
     if (title.isEmpty) {
       setState(() => _errorMessage = 'Escribe un título para continuar.');
@@ -998,25 +1014,7 @@ class _FormHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        AppInteractive(
-          tooltip: 'Regresar',
-          borderRadius: AppRadius.full,
-          onTap: onBack,
-          child: Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: Theme.of(
-                context,
-              ).colorScheme.primary.withValues(alpha: 0.12),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.arrow_back_rounded,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-        ),
+        AppBackButton(onTap: onBack),
         const SizedBox(width: 14),
         Expanded(
           child: Text(title, style: Theme.of(context).textTheme.headlineMedium),
@@ -1156,17 +1154,15 @@ Widget _coverFallback(BuildContext context) {
   );
 }
 
-class _FormCard extends StatelessWidget {
-  const _FormCard({required this.child});
+class AdminContentFormCard extends StatelessWidget {
+  const AdminContentFormCard({super.key, required this.child});
 
   final Widget child;
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     final brightness = Theme.of(context).brightness;
-    final surface = brightness == Brightness.dark
-        ? AppColors.darkSurface
-        : AppColors.background;
     final stroke = brightness == Brightness.dark
         ? AppColors.darkStroke
         : AppColors.stroke;
@@ -1175,18 +1171,22 @@ class _FormCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: surface.withValues(alpha: 0.92),
+        color: scheme.surface,
         borderRadius: AppRadius.large,
         border: Border.all(color: stroke),
         boxShadow: AppShadows.soft(brightness),
       ),
-      child: child,
+      child: DefaultTextStyle.merge(
+        style: TextStyle(color: scheme.onSurface),
+        child: child,
+      ),
     );
   }
 }
 
-class _MediaFilesCard extends StatelessWidget {
-  const _MediaFilesCard({
+class AdminContentMediaFilesCard extends StatelessWidget {
+  const AdminContentMediaFilesCard({
+    super.key,
     required this.items,
     required this.pendingItems,
     required this.mediaEdits,
@@ -1221,6 +1221,7 @@ class _MediaFilesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     final rows = <Widget>[
       for (final item in items)
         _MediaRow(
@@ -1255,18 +1256,22 @@ class _MediaFilesCard extends StatelessWidget {
         ),
     ];
 
-    return _FormCard(
+    return AdminContentFormCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Archivos del contenido',
-            style: Theme.of(context).textTheme.titleLarge,
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(color: scheme.onSurface),
           ),
           const SizedBox(height: 6),
           Text(
             'Agrega video, audio o sonido ambiental para poder publicar.',
-            style: Theme.of(context).textTheme.bodySmall,
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: scheme.onSurface),
           ),
           const SizedBox(height: AppSpacing.md),
           if (rows.isEmpty)
@@ -1282,12 +1287,59 @@ class _MediaFilesCard extends StatelessWidget {
               ],
             ),
           const SizedBox(height: AppSpacing.md),
-          AppSecondaryButton(
-            label: 'Agregar archivo',
-            icon: Icons.upload_file_rounded,
-            onPressed: onAdd,
-          ),
+          AdminContentAddMediaButton(onPressed: onAdd),
         ],
+      ),
+    );
+  }
+}
+
+class AdminContentAddMediaButton extends StatelessWidget {
+  const AdminContentAddMediaButton({super.key, required this.onPressed});
+
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
+    return AppSecondaryButton(
+      label: 'Agregar archivo',
+      icon: Icons.upload_file_rounded,
+      onPressed: onPressed,
+      backgroundColor: scheme.surface,
+      foregroundColor: scheme.onSurface,
+      labelStyle: const TextStyle(
+        fontFamily: AppTypography.displayFont,
+        fontFamilyFallback: AppTypography.fallbackFonts,
+      ),
+    );
+  }
+}
+
+class AdminContentSaveButton extends StatelessWidget {
+  const AdminContentSaveButton({
+    super.key,
+    required this.label,
+    required this.onPressed,
+  });
+
+  final String label;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
+    return AppPrimaryButton(
+      label: label,
+      icon: Icons.check_rounded,
+      onPressed: onPressed,
+      backgroundColor: scheme.primary,
+      foregroundColor: scheme.onPrimary,
+      labelStyle: const TextStyle(
+        fontFamily: AppTypography.displayFont,
+        fontFamilyFallback: AppTypography.fallbackFonts,
       ),
     );
   }
@@ -1300,10 +1352,7 @@ class _EmptyMediaMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final background = brightness == Brightness.dark
-        ? AppColors.darkSurfaceSoft
-        : AppColors.sandLight;
+    final scheme = Theme.of(context).colorScheme;
 
     return AppInteractive(
       tooltip: 'Agregar archivo',
@@ -1313,20 +1362,20 @@ class _EmptyMediaMessage extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: background,
+          color: scheme.surface,
           borderRadius: AppRadius.medium,
+          border: Border.all(color: scheme.onSurface.withValues(alpha: 0.12)),
         ),
         child: Row(
           children: [
-            Icon(
-              Icons.perm_media_outlined,
-              color: Theme.of(context).colorScheme.primary,
-            ),
+            Icon(Icons.perm_media_outlined, color: scheme.primary),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
                 'Aún no hay archivos para este contenido.',
-                style: Theme.of(context).textTheme.bodyMedium,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: scheme.onSurface),
               ),
             ),
           ],
@@ -1403,6 +1452,8 @@ class _PendingMediaRowState extends State<_PendingMediaRow> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1431,7 +1482,9 @@ class _PendingMediaRowState extends State<_PendingMediaRow> {
                   enabled: widget.onTitleChanged != null,
                   onChanged: widget.onTitleChanged,
                   textInputAction: TextInputAction.next,
-                  style: Theme.of(context).textTheme.titleMedium,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleMedium?.copyWith(color: scheme.onSurface),
                   decoration: const InputDecoration(
                     hintText: 'Título del archivo',
                     isDense: true,
@@ -1449,6 +1502,9 @@ class _PendingMediaRowState extends State<_PendingMediaRow> {
                       decimal: true,
                     ),
                     textInputAction: TextInputAction.done,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(color: scheme.onSurface),
                     decoration: const InputDecoration(
                       hintText: 'Duración (min)',
                       isDense: true,
@@ -1459,12 +1515,16 @@ class _PendingMediaRowState extends State<_PendingMediaRow> {
               ] else
                 Text(
                   _readOnlyMediaTitle(widget.contentTitle, widget.item.tipo),
-                  style: Theme.of(context).textTheme.titleMedium,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleMedium?.copyWith(color: scheme.onSurface),
                 ),
               const SizedBox(height: 4),
               Text(
                 '${_mediaTypeLabel(widget.item.tipo)} · ${_formatMediaDuration(widget.metadataEditable ? widget.item.duracionSegundos : widget.contentDurationSeconds)} · Pendiente de guardar · Orden ${widget.item.orden}',
-                style: Theme.of(context).textTheme.bodySmall,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: scheme.onSurface),
               ),
             ],
           ),
@@ -1566,6 +1626,8 @@ class _MediaRowState extends State<_MediaRow> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1594,7 +1656,9 @@ class _MediaRowState extends State<_MediaRow> {
                   enabled: widget.onTitleChanged != null,
                   onChanged: widget.onTitleChanged,
                   textInputAction: TextInputAction.next,
-                  style: Theme.of(context).textTheme.titleMedium,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleMedium?.copyWith(color: scheme.onSurface),
                   decoration: const InputDecoration(
                     hintText: 'Título del archivo',
                     isDense: true,
@@ -1612,6 +1676,9 @@ class _MediaRowState extends State<_MediaRow> {
                       decimal: true,
                     ),
                     textInputAction: TextInputAction.done,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(color: scheme.onSurface),
                     decoration: const InputDecoration(
                       hintText: 'Duración (min)',
                       isDense: true,
@@ -1622,12 +1689,16 @@ class _MediaRowState extends State<_MediaRow> {
               ] else
                 Text(
                   _readOnlyMediaTitle(widget.contentTitle, widget.item.tipo),
-                  style: Theme.of(context).textTheme.titleMedium,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleMedium?.copyWith(color: scheme.onSurface),
                 ),
               const SizedBox(height: 4),
               Text(
                 '${_mediaTypeLabel(widget.item.tipo)} · ${_formatMediaDuration(widget.metadataEditable ? _effectiveDurationSeconds : widget.contentDurationSeconds)} · Orden ${widget.item.orden}',
-                style: Theme.of(context).textTheme.bodySmall,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: scheme.onSurface),
               ),
               if (widget.item.hasPendingSync) ...[
                 const SizedBox(height: 4),
@@ -1654,41 +1725,32 @@ class _MediaRowState extends State<_MediaRow> {
   }
 }
 
-class _DropdownField extends StatelessWidget {
-  const _DropdownField({
-    required this.label,
+class AdminContentTypeSelector extends StatelessWidget {
+  const AdminContentTypeSelector({
+    super.key,
     required this.value,
-    required this.items,
-    required this.labelFor,
     required this.onChanged,
   });
 
-  final String label;
   final String value;
-  final List<String> items;
-  final String Function(String value) labelFor;
   final ValueChanged<String?> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButtonFormField<String>(
-      initialValue: value,
-      items: items
-          .map(
-            (item) => DropdownMenuItem<String>(
-              value: item,
-              child: Text(labelFor(item)),
-            ),
-          )
-          .toList(),
+    return NotificationFormSelect(
+      label: 'Tipo',
+      value: value,
+      items: _contentTypes,
+      labelFor: _typeLabel,
+      iconFor: _contentTypeIcon,
       onChanged: onChanged,
-      decoration: InputDecoration(labelText: label),
     );
   }
 }
 
-class _SwitchRow extends StatelessWidget {
-  const _SwitchRow({
+class AdminContentSwitchRow extends StatelessWidget {
+  const AdminContentSwitchRow({
+    super.key,
     required this.title,
     required this.subtitle,
     required this.value,
@@ -1702,17 +1764,36 @@ class _SwitchRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return SwitchListTile.adaptive(
       contentPadding: EdgeInsets.zero,
-      title: Text(title, style: Theme.of(context).textTheme.titleMedium),
-      subtitle: Text(subtitle),
+      title: Text(
+        title,
+        style: Theme.of(
+          context,
+        ).textTheme.titleMedium?.copyWith(color: scheme.onSurface),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: Theme.of(
+          context,
+        ).textTheme.bodySmall?.copyWith(color: scheme.onSurface),
+      ),
       value: value,
       onChanged: onChanged,
     );
   }
 }
 
-const _contentTypes = ['meditation', 'audio', 'sound', 'event'];
+const _contentTypes = [
+  'meditation',
+  'audio',
+  'sound',
+  'course',
+  'event',
+  'session',
+];
 
 String _contentTypeForForm(String tipo) {
   final cleanType = tipo.trim().toLowerCase();
@@ -1733,6 +1814,18 @@ String _typeLabel(String tipo) {
     'event' => 'Evento',
     'session' => 'Sesión',
     _ => tipo,
+  };
+}
+
+IconData _contentTypeIcon(String tipo) {
+  return switch (tipo) {
+    'course' => Icons.school_outlined,
+    'meditation' => Icons.self_improvement_outlined,
+    'audio' => Icons.headphones_outlined,
+    'sound' => Icons.graphic_eq_rounded,
+    'event' => Icons.event_available_outlined,
+    'session' => Icons.groups_outlined,
+    _ => Icons.tune_rounded,
   };
 }
 

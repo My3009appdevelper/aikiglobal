@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_typography.dart';
 import '../../../shared/widgets/app_interactive.dart';
 
 class WellnessMetricSelector extends StatelessWidget {
@@ -20,14 +20,14 @@ class WellnessMetricSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textColor = Theme.of(context).colorScheme.onSurface;
+    final scheme = Theme.of(context).colorScheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(icon, size: 18, color: Theme.of(context).colorScheme.primary),
+            Icon(icon, size: 18, color: scheme.primary),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
@@ -35,8 +35,9 @@ class WellnessMetricSelector extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: textColor,
-                  fontWeight: FontWeight.w800,
+                  color: scheme.onSurface,
+                  fontFamily: AppTypography.displayFont,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
@@ -75,20 +76,12 @@ class _MetricSegment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final fill = selected
-        ? Theme.of(context).colorScheme.primary
-        : brightness == Brightness.dark
-        ? AppColors.darkSurface
-        : AppColors.sandLight;
+    final scheme = Theme.of(context).colorScheme;
+    final fill = selected ? scheme.primary : scheme.surface;
+    final foreground = selected ? scheme.onPrimary : scheme.onTertiary;
     final border = selected
-        ? Theme.of(context).colorScheme.primary
-        : brightness == Brightness.dark
-        ? AppColors.darkStroke
-        : AppColors.stroke;
-    final foreground = selected
-        ? Theme.of(context).colorScheme.onPrimary
-        : Theme.of(context).colorScheme.onSurface;
+        ? scheme.primary
+        : scheme.onTertiary.withValues(alpha: 0.16);
 
     return AppInteractive(
       borderRadius: AppRadius.full,
@@ -108,6 +101,7 @@ class _MetricSegment extends StatelessWidget {
           level.toString(),
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
             color: foreground,
+            fontFamily: AppTypography.displayFont,
             fontWeight: FontWeight.w900,
           ),
         ),

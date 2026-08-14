@@ -30,5 +30,11 @@ class LocalMediaCache {
     return false;
   }
 
+  bool existsSync(String? localPath) {
+    return false;
+  }
+
   Future<void> delete(String? localPath) async {}
+
+  Future<void> deletePartial(String? localPath) async {}
 }

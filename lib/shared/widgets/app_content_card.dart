@@ -19,8 +19,10 @@ class AppContentCard extends StatelessWidget {
     this.badge,
     this.isNew = false,
     this.favoriteIcon = Icons.bookmark_border_rounded,
+    this.progressPercentage,
     this.width = 172,
     this.onTap,
+    this.onFavoriteTap,
   });
 
   final String imageAsset;
@@ -31,8 +33,10 @@ class AppContentCard extends StatelessWidget {
   final String? badge;
   final bool isNew;
   final IconData favoriteIcon;
+  final int? progressPercentage;
   final double width;
   final VoidCallback? onTap;
+  final VoidCallback? onFavoriteTap;
 
   @override
   Widget build(BuildContext context) {
@@ -108,6 +112,7 @@ class AppContentCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontFamily: AppTypography.displayFont,
+                        fontFamilyFallback: AppTypography.fallbackFonts,
                         color: scheme.onSurface,
                       ),
                     ),
@@ -121,13 +126,17 @@ class AppContentCard extends StatelessWidget {
                         color: scheme.onSurface,
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    if (progressPercentage case final progress?) ...[
+                      const SizedBox(height: 10),
+                      _ProgressIndicator(progressPercentage: progress),
+                    ],
+                    const SizedBox(height: 10),
                     Row(
                       children: [
                         Icon(
                           Icons.access_time_rounded,
                           size: 16,
-                          color: scheme.onSurface.withValues(alpha: 0.72),
+                          color: scheme.primary,
                         ),
                         const SizedBox(width: 4),
                         Expanded(
@@ -142,7 +151,10 @@ class AppContentCard extends StatelessWidget {
                                 ),
                           ),
                         ),
-                        _FavoriteActionIcon(initialIcon: favoriteIcon),
+                        _FavoriteActionIcon(
+                          icon: favoriteIcon,
+                          onTap: onFavoriteTap,
+                        ),
                       ],
                     ),
                   ],
@@ -156,54 +168,69 @@ class AppContentCard extends StatelessWidget {
   }
 }
 
-class _FavoriteActionIcon extends StatefulWidget {
-  const _FavoriteActionIcon({required this.initialIcon});
+class _ProgressIndicator extends StatelessWidget {
+  const _ProgressIndicator({required this.progressPercentage});
 
-  final IconData initialIcon;
-
-  @override
-  State<_FavoriteActionIcon> createState() => _FavoriteActionIconState();
-}
-
-class _FavoriteActionIconState extends State<_FavoriteActionIcon> {
-  late bool _selected;
-
-  @override
-  void initState() {
-    super.initState();
-    _selected = widget.initialIcon == Icons.bookmark_rounded;
-  }
-
-  @override
-  void didUpdateWidget(covariant _FavoriteActionIcon oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.initialIcon != widget.initialIcon) {
-      _selected = widget.initialIcon == Icons.bookmark_rounded;
-    }
-  }
+  final int progressPercentage;
 
   @override
   Widget build(BuildContext context) {
-    final idleColor = Theme.of(
-      context,
-    ).colorScheme.onSurface.withValues(alpha: 0.72);
+    final scheme = Theme.of(context).colorScheme;
+    final progress = progressPercentage.clamp(0, 100).toInt();
+
+    return Row(
+      children: [
+        Expanded(
+          child: ClipRRect(
+            borderRadius: AppRadius.full,
+            child: LinearProgressIndicator(
+              value: progress / 100,
+              minHeight: 5,
+              backgroundColor: scheme.onSurface.withValues(alpha: 0.12),
+              valueColor: AlwaysStoppedAnimation<Color>(scheme.primary),
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          '$progress%',
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            fontFamily: AppTypography.displayFont,
+            color: scheme.onSurface,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _FavoriteActionIcon extends StatelessWidget {
+  const _FavoriteActionIcon({required this.icon, this.onTap});
+
+  final IconData icon;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final selected = icon == Icons.bookmark_rounded;
+    final scheme = Theme.of(context).colorScheme;
 
     return AppInteractive(
-      tooltip: _selected ? 'Quitar de favoritos' : 'Guardar en favoritos',
+      tooltip: selected ? 'Quitar de favoritos' : 'Guardar en favoritos',
       borderRadius: AppRadius.full,
       hoverScale: 1,
       pressedScale: 1,
-      onTap: () => setState(() => _selected = !_selected),
+      onTap: onTap,
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 180),
         transitionBuilder: (child, animation) {
           return FadeTransition(opacity: animation, child: child);
         },
         child: Icon(
-          _selected ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-          key: ValueKey(_selected),
+          selected ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+          key: ValueKey(selected),
           size: 20,
-          color: _selected ? Theme.of(context).colorScheme.primary : idleColor,
+          color: scheme.primary,
         ),
       ),
     );
@@ -227,6 +254,7 @@ class _Badge extends StatelessWidget {
         label,
         style: Theme.of(context).textTheme.labelMedium?.copyWith(
           fontFamily: AppTypography.displayFont,
+          fontFamilyFallback: AppTypography.fallbackFonts,
           color: Theme.of(context).colorScheme.onSurface,
           fontSize: 11,
         ),

@@ -37,7 +37,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     _OnboardingData(
       title: 'Tu lugar seguro, siempre contigo',
       subtitle:
-          'Sigue tu racha diaria, cuida tu descanso y celebra tu avance de bienestar.',
+          'Sigue tu progreso diario, cuida tu descanso y celebra tu avance de bienestar.',
       imageAsset: AppAssets.backgroundSafeSpace,
     ),
   ];

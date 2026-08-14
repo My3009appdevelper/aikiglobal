@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_shadows.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_typography.dart';
 import '../../core/data/providers/app_data_scope.dart';
+import '../../core/data/providers/app_load_coordinator.dart';
 import '../../shared/widgets/app_interactive.dart';
 import '../../shared/widgets/app_logo.dart';
 import '../../shared/widgets/app_refresh_indicator.dart';
@@ -23,19 +24,9 @@ class EspacioSeguroPage extends StatelessWidget {
   const EspacioSeguroPage({super.key});
 
   Future<void> _refreshSafeSpace(BuildContext context) async {
-    final profile = AppDataScope.currentProfile(context).profile;
-    if (profile == null) {
-      return;
-    }
-
-    await Future.wait([
-      AppDataScope.wellnessDailyLogs(
-        context,
-      ).syncWithRemote(uuidProfile: profile.uuidProfile),
-      AppDataScope.wellnessProfileStats(
-        context,
-      ).syncWithRemote(uuidProfile: profile.uuidProfile),
-    ]);
+    await AppDataScope.loadCoordinator(
+      context,
+    ).syncWithRemote(scope: AppLoadScope.safeSpace);
   }
 
   @override
@@ -88,11 +79,7 @@ class _SafeSpaceIntro extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
-    final isDark = brightness == Brightness.dark;
-    final titleColor = Theme.of(context).colorScheme.onSurface;
-    final bodyColor = isDark
-        ? AppColors.darkTextMuted
-        : AppColors.textSecondary;
+    final scheme = Theme.of(context).colorScheme;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,9 +92,10 @@ class _SafeSpaceIntro extends StatelessWidget {
                 'Hola, Mau',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(
-                  context,
-                ).textTheme.displayMedium?.copyWith(color: titleColor),
+                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                  color: scheme.onSurface,
+                  fontFamily: AppTypography.displayFont,
+                ),
               ),
               const SizedBox(height: 8),
               Text(
@@ -116,7 +104,7 @@ class _SafeSpaceIntro extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(
                   context,
-                ).textTheme.bodyLarge?.copyWith(color: bodyColor),
+                ).textTheme.bodyLarge?.copyWith(color: scheme.onSurface),
               ),
             ],
           ),
@@ -138,47 +126,53 @@ class _NotificationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final surface = brightness == Brightness.dark
-        ? AppColors.darkSurfaceSoft
-        : AppColors.background.withValues(alpha: 0.86);
-    final iconColor = Theme.of(context).colorScheme.primary;
+    final scheme = Theme.of(context).colorScheme;
+    final inboxController = AppDataScope.notificationsInbox(context);
 
-    return AppInteractive(
-      tooltip: 'Ver notificaciones',
-      borderRadius: AppRadius.full,
-      hoverScale: 1.08,
-      pressedScale: 0.9,
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => const NotificationsPage()),
-        );
-      },
-      child: Container(
-        width: 48,
-        height: 48,
-        decoration: BoxDecoration(
-          color: surface,
-          shape: BoxShape.circle,
-          boxShadow: AppShadows.soft(brightness),
-        ),
-        child: Stack(
-          children: [
-            Center(
-              child: Icon(Icons.notifications_none_rounded, color: iconColor),
-            ),
-            Positioned(
-              top: 12,
-              right: 12,
-              child: Container(
-                width: 9,
-                height: 9,
-                decoration: const BoxDecoration(
-                  color: AppColors.primary,
-                  shape: BoxShape.circle,
+    return AnimatedBuilder(
+      animation: inboxController,
+      builder: (context, _) => AppInteractive(
+        tooltip: 'Ver notificaciones',
+        borderRadius: AppRadius.full,
+        hoverScale: 1.08,
+        pressedScale: 0.9,
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => const NotificationsPage()),
+          );
+        },
+        child: Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            color: scheme.primary,
+            shape: BoxShape.circle,
+            boxShadow: AppShadows.soft(brightness),
+          ),
+          child: Stack(
+            children: [
+              Center(
+                child: Icon(
+                  Icons.notifications_none_rounded,
+                  color: scheme.onPrimary,
                 ),
               ),
-            ),
-          ],
+              if (inboxController.unreadCount > 0)
+                Positioned(
+                  top: 10,
+                  right: 10,
+                  child: Container(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: scheme.onPrimary,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: scheme.primary, width: 1.5),
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );

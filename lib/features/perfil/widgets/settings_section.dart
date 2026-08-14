@@ -17,21 +17,11 @@ class SettingsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
-    final surface = brightness == Brightness.dark
-        ? AppColors.darkSurface
-        : AppColors.background;
     final stroke = brightness == Brightness.dark
         ? AppColors.darkStroke
         : AppColors.stroke;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: surface.withValues(alpha: 0.9),
-        borderRadius: AppRadius.large,
-        border: Border.all(color: stroke),
-        boxShadow: AppShadows.soft(brightness),
-      ),
-      clipBehavior: Clip.antiAlias,
+    return SettingsSectionFrame(
       child: Column(
         children: [
           AnimatedBuilder(
@@ -64,11 +54,35 @@ class SettingsSection extends StatelessWidget {
             icon: Icons.logout_rounded,
             title: 'Cerrar sesión',
             subtitle: 'Salir de tu cuenta de Aiki',
-            danger: true,
             onTap: onLogout,
           ),
         ],
       ),
+    );
+  }
+}
+
+class SettingsSectionFrame extends StatelessWidget {
+  const SettingsSectionFrame({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    final stroke = brightness == Brightness.dark
+        ? AppColors.darkStroke
+        : AppColors.stroke;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: AppRadius.large,
+        border: Border.all(color: stroke),
+        boxShadow: AppShadows.soft(brightness),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: child,
     );
   }
 }

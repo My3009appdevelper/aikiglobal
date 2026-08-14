@@ -1,10 +1,16 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 
+import '../models/notification_values.dart';
 import 'app_database_file.dart';
 import 'tables/company_info_table.dart';
+import 'tables/content_downloads_table.dart';
 import 'tables/content_media_table.dart';
 import 'tables/content_items_table.dart';
+import 'tables/notification_dispatches_table.dart';
+import 'tables/notification_devices_table.dart';
+import 'tables/notification_events_table.dart';
+import 'tables/notifications_inbox_table.dart';
 import 'tables/profiles_table.dart';
 import 'tables/user_content_states_table.dart';
 import 'tables/wellness_daily_logs_table.dart';
@@ -16,8 +22,13 @@ part 'app_database.g.dart';
   tables: [
     ProfilesTable,
     CompanyInfoTable,
+    ContentDownloadsTable,
     ContentItemsTable,
     ContentMediaTable,
+    NotificationDevicesTable,
+    NotificationEventsTable,
+    NotificationDispatchesTable,
+    NotificationsInboxTable,
     UserContentStatesTable,
     WellnessDailyLogsTable,
     WellnessProfileStatsTable,
@@ -31,7 +42,7 @@ class AppDatabase extends _$AppDatabase {
       );
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 11;
 
   @override
   MigrationStrategy get migration {
@@ -82,6 +93,29 @@ class AppDatabase extends _$AppDatabase {
             companyInfoTable,
             companyInfoTable.mensajeFundadoresImagePath5,
           );
+        }
+        if (from < 7) {
+          await m.createTable(notificationDevicesTable);
+        }
+        if (from < 8) {
+          await m.createTable(notificationEventsTable);
+          await m.createTable(notificationDispatchesTable);
+          await m.createTable(notificationsInboxTable);
+        }
+        if (from < 9) {
+          await m.addColumn(
+            notificationEventsTable,
+            notificationEventsTable.triggerConfigJson,
+          );
+        }
+        if (from < 10) {
+          await m.addColumn(
+            notificationDevicesTable,
+            notificationDevicesTable.timeZone,
+          );
+        }
+        if (from < 11) {
+          await m.createTable(contentDownloadsTable);
         }
       },
     );

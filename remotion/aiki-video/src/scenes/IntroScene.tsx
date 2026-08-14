@@ -11,13 +11,16 @@ import {
 } from "remotion";
 import { aikiPalette, begumSansFamily, fontFamily } from "../theme";
 import { SceneCanvas } from "../components/SceneCanvas";
-import { phoneMockupSize } from "../phoneSpec";
+import { getPhoneMockupFrameSize } from "../phoneSpec";
 
 export const IntroScene: React.FC<AikiVideoProps> = (props) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const phoneWidth = Math.round((phoneMockupSize.width + 50) * props.phoneScale);
-  const phoneHeight = Math.round((phoneWidth / phoneMockupSize.width) * phoneMockupSize.height);
+  const { width: phoneWidth, height: phoneHeight } = getPhoneMockupFrameSize(
+    props.phoneScale,
+    props.phoneWidthScale,
+    props.phoneHeightScale,
+  );
   const logoStart = Math.round(fps * 2.1);
   const revealStart = Math.round(fps * 2.5);
   const revealEnd = Math.round(fps * 3.8);

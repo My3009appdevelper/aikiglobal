@@ -1,8 +1,9 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../app/app_router.dart';
 import '../../../core/data/providers/app_data_scope.dart';
+import '../../../core/data/providers/app_load_coordinator.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../shared/widgets/app_interactive.dart';
@@ -51,7 +52,7 @@ class _LoginFormState extends State<LoginForm> {
     }
 
     final profileController = AppDataScope.currentProfile(context);
-    final contentController = AppDataScope.contentItems(context);
+    final loadCoordinator = AppDataScope.loadCoordinator(context);
 
     setState(() {
       _isSubmitting = true;
@@ -66,18 +67,9 @@ class _LoginFormState extends State<LoginForm> {
         password: password,
         rememberMe: _remember,
       );
-      try {
-        await contentController.pullFromRemote();
-        if (contentController.hasRemote) {
-          await contentController.loadPublished();
-        }
-      } catch (error) {
-        if (!mounted) return;
-        _errorMessage = _userFriendlySyncError(error);
-        if (_errorMessage != null) {
-          setState(() {});
-        }
-      }
+      await loadCoordinator.syncWithRemote(
+        scope: AppLoadScope.authenticatedEntry,
+      );
       if (!mounted) {
         return;
       }
@@ -243,6 +235,7 @@ class _LoginFormState extends State<LoginForm> {
     return 'No se pudo iniciar sesión. Inténtalo nuevamente.';
   }
 
+  // ignore: unused_element
   String? _userFriendlySyncError(Object error) {
     final rawError = error.toString().toLowerCase();
 

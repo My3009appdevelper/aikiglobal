@@ -11,12 +11,14 @@ class ContentCard extends StatelessWidget {
     this.width = 174,
     this.showBadge = false,
     this.onTap,
+    this.onFavoriteTap,
   });
 
   final ContentItem item;
   final double width;
   final bool showBadge;
   final VoidCallback? onTap;
+  final VoidCallback? onFavoriteTap;
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +33,10 @@ class ContentCard extends StatelessWidget {
       favoriteIcon: item.isFavorite
           ? Icons.bookmark_rounded
           : Icons.bookmark_border_rounded,
+      progressPercentage: item.progressPercentage,
       width: width,
       onTap: onTap,
+      onFavoriteTap: onFavoriteTap,
     );
   }
 }

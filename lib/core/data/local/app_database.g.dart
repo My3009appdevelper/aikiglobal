@@ -2120,6 +2120,822 @@ class CompanyInfoTableCompanion extends UpdateCompanion<LocalCompanyInfo> {
   }
 }
 
+class $ContentDownloadsTableTable extends ContentDownloadsTable
+    with TableInfo<$ContentDownloadsTableTable, LocalContentDownload> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ContentDownloadsTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _uuidContentDownloadMeta =
+      const VerificationMeta('uuidContentDownload');
+  @override
+  late final GeneratedColumn<String> uuidContentDownload =
+      GeneratedColumn<String>(
+        'uuid_content_download',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _uuidProfileMeta = const VerificationMeta(
+    'uuidProfile',
+  );
+  @override
+  late final GeneratedColumn<String> uuidProfile = GeneratedColumn<String>(
+    'uuid_profile',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _uuidContentItemMeta = const VerificationMeta(
+    'uuidContentItem',
+  );
+  @override
+  late final GeneratedColumn<String> uuidContentItem = GeneratedColumn<String>(
+    'uuid_content_item',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _uuidContentMediaMeta = const VerificationMeta(
+    'uuidContentMedia',
+  );
+  @override
+  late final GeneratedColumn<String> uuidContentMedia = GeneratedColumn<String>(
+    'uuid_content_media',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _storagePathSupabaseMeta =
+      const VerificationMeta('storagePathSupabase');
+  @override
+  late final GeneratedColumn<String> storagePathSupabase =
+      GeneratedColumn<String>(
+        'storage_path_supabase',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _storagePathLocalMeta = const VerificationMeta(
+    'storagePathLocal',
+  );
+  @override
+  late final GeneratedColumn<String> storagePathLocal = GeneratedColumn<String>(
+    'storage_path_local',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('pending'),
+  );
+  static const VerificationMeta _bytesDownloadedMeta = const VerificationMeta(
+    'bytesDownloaded',
+  );
+  @override
+  late final GeneratedColumn<int> bytesDownloaded = GeneratedColumn<int>(
+    'bytes_downloaded',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _totalBytesMeta = const VerificationMeta(
+    'totalBytes',
+  );
+  @override
+  late final GeneratedColumn<int> totalBytes = GeneratedColumn<int>(
+    'total_bytes',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _downloadedAtMeta = const VerificationMeta(
+    'downloadedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> downloadedAt = GeneratedColumn<DateTime>(
+    'downloaded_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _accessExpiresAtMeta = const VerificationMeta(
+    'accessExpiresAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> accessExpiresAt =
+      GeneratedColumn<DateTime>(
+        'access_expires_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    uuidContentDownload,
+    uuidProfile,
+    uuidContentItem,
+    uuidContentMedia,
+    storagePathSupabase,
+    storagePathLocal,
+    status,
+    bytesDownloaded,
+    totalBytes,
+    downloadedAt,
+    accessExpiresAt,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'local_content_downloads';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocalContentDownload> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('uuid_content_download')) {
+      context.handle(
+        _uuidContentDownloadMeta,
+        uuidContentDownload.isAcceptableOrUnknown(
+          data['uuid_content_download']!,
+          _uuidContentDownloadMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_uuidContentDownloadMeta);
+    }
+    if (data.containsKey('uuid_profile')) {
+      context.handle(
+        _uuidProfileMeta,
+        uuidProfile.isAcceptableOrUnknown(
+          data['uuid_profile']!,
+          _uuidProfileMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_uuidProfileMeta);
+    }
+    if (data.containsKey('uuid_content_item')) {
+      context.handle(
+        _uuidContentItemMeta,
+        uuidContentItem.isAcceptableOrUnknown(
+          data['uuid_content_item']!,
+          _uuidContentItemMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_uuidContentItemMeta);
+    }
+    if (data.containsKey('uuid_content_media')) {
+      context.handle(
+        _uuidContentMediaMeta,
+        uuidContentMedia.isAcceptableOrUnknown(
+          data['uuid_content_media']!,
+          _uuidContentMediaMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_uuidContentMediaMeta);
+    }
+    if (data.containsKey('storage_path_supabase')) {
+      context.handle(
+        _storagePathSupabaseMeta,
+        storagePathSupabase.isAcceptableOrUnknown(
+          data['storage_path_supabase']!,
+          _storagePathSupabaseMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_storagePathSupabaseMeta);
+    }
+    if (data.containsKey('storage_path_local')) {
+      context.handle(
+        _storagePathLocalMeta,
+        storagePathLocal.isAcceptableOrUnknown(
+          data['storage_path_local']!,
+          _storagePathLocalMeta,
+        ),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('bytes_downloaded')) {
+      context.handle(
+        _bytesDownloadedMeta,
+        bytesDownloaded.isAcceptableOrUnknown(
+          data['bytes_downloaded']!,
+          _bytesDownloadedMeta,
+        ),
+      );
+    }
+    if (data.containsKey('total_bytes')) {
+      context.handle(
+        _totalBytesMeta,
+        totalBytes.isAcceptableOrUnknown(data['total_bytes']!, _totalBytesMeta),
+      );
+    }
+    if (data.containsKey('downloaded_at')) {
+      context.handle(
+        _downloadedAtMeta,
+        downloadedAt.isAcceptableOrUnknown(
+          data['downloaded_at']!,
+          _downloadedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('access_expires_at')) {
+      context.handle(
+        _accessExpiresAtMeta,
+        accessExpiresAt.isAcceptableOrUnknown(
+          data['access_expires_at']!,
+          _accessExpiresAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {uuidContentDownload};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {uuidProfile, uuidContentMedia},
+  ];
+  @override
+  LocalContentDownload map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalContentDownload(
+      uuidContentDownload: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid_content_download'],
+      )!,
+      uuidProfile: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid_profile'],
+      )!,
+      uuidContentItem: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid_content_item'],
+      )!,
+      uuidContentMedia: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid_content_media'],
+      )!,
+      storagePathSupabase: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}storage_path_supabase'],
+      )!,
+      storagePathLocal: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}storage_path_local'],
+      ),
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      bytesDownloaded: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}bytes_downloaded'],
+      )!,
+      totalBytes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}total_bytes'],
+      )!,
+      downloadedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}downloaded_at'],
+      ),
+      accessExpiresAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}access_expires_at'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ContentDownloadsTableTable createAlias(String alias) {
+    return $ContentDownloadsTableTable(attachedDatabase, alias);
+  }
+}
+
+class LocalContentDownload extends DataClass
+    implements Insertable<LocalContentDownload> {
+  final String uuidContentDownload;
+  final String uuidProfile;
+  final String uuidContentItem;
+  final String uuidContentMedia;
+  final String storagePathSupabase;
+  final String? storagePathLocal;
+  final String status;
+  final int bytesDownloaded;
+  final int totalBytes;
+  final DateTime? downloadedAt;
+  final DateTime? accessExpiresAt;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const LocalContentDownload({
+    required this.uuidContentDownload,
+    required this.uuidProfile,
+    required this.uuidContentItem,
+    required this.uuidContentMedia,
+    required this.storagePathSupabase,
+    this.storagePathLocal,
+    required this.status,
+    required this.bytesDownloaded,
+    required this.totalBytes,
+    this.downloadedAt,
+    this.accessExpiresAt,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['uuid_content_download'] = Variable<String>(uuidContentDownload);
+    map['uuid_profile'] = Variable<String>(uuidProfile);
+    map['uuid_content_item'] = Variable<String>(uuidContentItem);
+    map['uuid_content_media'] = Variable<String>(uuidContentMedia);
+    map['storage_path_supabase'] = Variable<String>(storagePathSupabase);
+    if (!nullToAbsent || storagePathLocal != null) {
+      map['storage_path_local'] = Variable<String>(storagePathLocal);
+    }
+    map['status'] = Variable<String>(status);
+    map['bytes_downloaded'] = Variable<int>(bytesDownloaded);
+    map['total_bytes'] = Variable<int>(totalBytes);
+    if (!nullToAbsent || downloadedAt != null) {
+      map['downloaded_at'] = Variable<DateTime>(downloadedAt);
+    }
+    if (!nullToAbsent || accessExpiresAt != null) {
+      map['access_expires_at'] = Variable<DateTime>(accessExpiresAt);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  ContentDownloadsTableCompanion toCompanion(bool nullToAbsent) {
+    return ContentDownloadsTableCompanion(
+      uuidContentDownload: Value(uuidContentDownload),
+      uuidProfile: Value(uuidProfile),
+      uuidContentItem: Value(uuidContentItem),
+      uuidContentMedia: Value(uuidContentMedia),
+      storagePathSupabase: Value(storagePathSupabase),
+      storagePathLocal: storagePathLocal == null && nullToAbsent
+          ? const Value.absent()
+          : Value(storagePathLocal),
+      status: Value(status),
+      bytesDownloaded: Value(bytesDownloaded),
+      totalBytes: Value(totalBytes),
+      downloadedAt: downloadedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(downloadedAt),
+      accessExpiresAt: accessExpiresAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(accessExpiresAt),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory LocalContentDownload.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalContentDownload(
+      uuidContentDownload: serializer.fromJson<String>(
+        json['uuidContentDownload'],
+      ),
+      uuidProfile: serializer.fromJson<String>(json['uuidProfile']),
+      uuidContentItem: serializer.fromJson<String>(json['uuidContentItem']),
+      uuidContentMedia: serializer.fromJson<String>(json['uuidContentMedia']),
+      storagePathSupabase: serializer.fromJson<String>(
+        json['storagePathSupabase'],
+      ),
+      storagePathLocal: serializer.fromJson<String?>(json['storagePathLocal']),
+      status: serializer.fromJson<String>(json['status']),
+      bytesDownloaded: serializer.fromJson<int>(json['bytesDownloaded']),
+      totalBytes: serializer.fromJson<int>(json['totalBytes']),
+      downloadedAt: serializer.fromJson<DateTime?>(json['downloadedAt']),
+      accessExpiresAt: serializer.fromJson<DateTime?>(json['accessExpiresAt']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'uuidContentDownload': serializer.toJson<String>(uuidContentDownload),
+      'uuidProfile': serializer.toJson<String>(uuidProfile),
+      'uuidContentItem': serializer.toJson<String>(uuidContentItem),
+      'uuidContentMedia': serializer.toJson<String>(uuidContentMedia),
+      'storagePathSupabase': serializer.toJson<String>(storagePathSupabase),
+      'storagePathLocal': serializer.toJson<String?>(storagePathLocal),
+      'status': serializer.toJson<String>(status),
+      'bytesDownloaded': serializer.toJson<int>(bytesDownloaded),
+      'totalBytes': serializer.toJson<int>(totalBytes),
+      'downloadedAt': serializer.toJson<DateTime?>(downloadedAt),
+      'accessExpiresAt': serializer.toJson<DateTime?>(accessExpiresAt),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  LocalContentDownload copyWith({
+    String? uuidContentDownload,
+    String? uuidProfile,
+    String? uuidContentItem,
+    String? uuidContentMedia,
+    String? storagePathSupabase,
+    Value<String?> storagePathLocal = const Value.absent(),
+    String? status,
+    int? bytesDownloaded,
+    int? totalBytes,
+    Value<DateTime?> downloadedAt = const Value.absent(),
+    Value<DateTime?> accessExpiresAt = const Value.absent(),
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => LocalContentDownload(
+    uuidContentDownload: uuidContentDownload ?? this.uuidContentDownload,
+    uuidProfile: uuidProfile ?? this.uuidProfile,
+    uuidContentItem: uuidContentItem ?? this.uuidContentItem,
+    uuidContentMedia: uuidContentMedia ?? this.uuidContentMedia,
+    storagePathSupabase: storagePathSupabase ?? this.storagePathSupabase,
+    storagePathLocal: storagePathLocal.present
+        ? storagePathLocal.value
+        : this.storagePathLocal,
+    status: status ?? this.status,
+    bytesDownloaded: bytesDownloaded ?? this.bytesDownloaded,
+    totalBytes: totalBytes ?? this.totalBytes,
+    downloadedAt: downloadedAt.present ? downloadedAt.value : this.downloadedAt,
+    accessExpiresAt: accessExpiresAt.present
+        ? accessExpiresAt.value
+        : this.accessExpiresAt,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  LocalContentDownload copyWithCompanion(ContentDownloadsTableCompanion data) {
+    return LocalContentDownload(
+      uuidContentDownload: data.uuidContentDownload.present
+          ? data.uuidContentDownload.value
+          : this.uuidContentDownload,
+      uuidProfile: data.uuidProfile.present
+          ? data.uuidProfile.value
+          : this.uuidProfile,
+      uuidContentItem: data.uuidContentItem.present
+          ? data.uuidContentItem.value
+          : this.uuidContentItem,
+      uuidContentMedia: data.uuidContentMedia.present
+          ? data.uuidContentMedia.value
+          : this.uuidContentMedia,
+      storagePathSupabase: data.storagePathSupabase.present
+          ? data.storagePathSupabase.value
+          : this.storagePathSupabase,
+      storagePathLocal: data.storagePathLocal.present
+          ? data.storagePathLocal.value
+          : this.storagePathLocal,
+      status: data.status.present ? data.status.value : this.status,
+      bytesDownloaded: data.bytesDownloaded.present
+          ? data.bytesDownloaded.value
+          : this.bytesDownloaded,
+      totalBytes: data.totalBytes.present
+          ? data.totalBytes.value
+          : this.totalBytes,
+      downloadedAt: data.downloadedAt.present
+          ? data.downloadedAt.value
+          : this.downloadedAt,
+      accessExpiresAt: data.accessExpiresAt.present
+          ? data.accessExpiresAt.value
+          : this.accessExpiresAt,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalContentDownload(')
+          ..write('uuidContentDownload: $uuidContentDownload, ')
+          ..write('uuidProfile: $uuidProfile, ')
+          ..write('uuidContentItem: $uuidContentItem, ')
+          ..write('uuidContentMedia: $uuidContentMedia, ')
+          ..write('storagePathSupabase: $storagePathSupabase, ')
+          ..write('storagePathLocal: $storagePathLocal, ')
+          ..write('status: $status, ')
+          ..write('bytesDownloaded: $bytesDownloaded, ')
+          ..write('totalBytes: $totalBytes, ')
+          ..write('downloadedAt: $downloadedAt, ')
+          ..write('accessExpiresAt: $accessExpiresAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    uuidContentDownload,
+    uuidProfile,
+    uuidContentItem,
+    uuidContentMedia,
+    storagePathSupabase,
+    storagePathLocal,
+    status,
+    bytesDownloaded,
+    totalBytes,
+    downloadedAt,
+    accessExpiresAt,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalContentDownload &&
+          other.uuidContentDownload == this.uuidContentDownload &&
+          other.uuidProfile == this.uuidProfile &&
+          other.uuidContentItem == this.uuidContentItem &&
+          other.uuidContentMedia == this.uuidContentMedia &&
+          other.storagePathSupabase == this.storagePathSupabase &&
+          other.storagePathLocal == this.storagePathLocal &&
+          other.status == this.status &&
+          other.bytesDownloaded == this.bytesDownloaded &&
+          other.totalBytes == this.totalBytes &&
+          other.downloadedAt == this.downloadedAt &&
+          other.accessExpiresAt == this.accessExpiresAt &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class ContentDownloadsTableCompanion
+    extends UpdateCompanion<LocalContentDownload> {
+  final Value<String> uuidContentDownload;
+  final Value<String> uuidProfile;
+  final Value<String> uuidContentItem;
+  final Value<String> uuidContentMedia;
+  final Value<String> storagePathSupabase;
+  final Value<String?> storagePathLocal;
+  final Value<String> status;
+  final Value<int> bytesDownloaded;
+  final Value<int> totalBytes;
+  final Value<DateTime?> downloadedAt;
+  final Value<DateTime?> accessExpiresAt;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const ContentDownloadsTableCompanion({
+    this.uuidContentDownload = const Value.absent(),
+    this.uuidProfile = const Value.absent(),
+    this.uuidContentItem = const Value.absent(),
+    this.uuidContentMedia = const Value.absent(),
+    this.storagePathSupabase = const Value.absent(),
+    this.storagePathLocal = const Value.absent(),
+    this.status = const Value.absent(),
+    this.bytesDownloaded = const Value.absent(),
+    this.totalBytes = const Value.absent(),
+    this.downloadedAt = const Value.absent(),
+    this.accessExpiresAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ContentDownloadsTableCompanion.insert({
+    required String uuidContentDownload,
+    required String uuidProfile,
+    required String uuidContentItem,
+    required String uuidContentMedia,
+    required String storagePathSupabase,
+    this.storagePathLocal = const Value.absent(),
+    this.status = const Value.absent(),
+    this.bytesDownloaded = const Value.absent(),
+    this.totalBytes = const Value.absent(),
+    this.downloadedAt = const Value.absent(),
+    this.accessExpiresAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : uuidContentDownload = Value(uuidContentDownload),
+       uuidProfile = Value(uuidProfile),
+       uuidContentItem = Value(uuidContentItem),
+       uuidContentMedia = Value(uuidContentMedia),
+       storagePathSupabase = Value(storagePathSupabase);
+  static Insertable<LocalContentDownload> custom({
+    Expression<String>? uuidContentDownload,
+    Expression<String>? uuidProfile,
+    Expression<String>? uuidContentItem,
+    Expression<String>? uuidContentMedia,
+    Expression<String>? storagePathSupabase,
+    Expression<String>? storagePathLocal,
+    Expression<String>? status,
+    Expression<int>? bytesDownloaded,
+    Expression<int>? totalBytes,
+    Expression<DateTime>? downloadedAt,
+    Expression<DateTime>? accessExpiresAt,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (uuidContentDownload != null)
+        'uuid_content_download': uuidContentDownload,
+      if (uuidProfile != null) 'uuid_profile': uuidProfile,
+      if (uuidContentItem != null) 'uuid_content_item': uuidContentItem,
+      if (uuidContentMedia != null) 'uuid_content_media': uuidContentMedia,
+      if (storagePathSupabase != null)
+        'storage_path_supabase': storagePathSupabase,
+      if (storagePathLocal != null) 'storage_path_local': storagePathLocal,
+      if (status != null) 'status': status,
+      if (bytesDownloaded != null) 'bytes_downloaded': bytesDownloaded,
+      if (totalBytes != null) 'total_bytes': totalBytes,
+      if (downloadedAt != null) 'downloaded_at': downloadedAt,
+      if (accessExpiresAt != null) 'access_expires_at': accessExpiresAt,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ContentDownloadsTableCompanion copyWith({
+    Value<String>? uuidContentDownload,
+    Value<String>? uuidProfile,
+    Value<String>? uuidContentItem,
+    Value<String>? uuidContentMedia,
+    Value<String>? storagePathSupabase,
+    Value<String?>? storagePathLocal,
+    Value<String>? status,
+    Value<int>? bytesDownloaded,
+    Value<int>? totalBytes,
+    Value<DateTime?>? downloadedAt,
+    Value<DateTime?>? accessExpiresAt,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return ContentDownloadsTableCompanion(
+      uuidContentDownload: uuidContentDownload ?? this.uuidContentDownload,
+      uuidProfile: uuidProfile ?? this.uuidProfile,
+      uuidContentItem: uuidContentItem ?? this.uuidContentItem,
+      uuidContentMedia: uuidContentMedia ?? this.uuidContentMedia,
+      storagePathSupabase: storagePathSupabase ?? this.storagePathSupabase,
+      storagePathLocal: storagePathLocal ?? this.storagePathLocal,
+      status: status ?? this.status,
+      bytesDownloaded: bytesDownloaded ?? this.bytesDownloaded,
+      totalBytes: totalBytes ?? this.totalBytes,
+      downloadedAt: downloadedAt ?? this.downloadedAt,
+      accessExpiresAt: accessExpiresAt ?? this.accessExpiresAt,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (uuidContentDownload.present) {
+      map['uuid_content_download'] = Variable<String>(
+        uuidContentDownload.value,
+      );
+    }
+    if (uuidProfile.present) {
+      map['uuid_profile'] = Variable<String>(uuidProfile.value);
+    }
+    if (uuidContentItem.present) {
+      map['uuid_content_item'] = Variable<String>(uuidContentItem.value);
+    }
+    if (uuidContentMedia.present) {
+      map['uuid_content_media'] = Variable<String>(uuidContentMedia.value);
+    }
+    if (storagePathSupabase.present) {
+      map['storage_path_supabase'] = Variable<String>(
+        storagePathSupabase.value,
+      );
+    }
+    if (storagePathLocal.present) {
+      map['storage_path_local'] = Variable<String>(storagePathLocal.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (bytesDownloaded.present) {
+      map['bytes_downloaded'] = Variable<int>(bytesDownloaded.value);
+    }
+    if (totalBytes.present) {
+      map['total_bytes'] = Variable<int>(totalBytes.value);
+    }
+    if (downloadedAt.present) {
+      map['downloaded_at'] = Variable<DateTime>(downloadedAt.value);
+    }
+    if (accessExpiresAt.present) {
+      map['access_expires_at'] = Variable<DateTime>(accessExpiresAt.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ContentDownloadsTableCompanion(')
+          ..write('uuidContentDownload: $uuidContentDownload, ')
+          ..write('uuidProfile: $uuidProfile, ')
+          ..write('uuidContentItem: $uuidContentItem, ')
+          ..write('uuidContentMedia: $uuidContentMedia, ')
+          ..write('storagePathSupabase: $storagePathSupabase, ')
+          ..write('storagePathLocal: $storagePathLocal, ')
+          ..write('status: $status, ')
+          ..write('bytesDownloaded: $bytesDownloaded, ')
+          ..write('totalBytes: $totalBytes, ')
+          ..write('downloadedAt: $downloadedAt, ')
+          ..write('accessExpiresAt: $accessExpiresAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $ContentItemsTableTable extends ContentItemsTable
     with TableInfo<$ContentItemsTableTable, LocalContentItem> {
   @override
@@ -3827,6 +4643,4491 @@ class ContentMediaTableCompanion extends UpdateCompanion<LocalContentMedia> {
           ..write('storagePathLocal: $storagePathLocal, ')
           ..write('duracionSegundos: $duracionSegundos, ')
           ..write('orden: $orden, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $NotificationDevicesTableTable extends NotificationDevicesTable
+    with TableInfo<$NotificationDevicesTableTable, LocalNotificationDevice> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $NotificationDevicesTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _uuidNotificationDeviceMeta =
+      const VerificationMeta('uuidNotificationDevice');
+  @override
+  late final GeneratedColumn<String> uuidNotificationDevice =
+      GeneratedColumn<String>(
+        'uuid_notification_device',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _uuidProfileMeta = const VerificationMeta(
+    'uuidProfile',
+  );
+  @override
+  late final GeneratedColumn<String> uuidProfile = GeneratedColumn<String>(
+    'uuid_profile',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _installationIdMeta = const VerificationMeta(
+    'installationId',
+  );
+  @override
+  late final GeneratedColumn<String> installationId = GeneratedColumn<String>(
+    'installation_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _fcmTokenMeta = const VerificationMeta(
+    'fcmToken',
+  );
+  @override
+  late final GeneratedColumn<String> fcmToken = GeneratedColumn<String>(
+    'fcm_token',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _platformMeta = const VerificationMeta(
+    'platform',
+  );
+  @override
+  late final GeneratedColumn<String> platform = GeneratedColumn<String>(
+    'platform',
+    aliasedName,
+    false,
+    check: () => platform.isIn(notificationDevicePlatforms),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _permissionStatusMeta = const VerificationMeta(
+    'permissionStatus',
+  );
+  @override
+  late final GeneratedColumn<String> permissionStatus = GeneratedColumn<String>(
+    'permission_status',
+    aliasedName,
+    false,
+    check: () => permissionStatus.isIn(notificationPermissionStatuses),
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('not_determined'),
+  );
+  static const VerificationMeta _appVersionMeta = const VerificationMeta(
+    'appVersion',
+  );
+  @override
+  late final GeneratedColumn<String> appVersion = GeneratedColumn<String>(
+    'app_version',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _timeZoneMeta = const VerificationMeta(
+    'timeZone',
+  );
+  @override
+  late final GeneratedColumn<String> timeZone = GeneratedColumn<String>(
+    'timezone',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _isActiveMeta = const VerificationMeta(
+    'isActive',
+  );
+  @override
+  late final GeneratedColumn<bool> isActive = GeneratedColumn<bool>(
+    'is_active',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_active" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _registrationRefreshedAtMeta =
+      const VerificationMeta('registrationRefreshedAt');
+  @override
+  late final GeneratedColumn<DateTime> registrationRefreshedAt =
+      GeneratedColumn<DateTime>(
+        'registration_refreshed_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    uuidNotificationDevice,
+    uuidProfile,
+    installationId,
+    fcmToken,
+    platform,
+    permissionStatus,
+    appVersion,
+    timeZone,
+    isActive,
+    registrationRefreshedAt,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    syncedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'local_notification_devices';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocalNotificationDevice> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('uuid_notification_device')) {
+      context.handle(
+        _uuidNotificationDeviceMeta,
+        uuidNotificationDevice.isAcceptableOrUnknown(
+          data['uuid_notification_device']!,
+          _uuidNotificationDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_uuidNotificationDeviceMeta);
+    }
+    if (data.containsKey('uuid_profile')) {
+      context.handle(
+        _uuidProfileMeta,
+        uuidProfile.isAcceptableOrUnknown(
+          data['uuid_profile']!,
+          _uuidProfileMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_uuidProfileMeta);
+    }
+    if (data.containsKey('installation_id')) {
+      context.handle(
+        _installationIdMeta,
+        installationId.isAcceptableOrUnknown(
+          data['installation_id']!,
+          _installationIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_installationIdMeta);
+    }
+    if (data.containsKey('fcm_token')) {
+      context.handle(
+        _fcmTokenMeta,
+        fcmToken.isAcceptableOrUnknown(data['fcm_token']!, _fcmTokenMeta),
+      );
+    }
+    if (data.containsKey('platform')) {
+      context.handle(
+        _platformMeta,
+        platform.isAcceptableOrUnknown(data['platform']!, _platformMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_platformMeta);
+    }
+    if (data.containsKey('permission_status')) {
+      context.handle(
+        _permissionStatusMeta,
+        permissionStatus.isAcceptableOrUnknown(
+          data['permission_status']!,
+          _permissionStatusMeta,
+        ),
+      );
+    }
+    if (data.containsKey('app_version')) {
+      context.handle(
+        _appVersionMeta,
+        appVersion.isAcceptableOrUnknown(data['app_version']!, _appVersionMeta),
+      );
+    }
+    if (data.containsKey('timezone')) {
+      context.handle(
+        _timeZoneMeta,
+        timeZone.isAcceptableOrUnknown(data['timezone']!, _timeZoneMeta),
+      );
+    }
+    if (data.containsKey('is_active')) {
+      context.handle(
+        _isActiveMeta,
+        isActive.isAcceptableOrUnknown(data['is_active']!, _isActiveMeta),
+      );
+    }
+    if (data.containsKey('registration_refreshed_at')) {
+      context.handle(
+        _registrationRefreshedAtMeta,
+        registrationRefreshedAt.isAcceptableOrUnknown(
+          data['registration_refreshed_at']!,
+          _registrationRefreshedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {uuidNotificationDevice};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {uuidProfile, installationId},
+  ];
+  @override
+  LocalNotificationDevice map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalNotificationDevice(
+      uuidNotificationDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid_notification_device'],
+      )!,
+      uuidProfile: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid_profile'],
+      )!,
+      installationId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}installation_id'],
+      )!,
+      fcmToken: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}fcm_token'],
+      ),
+      platform: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}platform'],
+      )!,
+      permissionStatus: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}permission_status'],
+      )!,
+      appVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}app_version'],
+      ),
+      timeZone: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}timezone'],
+      ),
+      isActive: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_active'],
+      )!,
+      registrationRefreshedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}registration_refreshed_at'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
+    );
+  }
+
+  @override
+  $NotificationDevicesTableTable createAlias(String alias) {
+    return $NotificationDevicesTableTable(attachedDatabase, alias);
+  }
+}
+
+class LocalNotificationDevice extends DataClass
+    implements Insertable<LocalNotificationDevice> {
+  final String uuidNotificationDevice;
+  final String uuidProfile;
+  final String installationId;
+  final String? fcmToken;
+  final String platform;
+  final String permissionStatus;
+  final String? appVersion;
+  final String? timeZone;
+  final bool isActive;
+  final DateTime? registrationRefreshedAt;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
+  final DateTime? syncedAt;
+  const LocalNotificationDevice({
+    required this.uuidNotificationDevice,
+    required this.uuidProfile,
+    required this.installationId,
+    this.fcmToken,
+    required this.platform,
+    required this.permissionStatus,
+    this.appVersion,
+    this.timeZone,
+    required this.isActive,
+    this.registrationRefreshedAt,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+    this.syncedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['uuid_notification_device'] = Variable<String>(uuidNotificationDevice);
+    map['uuid_profile'] = Variable<String>(uuidProfile);
+    map['installation_id'] = Variable<String>(installationId);
+    if (!nullToAbsent || fcmToken != null) {
+      map['fcm_token'] = Variable<String>(fcmToken);
+    }
+    map['platform'] = Variable<String>(platform);
+    map['permission_status'] = Variable<String>(permissionStatus);
+    if (!nullToAbsent || appVersion != null) {
+      map['app_version'] = Variable<String>(appVersion);
+    }
+    if (!nullToAbsent || timeZone != null) {
+      map['timezone'] = Variable<String>(timeZone);
+    }
+    map['is_active'] = Variable<bool>(isActive);
+    if (!nullToAbsent || registrationRefreshedAt != null) {
+      map['registration_refreshed_at'] = Variable<DateTime>(
+        registrationRefreshedAt,
+      );
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
+    return map;
+  }
+
+  NotificationDevicesTableCompanion toCompanion(bool nullToAbsent) {
+    return NotificationDevicesTableCompanion(
+      uuidNotificationDevice: Value(uuidNotificationDevice),
+      uuidProfile: Value(uuidProfile),
+      installationId: Value(installationId),
+      fcmToken: fcmToken == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fcmToken),
+      platform: Value(platform),
+      permissionStatus: Value(permissionStatus),
+      appVersion: appVersion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(appVersion),
+      timeZone: timeZone == null && nullToAbsent
+          ? const Value.absent()
+          : Value(timeZone),
+      isActive: Value(isActive),
+      registrationRefreshedAt: registrationRefreshedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(registrationRefreshedAt),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
+    );
+  }
+
+  factory LocalNotificationDevice.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalNotificationDevice(
+      uuidNotificationDevice: serializer.fromJson<String>(
+        json['uuidNotificationDevice'],
+      ),
+      uuidProfile: serializer.fromJson<String>(json['uuidProfile']),
+      installationId: serializer.fromJson<String>(json['installationId']),
+      fcmToken: serializer.fromJson<String?>(json['fcmToken']),
+      platform: serializer.fromJson<String>(json['platform']),
+      permissionStatus: serializer.fromJson<String>(json['permissionStatus']),
+      appVersion: serializer.fromJson<String?>(json['appVersion']),
+      timeZone: serializer.fromJson<String?>(json['timeZone']),
+      isActive: serializer.fromJson<bool>(json['isActive']),
+      registrationRefreshedAt: serializer.fromJson<DateTime?>(
+        json['registrationRefreshedAt'],
+      ),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'uuidNotificationDevice': serializer.toJson<String>(
+        uuidNotificationDevice,
+      ),
+      'uuidProfile': serializer.toJson<String>(uuidProfile),
+      'installationId': serializer.toJson<String>(installationId),
+      'fcmToken': serializer.toJson<String?>(fcmToken),
+      'platform': serializer.toJson<String>(platform),
+      'permissionStatus': serializer.toJson<String>(permissionStatus),
+      'appVersion': serializer.toJson<String?>(appVersion),
+      'timeZone': serializer.toJson<String?>(timeZone),
+      'isActive': serializer.toJson<bool>(isActive),
+      'registrationRefreshedAt': serializer.toJson<DateTime?>(
+        registrationRefreshedAt,
+      ),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
+    };
+  }
+
+  LocalNotificationDevice copyWith({
+    String? uuidNotificationDevice,
+    String? uuidProfile,
+    String? installationId,
+    Value<String?> fcmToken = const Value.absent(),
+    String? platform,
+    String? permissionStatus,
+    Value<String?> appVersion = const Value.absent(),
+    Value<String?> timeZone = const Value.absent(),
+    bool? isActive,
+    Value<DateTime?> registrationRefreshedAt = const Value.absent(),
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
+    Value<DateTime?> syncedAt = const Value.absent(),
+  }) => LocalNotificationDevice(
+    uuidNotificationDevice:
+        uuidNotificationDevice ?? this.uuidNotificationDevice,
+    uuidProfile: uuidProfile ?? this.uuidProfile,
+    installationId: installationId ?? this.installationId,
+    fcmToken: fcmToken.present ? fcmToken.value : this.fcmToken,
+    platform: platform ?? this.platform,
+    permissionStatus: permissionStatus ?? this.permissionStatus,
+    appVersion: appVersion.present ? appVersion.value : this.appVersion,
+    timeZone: timeZone.present ? timeZone.value : this.timeZone,
+    isActive: isActive ?? this.isActive,
+    registrationRefreshedAt: registrationRefreshedAt.present
+        ? registrationRefreshedAt.value
+        : this.registrationRefreshedAt,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+  );
+  LocalNotificationDevice copyWithCompanion(
+    NotificationDevicesTableCompanion data,
+  ) {
+    return LocalNotificationDevice(
+      uuidNotificationDevice: data.uuidNotificationDevice.present
+          ? data.uuidNotificationDevice.value
+          : this.uuidNotificationDevice,
+      uuidProfile: data.uuidProfile.present
+          ? data.uuidProfile.value
+          : this.uuidProfile,
+      installationId: data.installationId.present
+          ? data.installationId.value
+          : this.installationId,
+      fcmToken: data.fcmToken.present ? data.fcmToken.value : this.fcmToken,
+      platform: data.platform.present ? data.platform.value : this.platform,
+      permissionStatus: data.permissionStatus.present
+          ? data.permissionStatus.value
+          : this.permissionStatus,
+      appVersion: data.appVersion.present
+          ? data.appVersion.value
+          : this.appVersion,
+      timeZone: data.timeZone.present ? data.timeZone.value : this.timeZone,
+      isActive: data.isActive.present ? data.isActive.value : this.isActive,
+      registrationRefreshedAt: data.registrationRefreshedAt.present
+          ? data.registrationRefreshedAt.value
+          : this.registrationRefreshedAt,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalNotificationDevice(')
+          ..write('uuidNotificationDevice: $uuidNotificationDevice, ')
+          ..write('uuidProfile: $uuidProfile, ')
+          ..write('installationId: $installationId, ')
+          ..write('fcmToken: $fcmToken, ')
+          ..write('platform: $platform, ')
+          ..write('permissionStatus: $permissionStatus, ')
+          ..write('appVersion: $appVersion, ')
+          ..write('timeZone: $timeZone, ')
+          ..write('isActive: $isActive, ')
+          ..write('registrationRefreshedAt: $registrationRefreshedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('syncedAt: $syncedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    uuidNotificationDevice,
+    uuidProfile,
+    installationId,
+    fcmToken,
+    platform,
+    permissionStatus,
+    appVersion,
+    timeZone,
+    isActive,
+    registrationRefreshedAt,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    syncedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalNotificationDevice &&
+          other.uuidNotificationDevice == this.uuidNotificationDevice &&
+          other.uuidProfile == this.uuidProfile &&
+          other.installationId == this.installationId &&
+          other.fcmToken == this.fcmToken &&
+          other.platform == this.platform &&
+          other.permissionStatus == this.permissionStatus &&
+          other.appVersion == this.appVersion &&
+          other.timeZone == this.timeZone &&
+          other.isActive == this.isActive &&
+          other.registrationRefreshedAt == this.registrationRefreshedAt &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.syncedAt == this.syncedAt);
+}
+
+class NotificationDevicesTableCompanion
+    extends UpdateCompanion<LocalNotificationDevice> {
+  final Value<String> uuidNotificationDevice;
+  final Value<String> uuidProfile;
+  final Value<String> installationId;
+  final Value<String?> fcmToken;
+  final Value<String> platform;
+  final Value<String> permissionStatus;
+  final Value<String?> appVersion;
+  final Value<String?> timeZone;
+  final Value<bool> isActive;
+  final Value<DateTime?> registrationRefreshedAt;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
+  final Value<DateTime?> syncedAt;
+  final Value<int> rowid;
+  const NotificationDevicesTableCompanion({
+    this.uuidNotificationDevice = const Value.absent(),
+    this.uuidProfile = const Value.absent(),
+    this.installationId = const Value.absent(),
+    this.fcmToken = const Value.absent(),
+    this.platform = const Value.absent(),
+    this.permissionStatus = const Value.absent(),
+    this.appVersion = const Value.absent(),
+    this.timeZone = const Value.absent(),
+    this.isActive = const Value.absent(),
+    this.registrationRefreshedAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  NotificationDevicesTableCompanion.insert({
+    required String uuidNotificationDevice,
+    required String uuidProfile,
+    required String installationId,
+    this.fcmToken = const Value.absent(),
+    required String platform,
+    this.permissionStatus = const Value.absent(),
+    this.appVersion = const Value.absent(),
+    this.timeZone = const Value.absent(),
+    this.isActive = const Value.absent(),
+    this.registrationRefreshedAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : uuidNotificationDevice = Value(uuidNotificationDevice),
+       uuidProfile = Value(uuidProfile),
+       installationId = Value(installationId),
+       platform = Value(platform);
+  static Insertable<LocalNotificationDevice> custom({
+    Expression<String>? uuidNotificationDevice,
+    Expression<String>? uuidProfile,
+    Expression<String>? installationId,
+    Expression<String>? fcmToken,
+    Expression<String>? platform,
+    Expression<String>? permissionStatus,
+    Expression<String>? appVersion,
+    Expression<String>? timeZone,
+    Expression<bool>? isActive,
+    Expression<DateTime>? registrationRefreshedAt,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
+    Expression<DateTime>? syncedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (uuidNotificationDevice != null)
+        'uuid_notification_device': uuidNotificationDevice,
+      if (uuidProfile != null) 'uuid_profile': uuidProfile,
+      if (installationId != null) 'installation_id': installationId,
+      if (fcmToken != null) 'fcm_token': fcmToken,
+      if (platform != null) 'platform': platform,
+      if (permissionStatus != null) 'permission_status': permissionStatus,
+      if (appVersion != null) 'app_version': appVersion,
+      if (timeZone != null) 'timezone': timeZone,
+      if (isActive != null) 'is_active': isActive,
+      if (registrationRefreshedAt != null)
+        'registration_refreshed_at': registrationRefreshedAt,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (syncedAt != null) 'synced_at': syncedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  NotificationDevicesTableCompanion copyWith({
+    Value<String>? uuidNotificationDevice,
+    Value<String>? uuidProfile,
+    Value<String>? installationId,
+    Value<String?>? fcmToken,
+    Value<String>? platform,
+    Value<String>? permissionStatus,
+    Value<String?>? appVersion,
+    Value<String?>? timeZone,
+    Value<bool>? isActive,
+    Value<DateTime?>? registrationRefreshedAt,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
+    Value<DateTime?>? syncedAt,
+    Value<int>? rowid,
+  }) {
+    return NotificationDevicesTableCompanion(
+      uuidNotificationDevice:
+          uuidNotificationDevice ?? this.uuidNotificationDevice,
+      uuidProfile: uuidProfile ?? this.uuidProfile,
+      installationId: installationId ?? this.installationId,
+      fcmToken: fcmToken ?? this.fcmToken,
+      platform: platform ?? this.platform,
+      permissionStatus: permissionStatus ?? this.permissionStatus,
+      appVersion: appVersion ?? this.appVersion,
+      timeZone: timeZone ?? this.timeZone,
+      isActive: isActive ?? this.isActive,
+      registrationRefreshedAt:
+          registrationRefreshedAt ?? this.registrationRefreshedAt,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      syncedAt: syncedAt ?? this.syncedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (uuidNotificationDevice.present) {
+      map['uuid_notification_device'] = Variable<String>(
+        uuidNotificationDevice.value,
+      );
+    }
+    if (uuidProfile.present) {
+      map['uuid_profile'] = Variable<String>(uuidProfile.value);
+    }
+    if (installationId.present) {
+      map['installation_id'] = Variable<String>(installationId.value);
+    }
+    if (fcmToken.present) {
+      map['fcm_token'] = Variable<String>(fcmToken.value);
+    }
+    if (platform.present) {
+      map['platform'] = Variable<String>(platform.value);
+    }
+    if (permissionStatus.present) {
+      map['permission_status'] = Variable<String>(permissionStatus.value);
+    }
+    if (appVersion.present) {
+      map['app_version'] = Variable<String>(appVersion.value);
+    }
+    if (timeZone.present) {
+      map['timezone'] = Variable<String>(timeZone.value);
+    }
+    if (isActive.present) {
+      map['is_active'] = Variable<bool>(isActive.value);
+    }
+    if (registrationRefreshedAt.present) {
+      map['registration_refreshed_at'] = Variable<DateTime>(
+        registrationRefreshedAt.value,
+      );
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NotificationDevicesTableCompanion(')
+          ..write('uuidNotificationDevice: $uuidNotificationDevice, ')
+          ..write('uuidProfile: $uuidProfile, ')
+          ..write('installationId: $installationId, ')
+          ..write('fcmToken: $fcmToken, ')
+          ..write('platform: $platform, ')
+          ..write('permissionStatus: $permissionStatus, ')
+          ..write('appVersion: $appVersion, ')
+          ..write('timeZone: $timeZone, ')
+          ..write('isActive: $isActive, ')
+          ..write('registrationRefreshedAt: $registrationRefreshedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $NotificationEventsTableTable extends NotificationEventsTable
+    with TableInfo<$NotificationEventsTableTable, LocalNotificationEvent> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $NotificationEventsTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _uuidNotificationEventMeta =
+      const VerificationMeta('uuidNotificationEvent');
+  @override
+  late final GeneratedColumn<String> uuidNotificationEvent =
+      GeneratedColumn<String>(
+        'uuid_notification_event',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _categoryMeta = const VerificationMeta(
+    'category',
+  );
+  @override
+  late final GeneratedColumn<String> category = GeneratedColumn<String>(
+    'category',
+    aliasedName,
+    false,
+    check: () => category.isIn(notificationCategories),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _titleTemplateMeta = const VerificationMeta(
+    'titleTemplate',
+  );
+  @override
+  late final GeneratedColumn<String> titleTemplate = GeneratedColumn<String>(
+    'title_template',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _bodyTemplateMeta = const VerificationMeta(
+    'bodyTemplate',
+  );
+  @override
+  late final GeneratedColumn<String> bodyTemplate = GeneratedColumn<String>(
+    'body_template',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _triggerTypeMeta = const VerificationMeta(
+    'triggerType',
+  );
+  @override
+  late final GeneratedColumn<String> triggerType = GeneratedColumn<String>(
+    'trigger_type',
+    aliasedName,
+    false,
+    check: () => triggerType.isIn(notificationEventTriggerTypes),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _triggerKeyMeta = const VerificationMeta(
+    'triggerKey',
+  );
+  @override
+  late final GeneratedColumn<String> triggerKey = GeneratedColumn<String>(
+    'trigger_key',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _executionModeMeta = const VerificationMeta(
+    'executionMode',
+  );
+  @override
+  late final GeneratedColumn<String> executionMode = GeneratedColumn<String>(
+    'execution_mode',
+    aliasedName,
+    false,
+    check: () => executionMode.isIn(notificationEventExecutionModes),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _audienceTypeMeta = const VerificationMeta(
+    'audienceType',
+  );
+  @override
+  late final GeneratedColumn<String> audienceType = GeneratedColumn<String>(
+    'audience_type',
+    aliasedName,
+    false,
+    check: () => audienceType.isIn(notificationAudienceTypes),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _actionTypeMeta = const VerificationMeta(
+    'actionType',
+  );
+  @override
+  late final GeneratedColumn<String> actionType = GeneratedColumn<String>(
+    'action_type',
+    aliasedName,
+    false,
+    check: () => actionType.isIn(notificationActionTypes),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _actionPayloadTemplateJsonMeta =
+      const VerificationMeta('actionPayloadTemplateJson');
+  @override
+  late final GeneratedColumn<String> actionPayloadTemplateJson =
+      GeneratedColumn<String>(
+        'action_payload_template',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant('{}'),
+      );
+  static const VerificationMeta _triggerConfigJsonMeta = const VerificationMeta(
+    'triggerConfigJson',
+  );
+  @override
+  late final GeneratedColumn<String> triggerConfigJson =
+      GeneratedColumn<String>(
+        'trigger_config',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant('{}'),
+      );
+  static const VerificationMeta _startsAtMeta = const VerificationMeta(
+    'startsAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> startsAt = GeneratedColumn<DateTime>(
+    'starts_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _endsAtMeta = const VerificationMeta('endsAt');
+  @override
+  late final GeneratedColumn<DateTime> endsAt = GeneratedColumn<DateTime>(
+    'ends_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    check: () => status.isIn(notificationEventStatuses),
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('draft'),
+  );
+  static const VerificationMeta _uuidCreatedByProfileMeta =
+      const VerificationMeta('uuidCreatedByProfile');
+  @override
+  late final GeneratedColumn<String> uuidCreatedByProfile =
+      GeneratedColumn<String>(
+        'uuid_created_by_profile',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _uuidUpdatedByProfileMeta =
+      const VerificationMeta('uuidUpdatedByProfile');
+  @override
+  late final GeneratedColumn<String> uuidUpdatedByProfile =
+      GeneratedColumn<String>(
+        'uuid_updated_by_profile',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    uuidNotificationEvent,
+    name,
+    category,
+    titleTemplate,
+    bodyTemplate,
+    triggerType,
+    triggerKey,
+    executionMode,
+    audienceType,
+    actionType,
+    actionPayloadTemplateJson,
+    triggerConfigJson,
+    startsAt,
+    endsAt,
+    status,
+    uuidCreatedByProfile,
+    uuidUpdatedByProfile,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    syncedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'local_notification_events';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocalNotificationEvent> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('uuid_notification_event')) {
+      context.handle(
+        _uuidNotificationEventMeta,
+        uuidNotificationEvent.isAcceptableOrUnknown(
+          data['uuid_notification_event']!,
+          _uuidNotificationEventMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_uuidNotificationEventMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('category')) {
+      context.handle(
+        _categoryMeta,
+        category.isAcceptableOrUnknown(data['category']!, _categoryMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_categoryMeta);
+    }
+    if (data.containsKey('title_template')) {
+      context.handle(
+        _titleTemplateMeta,
+        titleTemplate.isAcceptableOrUnknown(
+          data['title_template']!,
+          _titleTemplateMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_titleTemplateMeta);
+    }
+    if (data.containsKey('body_template')) {
+      context.handle(
+        _bodyTemplateMeta,
+        bodyTemplate.isAcceptableOrUnknown(
+          data['body_template']!,
+          _bodyTemplateMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_bodyTemplateMeta);
+    }
+    if (data.containsKey('trigger_type')) {
+      context.handle(
+        _triggerTypeMeta,
+        triggerType.isAcceptableOrUnknown(
+          data['trigger_type']!,
+          _triggerTypeMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_triggerTypeMeta);
+    }
+    if (data.containsKey('trigger_key')) {
+      context.handle(
+        _triggerKeyMeta,
+        triggerKey.isAcceptableOrUnknown(data['trigger_key']!, _triggerKeyMeta),
+      );
+    }
+    if (data.containsKey('execution_mode')) {
+      context.handle(
+        _executionModeMeta,
+        executionMode.isAcceptableOrUnknown(
+          data['execution_mode']!,
+          _executionModeMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_executionModeMeta);
+    }
+    if (data.containsKey('audience_type')) {
+      context.handle(
+        _audienceTypeMeta,
+        audienceType.isAcceptableOrUnknown(
+          data['audience_type']!,
+          _audienceTypeMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_audienceTypeMeta);
+    }
+    if (data.containsKey('action_type')) {
+      context.handle(
+        _actionTypeMeta,
+        actionType.isAcceptableOrUnknown(data['action_type']!, _actionTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_actionTypeMeta);
+    }
+    if (data.containsKey('action_payload_template')) {
+      context.handle(
+        _actionPayloadTemplateJsonMeta,
+        actionPayloadTemplateJson.isAcceptableOrUnknown(
+          data['action_payload_template']!,
+          _actionPayloadTemplateJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('trigger_config')) {
+      context.handle(
+        _triggerConfigJsonMeta,
+        triggerConfigJson.isAcceptableOrUnknown(
+          data['trigger_config']!,
+          _triggerConfigJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('starts_at')) {
+      context.handle(
+        _startsAtMeta,
+        startsAt.isAcceptableOrUnknown(data['starts_at']!, _startsAtMeta),
+      );
+    }
+    if (data.containsKey('ends_at')) {
+      context.handle(
+        _endsAtMeta,
+        endsAt.isAcceptableOrUnknown(data['ends_at']!, _endsAtMeta),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('uuid_created_by_profile')) {
+      context.handle(
+        _uuidCreatedByProfileMeta,
+        uuidCreatedByProfile.isAcceptableOrUnknown(
+          data['uuid_created_by_profile']!,
+          _uuidCreatedByProfileMeta,
+        ),
+      );
+    }
+    if (data.containsKey('uuid_updated_by_profile')) {
+      context.handle(
+        _uuidUpdatedByProfileMeta,
+        uuidUpdatedByProfile.isAcceptableOrUnknown(
+          data['uuid_updated_by_profile']!,
+          _uuidUpdatedByProfileMeta,
+        ),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {uuidNotificationEvent};
+  @override
+  LocalNotificationEvent map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalNotificationEvent(
+      uuidNotificationEvent: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid_notification_event'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      category: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}category'],
+      )!,
+      titleTemplate: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title_template'],
+      )!,
+      bodyTemplate: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}body_template'],
+      )!,
+      triggerType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}trigger_type'],
+      )!,
+      triggerKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}trigger_key'],
+      ),
+      executionMode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}execution_mode'],
+      )!,
+      audienceType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}audience_type'],
+      )!,
+      actionType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}action_type'],
+      )!,
+      actionPayloadTemplateJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}action_payload_template'],
+      )!,
+      triggerConfigJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}trigger_config'],
+      )!,
+      startsAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}starts_at'],
+      )!,
+      endsAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}ends_at'],
+      ),
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      uuidCreatedByProfile: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid_created_by_profile'],
+      ),
+      uuidUpdatedByProfile: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid_updated_by_profile'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
+    );
+  }
+
+  @override
+  $NotificationEventsTableTable createAlias(String alias) {
+    return $NotificationEventsTableTable(attachedDatabase, alias);
+  }
+}
+
+class LocalNotificationEvent extends DataClass
+    implements Insertable<LocalNotificationEvent> {
+  final String uuidNotificationEvent;
+  final String name;
+  final String category;
+  final String titleTemplate;
+  final String bodyTemplate;
+  final String triggerType;
+  final String? triggerKey;
+  final String executionMode;
+  final String audienceType;
+  final String actionType;
+  final String actionPayloadTemplateJson;
+  final String triggerConfigJson;
+  final DateTime startsAt;
+  final DateTime? endsAt;
+  final String status;
+  final String? uuidCreatedByProfile;
+  final String? uuidUpdatedByProfile;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
+  final DateTime? syncedAt;
+  const LocalNotificationEvent({
+    required this.uuidNotificationEvent,
+    required this.name,
+    required this.category,
+    required this.titleTemplate,
+    required this.bodyTemplate,
+    required this.triggerType,
+    this.triggerKey,
+    required this.executionMode,
+    required this.audienceType,
+    required this.actionType,
+    required this.actionPayloadTemplateJson,
+    required this.triggerConfigJson,
+    required this.startsAt,
+    this.endsAt,
+    required this.status,
+    this.uuidCreatedByProfile,
+    this.uuidUpdatedByProfile,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+    this.syncedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['uuid_notification_event'] = Variable<String>(uuidNotificationEvent);
+    map['name'] = Variable<String>(name);
+    map['category'] = Variable<String>(category);
+    map['title_template'] = Variable<String>(titleTemplate);
+    map['body_template'] = Variable<String>(bodyTemplate);
+    map['trigger_type'] = Variable<String>(triggerType);
+    if (!nullToAbsent || triggerKey != null) {
+      map['trigger_key'] = Variable<String>(triggerKey);
+    }
+    map['execution_mode'] = Variable<String>(executionMode);
+    map['audience_type'] = Variable<String>(audienceType);
+    map['action_type'] = Variable<String>(actionType);
+    map['action_payload_template'] = Variable<String>(
+      actionPayloadTemplateJson,
+    );
+    map['trigger_config'] = Variable<String>(triggerConfigJson);
+    map['starts_at'] = Variable<DateTime>(startsAt);
+    if (!nullToAbsent || endsAt != null) {
+      map['ends_at'] = Variable<DateTime>(endsAt);
+    }
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || uuidCreatedByProfile != null) {
+      map['uuid_created_by_profile'] = Variable<String>(uuidCreatedByProfile);
+    }
+    if (!nullToAbsent || uuidUpdatedByProfile != null) {
+      map['uuid_updated_by_profile'] = Variable<String>(uuidUpdatedByProfile);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
+    return map;
+  }
+
+  NotificationEventsTableCompanion toCompanion(bool nullToAbsent) {
+    return NotificationEventsTableCompanion(
+      uuidNotificationEvent: Value(uuidNotificationEvent),
+      name: Value(name),
+      category: Value(category),
+      titleTemplate: Value(titleTemplate),
+      bodyTemplate: Value(bodyTemplate),
+      triggerType: Value(triggerType),
+      triggerKey: triggerKey == null && nullToAbsent
+          ? const Value.absent()
+          : Value(triggerKey),
+      executionMode: Value(executionMode),
+      audienceType: Value(audienceType),
+      actionType: Value(actionType),
+      actionPayloadTemplateJson: Value(actionPayloadTemplateJson),
+      triggerConfigJson: Value(triggerConfigJson),
+      startsAt: Value(startsAt),
+      endsAt: endsAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(endsAt),
+      status: Value(status),
+      uuidCreatedByProfile: uuidCreatedByProfile == null && nullToAbsent
+          ? const Value.absent()
+          : Value(uuidCreatedByProfile),
+      uuidUpdatedByProfile: uuidUpdatedByProfile == null && nullToAbsent
+          ? const Value.absent()
+          : Value(uuidUpdatedByProfile),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
+    );
+  }
+
+  factory LocalNotificationEvent.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalNotificationEvent(
+      uuidNotificationEvent: serializer.fromJson<String>(
+        json['uuidNotificationEvent'],
+      ),
+      name: serializer.fromJson<String>(json['name']),
+      category: serializer.fromJson<String>(json['category']),
+      titleTemplate: serializer.fromJson<String>(json['titleTemplate']),
+      bodyTemplate: serializer.fromJson<String>(json['bodyTemplate']),
+      triggerType: serializer.fromJson<String>(json['triggerType']),
+      triggerKey: serializer.fromJson<String?>(json['triggerKey']),
+      executionMode: serializer.fromJson<String>(json['executionMode']),
+      audienceType: serializer.fromJson<String>(json['audienceType']),
+      actionType: serializer.fromJson<String>(json['actionType']),
+      actionPayloadTemplateJson: serializer.fromJson<String>(
+        json['actionPayloadTemplateJson'],
+      ),
+      triggerConfigJson: serializer.fromJson<String>(json['triggerConfigJson']),
+      startsAt: serializer.fromJson<DateTime>(json['startsAt']),
+      endsAt: serializer.fromJson<DateTime?>(json['endsAt']),
+      status: serializer.fromJson<String>(json['status']),
+      uuidCreatedByProfile: serializer.fromJson<String?>(
+        json['uuidCreatedByProfile'],
+      ),
+      uuidUpdatedByProfile: serializer.fromJson<String?>(
+        json['uuidUpdatedByProfile'],
+      ),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'uuidNotificationEvent': serializer.toJson<String>(uuidNotificationEvent),
+      'name': serializer.toJson<String>(name),
+      'category': serializer.toJson<String>(category),
+      'titleTemplate': serializer.toJson<String>(titleTemplate),
+      'bodyTemplate': serializer.toJson<String>(bodyTemplate),
+      'triggerType': serializer.toJson<String>(triggerType),
+      'triggerKey': serializer.toJson<String?>(triggerKey),
+      'executionMode': serializer.toJson<String>(executionMode),
+      'audienceType': serializer.toJson<String>(audienceType),
+      'actionType': serializer.toJson<String>(actionType),
+      'actionPayloadTemplateJson': serializer.toJson<String>(
+        actionPayloadTemplateJson,
+      ),
+      'triggerConfigJson': serializer.toJson<String>(triggerConfigJson),
+      'startsAt': serializer.toJson<DateTime>(startsAt),
+      'endsAt': serializer.toJson<DateTime?>(endsAt),
+      'status': serializer.toJson<String>(status),
+      'uuidCreatedByProfile': serializer.toJson<String?>(uuidCreatedByProfile),
+      'uuidUpdatedByProfile': serializer.toJson<String?>(uuidUpdatedByProfile),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
+    };
+  }
+
+  LocalNotificationEvent copyWith({
+    String? uuidNotificationEvent,
+    String? name,
+    String? category,
+    String? titleTemplate,
+    String? bodyTemplate,
+    String? triggerType,
+    Value<String?> triggerKey = const Value.absent(),
+    String? executionMode,
+    String? audienceType,
+    String? actionType,
+    String? actionPayloadTemplateJson,
+    String? triggerConfigJson,
+    DateTime? startsAt,
+    Value<DateTime?> endsAt = const Value.absent(),
+    String? status,
+    Value<String?> uuidCreatedByProfile = const Value.absent(),
+    Value<String?> uuidUpdatedByProfile = const Value.absent(),
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
+    Value<DateTime?> syncedAt = const Value.absent(),
+  }) => LocalNotificationEvent(
+    uuidNotificationEvent: uuidNotificationEvent ?? this.uuidNotificationEvent,
+    name: name ?? this.name,
+    category: category ?? this.category,
+    titleTemplate: titleTemplate ?? this.titleTemplate,
+    bodyTemplate: bodyTemplate ?? this.bodyTemplate,
+    triggerType: triggerType ?? this.triggerType,
+    triggerKey: triggerKey.present ? triggerKey.value : this.triggerKey,
+    executionMode: executionMode ?? this.executionMode,
+    audienceType: audienceType ?? this.audienceType,
+    actionType: actionType ?? this.actionType,
+    actionPayloadTemplateJson:
+        actionPayloadTemplateJson ?? this.actionPayloadTemplateJson,
+    triggerConfigJson: triggerConfigJson ?? this.triggerConfigJson,
+    startsAt: startsAt ?? this.startsAt,
+    endsAt: endsAt.present ? endsAt.value : this.endsAt,
+    status: status ?? this.status,
+    uuidCreatedByProfile: uuidCreatedByProfile.present
+        ? uuidCreatedByProfile.value
+        : this.uuidCreatedByProfile,
+    uuidUpdatedByProfile: uuidUpdatedByProfile.present
+        ? uuidUpdatedByProfile.value
+        : this.uuidUpdatedByProfile,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+  );
+  LocalNotificationEvent copyWithCompanion(
+    NotificationEventsTableCompanion data,
+  ) {
+    return LocalNotificationEvent(
+      uuidNotificationEvent: data.uuidNotificationEvent.present
+          ? data.uuidNotificationEvent.value
+          : this.uuidNotificationEvent,
+      name: data.name.present ? data.name.value : this.name,
+      category: data.category.present ? data.category.value : this.category,
+      titleTemplate: data.titleTemplate.present
+          ? data.titleTemplate.value
+          : this.titleTemplate,
+      bodyTemplate: data.bodyTemplate.present
+          ? data.bodyTemplate.value
+          : this.bodyTemplate,
+      triggerType: data.triggerType.present
+          ? data.triggerType.value
+          : this.triggerType,
+      triggerKey: data.triggerKey.present
+          ? data.triggerKey.value
+          : this.triggerKey,
+      executionMode: data.executionMode.present
+          ? data.executionMode.value
+          : this.executionMode,
+      audienceType: data.audienceType.present
+          ? data.audienceType.value
+          : this.audienceType,
+      actionType: data.actionType.present
+          ? data.actionType.value
+          : this.actionType,
+      actionPayloadTemplateJson: data.actionPayloadTemplateJson.present
+          ? data.actionPayloadTemplateJson.value
+          : this.actionPayloadTemplateJson,
+      triggerConfigJson: data.triggerConfigJson.present
+          ? data.triggerConfigJson.value
+          : this.triggerConfigJson,
+      startsAt: data.startsAt.present ? data.startsAt.value : this.startsAt,
+      endsAt: data.endsAt.present ? data.endsAt.value : this.endsAt,
+      status: data.status.present ? data.status.value : this.status,
+      uuidCreatedByProfile: data.uuidCreatedByProfile.present
+          ? data.uuidCreatedByProfile.value
+          : this.uuidCreatedByProfile,
+      uuidUpdatedByProfile: data.uuidUpdatedByProfile.present
+          ? data.uuidUpdatedByProfile.value
+          : this.uuidUpdatedByProfile,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalNotificationEvent(')
+          ..write('uuidNotificationEvent: $uuidNotificationEvent, ')
+          ..write('name: $name, ')
+          ..write('category: $category, ')
+          ..write('titleTemplate: $titleTemplate, ')
+          ..write('bodyTemplate: $bodyTemplate, ')
+          ..write('triggerType: $triggerType, ')
+          ..write('triggerKey: $triggerKey, ')
+          ..write('executionMode: $executionMode, ')
+          ..write('audienceType: $audienceType, ')
+          ..write('actionType: $actionType, ')
+          ..write('actionPayloadTemplateJson: $actionPayloadTemplateJson, ')
+          ..write('triggerConfigJson: $triggerConfigJson, ')
+          ..write('startsAt: $startsAt, ')
+          ..write('endsAt: $endsAt, ')
+          ..write('status: $status, ')
+          ..write('uuidCreatedByProfile: $uuidCreatedByProfile, ')
+          ..write('uuidUpdatedByProfile: $uuidUpdatedByProfile, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('syncedAt: $syncedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hashAll([
+    uuidNotificationEvent,
+    name,
+    category,
+    titleTemplate,
+    bodyTemplate,
+    triggerType,
+    triggerKey,
+    executionMode,
+    audienceType,
+    actionType,
+    actionPayloadTemplateJson,
+    triggerConfigJson,
+    startsAt,
+    endsAt,
+    status,
+    uuidCreatedByProfile,
+    uuidUpdatedByProfile,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    syncedAt,
+  ]);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalNotificationEvent &&
+          other.uuidNotificationEvent == this.uuidNotificationEvent &&
+          other.name == this.name &&
+          other.category == this.category &&
+          other.titleTemplate == this.titleTemplate &&
+          other.bodyTemplate == this.bodyTemplate &&
+          other.triggerType == this.triggerType &&
+          other.triggerKey == this.triggerKey &&
+          other.executionMode == this.executionMode &&
+          other.audienceType == this.audienceType &&
+          other.actionType == this.actionType &&
+          other.actionPayloadTemplateJson == this.actionPayloadTemplateJson &&
+          other.triggerConfigJson == this.triggerConfigJson &&
+          other.startsAt == this.startsAt &&
+          other.endsAt == this.endsAt &&
+          other.status == this.status &&
+          other.uuidCreatedByProfile == this.uuidCreatedByProfile &&
+          other.uuidUpdatedByProfile == this.uuidUpdatedByProfile &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.syncedAt == this.syncedAt);
+}
+
+class NotificationEventsTableCompanion
+    extends UpdateCompanion<LocalNotificationEvent> {
+  final Value<String> uuidNotificationEvent;
+  final Value<String> name;
+  final Value<String> category;
+  final Value<String> titleTemplate;
+  final Value<String> bodyTemplate;
+  final Value<String> triggerType;
+  final Value<String?> triggerKey;
+  final Value<String> executionMode;
+  final Value<String> audienceType;
+  final Value<String> actionType;
+  final Value<String> actionPayloadTemplateJson;
+  final Value<String> triggerConfigJson;
+  final Value<DateTime> startsAt;
+  final Value<DateTime?> endsAt;
+  final Value<String> status;
+  final Value<String?> uuidCreatedByProfile;
+  final Value<String?> uuidUpdatedByProfile;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
+  final Value<DateTime?> syncedAt;
+  final Value<int> rowid;
+  const NotificationEventsTableCompanion({
+    this.uuidNotificationEvent = const Value.absent(),
+    this.name = const Value.absent(),
+    this.category = const Value.absent(),
+    this.titleTemplate = const Value.absent(),
+    this.bodyTemplate = const Value.absent(),
+    this.triggerType = const Value.absent(),
+    this.triggerKey = const Value.absent(),
+    this.executionMode = const Value.absent(),
+    this.audienceType = const Value.absent(),
+    this.actionType = const Value.absent(),
+    this.actionPayloadTemplateJson = const Value.absent(),
+    this.triggerConfigJson = const Value.absent(),
+    this.startsAt = const Value.absent(),
+    this.endsAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.uuidCreatedByProfile = const Value.absent(),
+    this.uuidUpdatedByProfile = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  NotificationEventsTableCompanion.insert({
+    required String uuidNotificationEvent,
+    required String name,
+    required String category,
+    required String titleTemplate,
+    required String bodyTemplate,
+    required String triggerType,
+    this.triggerKey = const Value.absent(),
+    required String executionMode,
+    required String audienceType,
+    required String actionType,
+    this.actionPayloadTemplateJson = const Value.absent(),
+    this.triggerConfigJson = const Value.absent(),
+    this.startsAt = const Value.absent(),
+    this.endsAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.uuidCreatedByProfile = const Value.absent(),
+    this.uuidUpdatedByProfile = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : uuidNotificationEvent = Value(uuidNotificationEvent),
+       name = Value(name),
+       category = Value(category),
+       titleTemplate = Value(titleTemplate),
+       bodyTemplate = Value(bodyTemplate),
+       triggerType = Value(triggerType),
+       executionMode = Value(executionMode),
+       audienceType = Value(audienceType),
+       actionType = Value(actionType);
+  static Insertable<LocalNotificationEvent> custom({
+    Expression<String>? uuidNotificationEvent,
+    Expression<String>? name,
+    Expression<String>? category,
+    Expression<String>? titleTemplate,
+    Expression<String>? bodyTemplate,
+    Expression<String>? triggerType,
+    Expression<String>? triggerKey,
+    Expression<String>? executionMode,
+    Expression<String>? audienceType,
+    Expression<String>? actionType,
+    Expression<String>? actionPayloadTemplateJson,
+    Expression<String>? triggerConfigJson,
+    Expression<DateTime>? startsAt,
+    Expression<DateTime>? endsAt,
+    Expression<String>? status,
+    Expression<String>? uuidCreatedByProfile,
+    Expression<String>? uuidUpdatedByProfile,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
+    Expression<DateTime>? syncedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (uuidNotificationEvent != null)
+        'uuid_notification_event': uuidNotificationEvent,
+      if (name != null) 'name': name,
+      if (category != null) 'category': category,
+      if (titleTemplate != null) 'title_template': titleTemplate,
+      if (bodyTemplate != null) 'body_template': bodyTemplate,
+      if (triggerType != null) 'trigger_type': triggerType,
+      if (triggerKey != null) 'trigger_key': triggerKey,
+      if (executionMode != null) 'execution_mode': executionMode,
+      if (audienceType != null) 'audience_type': audienceType,
+      if (actionType != null) 'action_type': actionType,
+      if (actionPayloadTemplateJson != null)
+        'action_payload_template': actionPayloadTemplateJson,
+      if (triggerConfigJson != null) 'trigger_config': triggerConfigJson,
+      if (startsAt != null) 'starts_at': startsAt,
+      if (endsAt != null) 'ends_at': endsAt,
+      if (status != null) 'status': status,
+      if (uuidCreatedByProfile != null)
+        'uuid_created_by_profile': uuidCreatedByProfile,
+      if (uuidUpdatedByProfile != null)
+        'uuid_updated_by_profile': uuidUpdatedByProfile,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (syncedAt != null) 'synced_at': syncedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  NotificationEventsTableCompanion copyWith({
+    Value<String>? uuidNotificationEvent,
+    Value<String>? name,
+    Value<String>? category,
+    Value<String>? titleTemplate,
+    Value<String>? bodyTemplate,
+    Value<String>? triggerType,
+    Value<String?>? triggerKey,
+    Value<String>? executionMode,
+    Value<String>? audienceType,
+    Value<String>? actionType,
+    Value<String>? actionPayloadTemplateJson,
+    Value<String>? triggerConfigJson,
+    Value<DateTime>? startsAt,
+    Value<DateTime?>? endsAt,
+    Value<String>? status,
+    Value<String?>? uuidCreatedByProfile,
+    Value<String?>? uuidUpdatedByProfile,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
+    Value<DateTime?>? syncedAt,
+    Value<int>? rowid,
+  }) {
+    return NotificationEventsTableCompanion(
+      uuidNotificationEvent:
+          uuidNotificationEvent ?? this.uuidNotificationEvent,
+      name: name ?? this.name,
+      category: category ?? this.category,
+      titleTemplate: titleTemplate ?? this.titleTemplate,
+      bodyTemplate: bodyTemplate ?? this.bodyTemplate,
+      triggerType: triggerType ?? this.triggerType,
+      triggerKey: triggerKey ?? this.triggerKey,
+      executionMode: executionMode ?? this.executionMode,
+      audienceType: audienceType ?? this.audienceType,
+      actionType: actionType ?? this.actionType,
+      actionPayloadTemplateJson:
+          actionPayloadTemplateJson ?? this.actionPayloadTemplateJson,
+      triggerConfigJson: triggerConfigJson ?? this.triggerConfigJson,
+      startsAt: startsAt ?? this.startsAt,
+      endsAt: endsAt ?? this.endsAt,
+      status: status ?? this.status,
+      uuidCreatedByProfile: uuidCreatedByProfile ?? this.uuidCreatedByProfile,
+      uuidUpdatedByProfile: uuidUpdatedByProfile ?? this.uuidUpdatedByProfile,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      syncedAt: syncedAt ?? this.syncedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (uuidNotificationEvent.present) {
+      map['uuid_notification_event'] = Variable<String>(
+        uuidNotificationEvent.value,
+      );
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (category.present) {
+      map['category'] = Variable<String>(category.value);
+    }
+    if (titleTemplate.present) {
+      map['title_template'] = Variable<String>(titleTemplate.value);
+    }
+    if (bodyTemplate.present) {
+      map['body_template'] = Variable<String>(bodyTemplate.value);
+    }
+    if (triggerType.present) {
+      map['trigger_type'] = Variable<String>(triggerType.value);
+    }
+    if (triggerKey.present) {
+      map['trigger_key'] = Variable<String>(triggerKey.value);
+    }
+    if (executionMode.present) {
+      map['execution_mode'] = Variable<String>(executionMode.value);
+    }
+    if (audienceType.present) {
+      map['audience_type'] = Variable<String>(audienceType.value);
+    }
+    if (actionType.present) {
+      map['action_type'] = Variable<String>(actionType.value);
+    }
+    if (actionPayloadTemplateJson.present) {
+      map['action_payload_template'] = Variable<String>(
+        actionPayloadTemplateJson.value,
+      );
+    }
+    if (triggerConfigJson.present) {
+      map['trigger_config'] = Variable<String>(triggerConfigJson.value);
+    }
+    if (startsAt.present) {
+      map['starts_at'] = Variable<DateTime>(startsAt.value);
+    }
+    if (endsAt.present) {
+      map['ends_at'] = Variable<DateTime>(endsAt.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (uuidCreatedByProfile.present) {
+      map['uuid_created_by_profile'] = Variable<String>(
+        uuidCreatedByProfile.value,
+      );
+    }
+    if (uuidUpdatedByProfile.present) {
+      map['uuid_updated_by_profile'] = Variable<String>(
+        uuidUpdatedByProfile.value,
+      );
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NotificationEventsTableCompanion(')
+          ..write('uuidNotificationEvent: $uuidNotificationEvent, ')
+          ..write('name: $name, ')
+          ..write('category: $category, ')
+          ..write('titleTemplate: $titleTemplate, ')
+          ..write('bodyTemplate: $bodyTemplate, ')
+          ..write('triggerType: $triggerType, ')
+          ..write('triggerKey: $triggerKey, ')
+          ..write('executionMode: $executionMode, ')
+          ..write('audienceType: $audienceType, ')
+          ..write('actionType: $actionType, ')
+          ..write('actionPayloadTemplateJson: $actionPayloadTemplateJson, ')
+          ..write('triggerConfigJson: $triggerConfigJson, ')
+          ..write('startsAt: $startsAt, ')
+          ..write('endsAt: $endsAt, ')
+          ..write('status: $status, ')
+          ..write('uuidCreatedByProfile: $uuidCreatedByProfile, ')
+          ..write('uuidUpdatedByProfile: $uuidUpdatedByProfile, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $NotificationDispatchesTableTable extends NotificationDispatchesTable
+    with
+        TableInfo<
+          $NotificationDispatchesTableTable,
+          LocalNotificationDispatch
+        > {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $NotificationDispatchesTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _uuidNotificationDispatchMeta =
+      const VerificationMeta('uuidNotificationDispatch');
+  @override
+  late final GeneratedColumn<String> uuidNotificationDispatch =
+      GeneratedColumn<String>(
+        'uuid_notification_dispatch',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _uuidNotificationEventMeta =
+      const VerificationMeta('uuidNotificationEvent');
+  @override
+  late final GeneratedColumn<String> uuidNotificationEvent =
+      GeneratedColumn<String>(
+        'uuid_notification_event',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _triggerSourceMeta = const VerificationMeta(
+    'triggerSource',
+  );
+  @override
+  late final GeneratedColumn<String> triggerSource = GeneratedColumn<String>(
+    'trigger_source',
+    aliasedName,
+    false,
+    check: () => triggerSource.isIn(notificationDispatchTriggerSources),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _uuidTriggeredByProfileMeta =
+      const VerificationMeta('uuidTriggeredByProfile');
+  @override
+  late final GeneratedColumn<String> uuidTriggeredByProfile =
+      GeneratedColumn<String>(
+        'uuid_triggered_by_profile',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _sourceEntityTypeMeta = const VerificationMeta(
+    'sourceEntityType',
+  );
+  @override
+  late final GeneratedColumn<String> sourceEntityType = GeneratedColumn<String>(
+    'source_entity_type',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _sourceEntityUuidMeta = const VerificationMeta(
+    'sourceEntityUuid',
+  );
+  @override
+  late final GeneratedColumn<String> sourceEntityUuid = GeneratedColumn<String>(
+    'source_entity_uuid',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _idempotencyKeyMeta = const VerificationMeta(
+    'idempotencyKey',
+  );
+  @override
+  late final GeneratedColumn<String> idempotencyKey = GeneratedColumn<String>(
+    'idempotency_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+  );
+  static const VerificationMeta _titleSnapshotMeta = const VerificationMeta(
+    'titleSnapshot',
+  );
+  @override
+  late final GeneratedColumn<String> titleSnapshot = GeneratedColumn<String>(
+    'title_snapshot',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _bodySnapshotMeta = const VerificationMeta(
+    'bodySnapshot',
+  );
+  @override
+  late final GeneratedColumn<String> bodySnapshot = GeneratedColumn<String>(
+    'body_snapshot',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _categorySnapshotMeta = const VerificationMeta(
+    'categorySnapshot',
+  );
+  @override
+  late final GeneratedColumn<String> categorySnapshot = GeneratedColumn<String>(
+    'category_snapshot',
+    aliasedName,
+    false,
+    check: () => categorySnapshot.isIn(notificationCategories),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _audienceTypeSnapshotMeta =
+      const VerificationMeta('audienceTypeSnapshot');
+  @override
+  late final GeneratedColumn<String> audienceTypeSnapshot =
+      GeneratedColumn<String>(
+        'audience_type_snapshot',
+        aliasedName,
+        false,
+        check: () => audienceTypeSnapshot.isIn(notificationAudienceTypes),
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _actionTypeSnapshotMeta =
+      const VerificationMeta('actionTypeSnapshot');
+  @override
+  late final GeneratedColumn<String> actionTypeSnapshot =
+      GeneratedColumn<String>(
+        'action_type_snapshot',
+        aliasedName,
+        false,
+        check: () => actionTypeSnapshot.isIn(notificationActionTypes),
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _actionPayloadSnapshotJsonMeta =
+      const VerificationMeta('actionPayloadSnapshotJson');
+  @override
+  late final GeneratedColumn<String> actionPayloadSnapshotJson =
+      GeneratedColumn<String>(
+        'action_payload_snapshot',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant('{}'),
+      );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    check: () => status.isIn(notificationDispatchStatuses),
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('pending'),
+  );
+  static const VerificationMeta _targetProfileCountMeta =
+      const VerificationMeta('targetProfileCount');
+  @override
+  late final GeneratedColumn<int> targetProfileCount = GeneratedColumn<int>(
+    'target_profile_count',
+    aliasedName,
+    false,
+    check: () => ComparableExpr(targetProfileCount).isBiggerOrEqualValue(0),
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _targetDeviceCountMeta = const VerificationMeta(
+    'targetDeviceCount',
+  );
+  @override
+  late final GeneratedColumn<int> targetDeviceCount = GeneratedColumn<int>(
+    'target_device_count',
+    aliasedName,
+    false,
+    check: () => ComparableExpr(targetDeviceCount).isBiggerOrEqualValue(0),
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _successDeviceCountMeta =
+      const VerificationMeta('successDeviceCount');
+  @override
+  late final GeneratedColumn<int> successDeviceCount = GeneratedColumn<int>(
+    'success_device_count',
+    aliasedName,
+    false,
+    check: () => ComparableExpr(successDeviceCount).isBiggerOrEqualValue(0),
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _failureDeviceCountMeta =
+      const VerificationMeta('failureDeviceCount');
+  @override
+  late final GeneratedColumn<int> failureDeviceCount = GeneratedColumn<int>(
+    'failure_device_count',
+    aliasedName,
+    false,
+    check: () => ComparableExpr(failureDeviceCount).isBiggerOrEqualValue(0),
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _invalidTokenCountMeta = const VerificationMeta(
+    'invalidTokenCount',
+  );
+  @override
+  late final GeneratedColumn<int> invalidTokenCount = GeneratedColumn<int>(
+    'invalid_token_count',
+    aliasedName,
+    false,
+    check: () => ComparableExpr(invalidTokenCount).isBiggerOrEqualValue(0),
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _startedAtMeta = const VerificationMeta(
+    'startedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> startedAt = GeneratedColumn<DateTime>(
+    'started_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _completedAtMeta = const VerificationMeta(
+    'completedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> completedAt = GeneratedColumn<DateTime>(
+    'completed_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _errorSummaryMeta = const VerificationMeta(
+    'errorSummary',
+  );
+  @override
+  late final GeneratedColumn<String> errorSummary = GeneratedColumn<String>(
+    'error_summary',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    uuidNotificationDispatch,
+    uuidNotificationEvent,
+    triggerSource,
+    uuidTriggeredByProfile,
+    sourceEntityType,
+    sourceEntityUuid,
+    idempotencyKey,
+    titleSnapshot,
+    bodySnapshot,
+    categorySnapshot,
+    audienceTypeSnapshot,
+    actionTypeSnapshot,
+    actionPayloadSnapshotJson,
+    status,
+    targetProfileCount,
+    targetDeviceCount,
+    successDeviceCount,
+    failureDeviceCount,
+    invalidTokenCount,
+    startedAt,
+    completedAt,
+    errorSummary,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    syncedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'local_notification_dispatches';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocalNotificationDispatch> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('uuid_notification_dispatch')) {
+      context.handle(
+        _uuidNotificationDispatchMeta,
+        uuidNotificationDispatch.isAcceptableOrUnknown(
+          data['uuid_notification_dispatch']!,
+          _uuidNotificationDispatchMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_uuidNotificationDispatchMeta);
+    }
+    if (data.containsKey('uuid_notification_event')) {
+      context.handle(
+        _uuidNotificationEventMeta,
+        uuidNotificationEvent.isAcceptableOrUnknown(
+          data['uuid_notification_event']!,
+          _uuidNotificationEventMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_uuidNotificationEventMeta);
+    }
+    if (data.containsKey('trigger_source')) {
+      context.handle(
+        _triggerSourceMeta,
+        triggerSource.isAcceptableOrUnknown(
+          data['trigger_source']!,
+          _triggerSourceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_triggerSourceMeta);
+    }
+    if (data.containsKey('uuid_triggered_by_profile')) {
+      context.handle(
+        _uuidTriggeredByProfileMeta,
+        uuidTriggeredByProfile.isAcceptableOrUnknown(
+          data['uuid_triggered_by_profile']!,
+          _uuidTriggeredByProfileMeta,
+        ),
+      );
+    }
+    if (data.containsKey('source_entity_type')) {
+      context.handle(
+        _sourceEntityTypeMeta,
+        sourceEntityType.isAcceptableOrUnknown(
+          data['source_entity_type']!,
+          _sourceEntityTypeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('source_entity_uuid')) {
+      context.handle(
+        _sourceEntityUuidMeta,
+        sourceEntityUuid.isAcceptableOrUnknown(
+          data['source_entity_uuid']!,
+          _sourceEntityUuidMeta,
+        ),
+      );
+    }
+    if (data.containsKey('idempotency_key')) {
+      context.handle(
+        _idempotencyKeyMeta,
+        idempotencyKey.isAcceptableOrUnknown(
+          data['idempotency_key']!,
+          _idempotencyKeyMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_idempotencyKeyMeta);
+    }
+    if (data.containsKey('title_snapshot')) {
+      context.handle(
+        _titleSnapshotMeta,
+        titleSnapshot.isAcceptableOrUnknown(
+          data['title_snapshot']!,
+          _titleSnapshotMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_titleSnapshotMeta);
+    }
+    if (data.containsKey('body_snapshot')) {
+      context.handle(
+        _bodySnapshotMeta,
+        bodySnapshot.isAcceptableOrUnknown(
+          data['body_snapshot']!,
+          _bodySnapshotMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_bodySnapshotMeta);
+    }
+    if (data.containsKey('category_snapshot')) {
+      context.handle(
+        _categorySnapshotMeta,
+        categorySnapshot.isAcceptableOrUnknown(
+          data['category_snapshot']!,
+          _categorySnapshotMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_categorySnapshotMeta);
+    }
+    if (data.containsKey('audience_type_snapshot')) {
+      context.handle(
+        _audienceTypeSnapshotMeta,
+        audienceTypeSnapshot.isAcceptableOrUnknown(
+          data['audience_type_snapshot']!,
+          _audienceTypeSnapshotMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_audienceTypeSnapshotMeta);
+    }
+    if (data.containsKey('action_type_snapshot')) {
+      context.handle(
+        _actionTypeSnapshotMeta,
+        actionTypeSnapshot.isAcceptableOrUnknown(
+          data['action_type_snapshot']!,
+          _actionTypeSnapshotMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_actionTypeSnapshotMeta);
+    }
+    if (data.containsKey('action_payload_snapshot')) {
+      context.handle(
+        _actionPayloadSnapshotJsonMeta,
+        actionPayloadSnapshotJson.isAcceptableOrUnknown(
+          data['action_payload_snapshot']!,
+          _actionPayloadSnapshotJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('target_profile_count')) {
+      context.handle(
+        _targetProfileCountMeta,
+        targetProfileCount.isAcceptableOrUnknown(
+          data['target_profile_count']!,
+          _targetProfileCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('target_device_count')) {
+      context.handle(
+        _targetDeviceCountMeta,
+        targetDeviceCount.isAcceptableOrUnknown(
+          data['target_device_count']!,
+          _targetDeviceCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('success_device_count')) {
+      context.handle(
+        _successDeviceCountMeta,
+        successDeviceCount.isAcceptableOrUnknown(
+          data['success_device_count']!,
+          _successDeviceCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('failure_device_count')) {
+      context.handle(
+        _failureDeviceCountMeta,
+        failureDeviceCount.isAcceptableOrUnknown(
+          data['failure_device_count']!,
+          _failureDeviceCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('invalid_token_count')) {
+      context.handle(
+        _invalidTokenCountMeta,
+        invalidTokenCount.isAcceptableOrUnknown(
+          data['invalid_token_count']!,
+          _invalidTokenCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('started_at')) {
+      context.handle(
+        _startedAtMeta,
+        startedAt.isAcceptableOrUnknown(data['started_at']!, _startedAtMeta),
+      );
+    }
+    if (data.containsKey('completed_at')) {
+      context.handle(
+        _completedAtMeta,
+        completedAt.isAcceptableOrUnknown(
+          data['completed_at']!,
+          _completedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('error_summary')) {
+      context.handle(
+        _errorSummaryMeta,
+        errorSummary.isAcceptableOrUnknown(
+          data['error_summary']!,
+          _errorSummaryMeta,
+        ),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {uuidNotificationDispatch};
+  @override
+  LocalNotificationDispatch map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalNotificationDispatch(
+      uuidNotificationDispatch: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid_notification_dispatch'],
+      )!,
+      uuidNotificationEvent: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid_notification_event'],
+      )!,
+      triggerSource: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}trigger_source'],
+      )!,
+      uuidTriggeredByProfile: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid_triggered_by_profile'],
+      ),
+      sourceEntityType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source_entity_type'],
+      ),
+      sourceEntityUuid: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source_entity_uuid'],
+      ),
+      idempotencyKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}idempotency_key'],
+      )!,
+      titleSnapshot: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title_snapshot'],
+      )!,
+      bodySnapshot: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}body_snapshot'],
+      )!,
+      categorySnapshot: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}category_snapshot'],
+      )!,
+      audienceTypeSnapshot: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}audience_type_snapshot'],
+      )!,
+      actionTypeSnapshot: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}action_type_snapshot'],
+      )!,
+      actionPayloadSnapshotJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}action_payload_snapshot'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      targetProfileCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}target_profile_count'],
+      )!,
+      targetDeviceCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}target_device_count'],
+      )!,
+      successDeviceCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}success_device_count'],
+      )!,
+      failureDeviceCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}failure_device_count'],
+      )!,
+      invalidTokenCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}invalid_token_count'],
+      )!,
+      startedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}started_at'],
+      ),
+      completedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}completed_at'],
+      ),
+      errorSummary: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}error_summary'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
+    );
+  }
+
+  @override
+  $NotificationDispatchesTableTable createAlias(String alias) {
+    return $NotificationDispatchesTableTable(attachedDatabase, alias);
+  }
+}
+
+class LocalNotificationDispatch extends DataClass
+    implements Insertable<LocalNotificationDispatch> {
+  final String uuidNotificationDispatch;
+  final String uuidNotificationEvent;
+  final String triggerSource;
+  final String? uuidTriggeredByProfile;
+  final String? sourceEntityType;
+  final String? sourceEntityUuid;
+  final String idempotencyKey;
+  final String titleSnapshot;
+  final String bodySnapshot;
+  final String categorySnapshot;
+  final String audienceTypeSnapshot;
+  final String actionTypeSnapshot;
+  final String actionPayloadSnapshotJson;
+  final String status;
+  final int targetProfileCount;
+  final int targetDeviceCount;
+  final int successDeviceCount;
+  final int failureDeviceCount;
+  final int invalidTokenCount;
+  final DateTime? startedAt;
+  final DateTime? completedAt;
+  final String? errorSummary;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
+  final DateTime? syncedAt;
+  const LocalNotificationDispatch({
+    required this.uuidNotificationDispatch,
+    required this.uuidNotificationEvent,
+    required this.triggerSource,
+    this.uuidTriggeredByProfile,
+    this.sourceEntityType,
+    this.sourceEntityUuid,
+    required this.idempotencyKey,
+    required this.titleSnapshot,
+    required this.bodySnapshot,
+    required this.categorySnapshot,
+    required this.audienceTypeSnapshot,
+    required this.actionTypeSnapshot,
+    required this.actionPayloadSnapshotJson,
+    required this.status,
+    required this.targetProfileCount,
+    required this.targetDeviceCount,
+    required this.successDeviceCount,
+    required this.failureDeviceCount,
+    required this.invalidTokenCount,
+    this.startedAt,
+    this.completedAt,
+    this.errorSummary,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+    this.syncedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['uuid_notification_dispatch'] = Variable<String>(
+      uuidNotificationDispatch,
+    );
+    map['uuid_notification_event'] = Variable<String>(uuidNotificationEvent);
+    map['trigger_source'] = Variable<String>(triggerSource);
+    if (!nullToAbsent || uuidTriggeredByProfile != null) {
+      map['uuid_triggered_by_profile'] = Variable<String>(
+        uuidTriggeredByProfile,
+      );
+    }
+    if (!nullToAbsent || sourceEntityType != null) {
+      map['source_entity_type'] = Variable<String>(sourceEntityType);
+    }
+    if (!nullToAbsent || sourceEntityUuid != null) {
+      map['source_entity_uuid'] = Variable<String>(sourceEntityUuid);
+    }
+    map['idempotency_key'] = Variable<String>(idempotencyKey);
+    map['title_snapshot'] = Variable<String>(titleSnapshot);
+    map['body_snapshot'] = Variable<String>(bodySnapshot);
+    map['category_snapshot'] = Variable<String>(categorySnapshot);
+    map['audience_type_snapshot'] = Variable<String>(audienceTypeSnapshot);
+    map['action_type_snapshot'] = Variable<String>(actionTypeSnapshot);
+    map['action_payload_snapshot'] = Variable<String>(
+      actionPayloadSnapshotJson,
+    );
+    map['status'] = Variable<String>(status);
+    map['target_profile_count'] = Variable<int>(targetProfileCount);
+    map['target_device_count'] = Variable<int>(targetDeviceCount);
+    map['success_device_count'] = Variable<int>(successDeviceCount);
+    map['failure_device_count'] = Variable<int>(failureDeviceCount);
+    map['invalid_token_count'] = Variable<int>(invalidTokenCount);
+    if (!nullToAbsent || startedAt != null) {
+      map['started_at'] = Variable<DateTime>(startedAt);
+    }
+    if (!nullToAbsent || completedAt != null) {
+      map['completed_at'] = Variable<DateTime>(completedAt);
+    }
+    if (!nullToAbsent || errorSummary != null) {
+      map['error_summary'] = Variable<String>(errorSummary);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
+    return map;
+  }
+
+  NotificationDispatchesTableCompanion toCompanion(bool nullToAbsent) {
+    return NotificationDispatchesTableCompanion(
+      uuidNotificationDispatch: Value(uuidNotificationDispatch),
+      uuidNotificationEvent: Value(uuidNotificationEvent),
+      triggerSource: Value(triggerSource),
+      uuidTriggeredByProfile: uuidTriggeredByProfile == null && nullToAbsent
+          ? const Value.absent()
+          : Value(uuidTriggeredByProfile),
+      sourceEntityType: sourceEntityType == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sourceEntityType),
+      sourceEntityUuid: sourceEntityUuid == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sourceEntityUuid),
+      idempotencyKey: Value(idempotencyKey),
+      titleSnapshot: Value(titleSnapshot),
+      bodySnapshot: Value(bodySnapshot),
+      categorySnapshot: Value(categorySnapshot),
+      audienceTypeSnapshot: Value(audienceTypeSnapshot),
+      actionTypeSnapshot: Value(actionTypeSnapshot),
+      actionPayloadSnapshotJson: Value(actionPayloadSnapshotJson),
+      status: Value(status),
+      targetProfileCount: Value(targetProfileCount),
+      targetDeviceCount: Value(targetDeviceCount),
+      successDeviceCount: Value(successDeviceCount),
+      failureDeviceCount: Value(failureDeviceCount),
+      invalidTokenCount: Value(invalidTokenCount),
+      startedAt: startedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(startedAt),
+      completedAt: completedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(completedAt),
+      errorSummary: errorSummary == null && nullToAbsent
+          ? const Value.absent()
+          : Value(errorSummary),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
+    );
+  }
+
+  factory LocalNotificationDispatch.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalNotificationDispatch(
+      uuidNotificationDispatch: serializer.fromJson<String>(
+        json['uuidNotificationDispatch'],
+      ),
+      uuidNotificationEvent: serializer.fromJson<String>(
+        json['uuidNotificationEvent'],
+      ),
+      triggerSource: serializer.fromJson<String>(json['triggerSource']),
+      uuidTriggeredByProfile: serializer.fromJson<String?>(
+        json['uuidTriggeredByProfile'],
+      ),
+      sourceEntityType: serializer.fromJson<String?>(json['sourceEntityType']),
+      sourceEntityUuid: serializer.fromJson<String?>(json['sourceEntityUuid']),
+      idempotencyKey: serializer.fromJson<String>(json['idempotencyKey']),
+      titleSnapshot: serializer.fromJson<String>(json['titleSnapshot']),
+      bodySnapshot: serializer.fromJson<String>(json['bodySnapshot']),
+      categorySnapshot: serializer.fromJson<String>(json['categorySnapshot']),
+      audienceTypeSnapshot: serializer.fromJson<String>(
+        json['audienceTypeSnapshot'],
+      ),
+      actionTypeSnapshot: serializer.fromJson<String>(
+        json['actionTypeSnapshot'],
+      ),
+      actionPayloadSnapshotJson: serializer.fromJson<String>(
+        json['actionPayloadSnapshotJson'],
+      ),
+      status: serializer.fromJson<String>(json['status']),
+      targetProfileCount: serializer.fromJson<int>(json['targetProfileCount']),
+      targetDeviceCount: serializer.fromJson<int>(json['targetDeviceCount']),
+      successDeviceCount: serializer.fromJson<int>(json['successDeviceCount']),
+      failureDeviceCount: serializer.fromJson<int>(json['failureDeviceCount']),
+      invalidTokenCount: serializer.fromJson<int>(json['invalidTokenCount']),
+      startedAt: serializer.fromJson<DateTime?>(json['startedAt']),
+      completedAt: serializer.fromJson<DateTime?>(json['completedAt']),
+      errorSummary: serializer.fromJson<String?>(json['errorSummary']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'uuidNotificationDispatch': serializer.toJson<String>(
+        uuidNotificationDispatch,
+      ),
+      'uuidNotificationEvent': serializer.toJson<String>(uuidNotificationEvent),
+      'triggerSource': serializer.toJson<String>(triggerSource),
+      'uuidTriggeredByProfile': serializer.toJson<String?>(
+        uuidTriggeredByProfile,
+      ),
+      'sourceEntityType': serializer.toJson<String?>(sourceEntityType),
+      'sourceEntityUuid': serializer.toJson<String?>(sourceEntityUuid),
+      'idempotencyKey': serializer.toJson<String>(idempotencyKey),
+      'titleSnapshot': serializer.toJson<String>(titleSnapshot),
+      'bodySnapshot': serializer.toJson<String>(bodySnapshot),
+      'categorySnapshot': serializer.toJson<String>(categorySnapshot),
+      'audienceTypeSnapshot': serializer.toJson<String>(audienceTypeSnapshot),
+      'actionTypeSnapshot': serializer.toJson<String>(actionTypeSnapshot),
+      'actionPayloadSnapshotJson': serializer.toJson<String>(
+        actionPayloadSnapshotJson,
+      ),
+      'status': serializer.toJson<String>(status),
+      'targetProfileCount': serializer.toJson<int>(targetProfileCount),
+      'targetDeviceCount': serializer.toJson<int>(targetDeviceCount),
+      'successDeviceCount': serializer.toJson<int>(successDeviceCount),
+      'failureDeviceCount': serializer.toJson<int>(failureDeviceCount),
+      'invalidTokenCount': serializer.toJson<int>(invalidTokenCount),
+      'startedAt': serializer.toJson<DateTime?>(startedAt),
+      'completedAt': serializer.toJson<DateTime?>(completedAt),
+      'errorSummary': serializer.toJson<String?>(errorSummary),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
+    };
+  }
+
+  LocalNotificationDispatch copyWith({
+    String? uuidNotificationDispatch,
+    String? uuidNotificationEvent,
+    String? triggerSource,
+    Value<String?> uuidTriggeredByProfile = const Value.absent(),
+    Value<String?> sourceEntityType = const Value.absent(),
+    Value<String?> sourceEntityUuid = const Value.absent(),
+    String? idempotencyKey,
+    String? titleSnapshot,
+    String? bodySnapshot,
+    String? categorySnapshot,
+    String? audienceTypeSnapshot,
+    String? actionTypeSnapshot,
+    String? actionPayloadSnapshotJson,
+    String? status,
+    int? targetProfileCount,
+    int? targetDeviceCount,
+    int? successDeviceCount,
+    int? failureDeviceCount,
+    int? invalidTokenCount,
+    Value<DateTime?> startedAt = const Value.absent(),
+    Value<DateTime?> completedAt = const Value.absent(),
+    Value<String?> errorSummary = const Value.absent(),
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
+    Value<DateTime?> syncedAt = const Value.absent(),
+  }) => LocalNotificationDispatch(
+    uuidNotificationDispatch:
+        uuidNotificationDispatch ?? this.uuidNotificationDispatch,
+    uuidNotificationEvent: uuidNotificationEvent ?? this.uuidNotificationEvent,
+    triggerSource: triggerSource ?? this.triggerSource,
+    uuidTriggeredByProfile: uuidTriggeredByProfile.present
+        ? uuidTriggeredByProfile.value
+        : this.uuidTriggeredByProfile,
+    sourceEntityType: sourceEntityType.present
+        ? sourceEntityType.value
+        : this.sourceEntityType,
+    sourceEntityUuid: sourceEntityUuid.present
+        ? sourceEntityUuid.value
+        : this.sourceEntityUuid,
+    idempotencyKey: idempotencyKey ?? this.idempotencyKey,
+    titleSnapshot: titleSnapshot ?? this.titleSnapshot,
+    bodySnapshot: bodySnapshot ?? this.bodySnapshot,
+    categorySnapshot: categorySnapshot ?? this.categorySnapshot,
+    audienceTypeSnapshot: audienceTypeSnapshot ?? this.audienceTypeSnapshot,
+    actionTypeSnapshot: actionTypeSnapshot ?? this.actionTypeSnapshot,
+    actionPayloadSnapshotJson:
+        actionPayloadSnapshotJson ?? this.actionPayloadSnapshotJson,
+    status: status ?? this.status,
+    targetProfileCount: targetProfileCount ?? this.targetProfileCount,
+    targetDeviceCount: targetDeviceCount ?? this.targetDeviceCount,
+    successDeviceCount: successDeviceCount ?? this.successDeviceCount,
+    failureDeviceCount: failureDeviceCount ?? this.failureDeviceCount,
+    invalidTokenCount: invalidTokenCount ?? this.invalidTokenCount,
+    startedAt: startedAt.present ? startedAt.value : this.startedAt,
+    completedAt: completedAt.present ? completedAt.value : this.completedAt,
+    errorSummary: errorSummary.present ? errorSummary.value : this.errorSummary,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+  );
+  LocalNotificationDispatch copyWithCompanion(
+    NotificationDispatchesTableCompanion data,
+  ) {
+    return LocalNotificationDispatch(
+      uuidNotificationDispatch: data.uuidNotificationDispatch.present
+          ? data.uuidNotificationDispatch.value
+          : this.uuidNotificationDispatch,
+      uuidNotificationEvent: data.uuidNotificationEvent.present
+          ? data.uuidNotificationEvent.value
+          : this.uuidNotificationEvent,
+      triggerSource: data.triggerSource.present
+          ? data.triggerSource.value
+          : this.triggerSource,
+      uuidTriggeredByProfile: data.uuidTriggeredByProfile.present
+          ? data.uuidTriggeredByProfile.value
+          : this.uuidTriggeredByProfile,
+      sourceEntityType: data.sourceEntityType.present
+          ? data.sourceEntityType.value
+          : this.sourceEntityType,
+      sourceEntityUuid: data.sourceEntityUuid.present
+          ? data.sourceEntityUuid.value
+          : this.sourceEntityUuid,
+      idempotencyKey: data.idempotencyKey.present
+          ? data.idempotencyKey.value
+          : this.idempotencyKey,
+      titleSnapshot: data.titleSnapshot.present
+          ? data.titleSnapshot.value
+          : this.titleSnapshot,
+      bodySnapshot: data.bodySnapshot.present
+          ? data.bodySnapshot.value
+          : this.bodySnapshot,
+      categorySnapshot: data.categorySnapshot.present
+          ? data.categorySnapshot.value
+          : this.categorySnapshot,
+      audienceTypeSnapshot: data.audienceTypeSnapshot.present
+          ? data.audienceTypeSnapshot.value
+          : this.audienceTypeSnapshot,
+      actionTypeSnapshot: data.actionTypeSnapshot.present
+          ? data.actionTypeSnapshot.value
+          : this.actionTypeSnapshot,
+      actionPayloadSnapshotJson: data.actionPayloadSnapshotJson.present
+          ? data.actionPayloadSnapshotJson.value
+          : this.actionPayloadSnapshotJson,
+      status: data.status.present ? data.status.value : this.status,
+      targetProfileCount: data.targetProfileCount.present
+          ? data.targetProfileCount.value
+          : this.targetProfileCount,
+      targetDeviceCount: data.targetDeviceCount.present
+          ? data.targetDeviceCount.value
+          : this.targetDeviceCount,
+      successDeviceCount: data.successDeviceCount.present
+          ? data.successDeviceCount.value
+          : this.successDeviceCount,
+      failureDeviceCount: data.failureDeviceCount.present
+          ? data.failureDeviceCount.value
+          : this.failureDeviceCount,
+      invalidTokenCount: data.invalidTokenCount.present
+          ? data.invalidTokenCount.value
+          : this.invalidTokenCount,
+      startedAt: data.startedAt.present ? data.startedAt.value : this.startedAt,
+      completedAt: data.completedAt.present
+          ? data.completedAt.value
+          : this.completedAt,
+      errorSummary: data.errorSummary.present
+          ? data.errorSummary.value
+          : this.errorSummary,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalNotificationDispatch(')
+          ..write('uuidNotificationDispatch: $uuidNotificationDispatch, ')
+          ..write('uuidNotificationEvent: $uuidNotificationEvent, ')
+          ..write('triggerSource: $triggerSource, ')
+          ..write('uuidTriggeredByProfile: $uuidTriggeredByProfile, ')
+          ..write('sourceEntityType: $sourceEntityType, ')
+          ..write('sourceEntityUuid: $sourceEntityUuid, ')
+          ..write('idempotencyKey: $idempotencyKey, ')
+          ..write('titleSnapshot: $titleSnapshot, ')
+          ..write('bodySnapshot: $bodySnapshot, ')
+          ..write('categorySnapshot: $categorySnapshot, ')
+          ..write('audienceTypeSnapshot: $audienceTypeSnapshot, ')
+          ..write('actionTypeSnapshot: $actionTypeSnapshot, ')
+          ..write('actionPayloadSnapshotJson: $actionPayloadSnapshotJson, ')
+          ..write('status: $status, ')
+          ..write('targetProfileCount: $targetProfileCount, ')
+          ..write('targetDeviceCount: $targetDeviceCount, ')
+          ..write('successDeviceCount: $successDeviceCount, ')
+          ..write('failureDeviceCount: $failureDeviceCount, ')
+          ..write('invalidTokenCount: $invalidTokenCount, ')
+          ..write('startedAt: $startedAt, ')
+          ..write('completedAt: $completedAt, ')
+          ..write('errorSummary: $errorSummary, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('syncedAt: $syncedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hashAll([
+    uuidNotificationDispatch,
+    uuidNotificationEvent,
+    triggerSource,
+    uuidTriggeredByProfile,
+    sourceEntityType,
+    sourceEntityUuid,
+    idempotencyKey,
+    titleSnapshot,
+    bodySnapshot,
+    categorySnapshot,
+    audienceTypeSnapshot,
+    actionTypeSnapshot,
+    actionPayloadSnapshotJson,
+    status,
+    targetProfileCount,
+    targetDeviceCount,
+    successDeviceCount,
+    failureDeviceCount,
+    invalidTokenCount,
+    startedAt,
+    completedAt,
+    errorSummary,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    syncedAt,
+  ]);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalNotificationDispatch &&
+          other.uuidNotificationDispatch == this.uuidNotificationDispatch &&
+          other.uuidNotificationEvent == this.uuidNotificationEvent &&
+          other.triggerSource == this.triggerSource &&
+          other.uuidTriggeredByProfile == this.uuidTriggeredByProfile &&
+          other.sourceEntityType == this.sourceEntityType &&
+          other.sourceEntityUuid == this.sourceEntityUuid &&
+          other.idempotencyKey == this.idempotencyKey &&
+          other.titleSnapshot == this.titleSnapshot &&
+          other.bodySnapshot == this.bodySnapshot &&
+          other.categorySnapshot == this.categorySnapshot &&
+          other.audienceTypeSnapshot == this.audienceTypeSnapshot &&
+          other.actionTypeSnapshot == this.actionTypeSnapshot &&
+          other.actionPayloadSnapshotJson == this.actionPayloadSnapshotJson &&
+          other.status == this.status &&
+          other.targetProfileCount == this.targetProfileCount &&
+          other.targetDeviceCount == this.targetDeviceCount &&
+          other.successDeviceCount == this.successDeviceCount &&
+          other.failureDeviceCount == this.failureDeviceCount &&
+          other.invalidTokenCount == this.invalidTokenCount &&
+          other.startedAt == this.startedAt &&
+          other.completedAt == this.completedAt &&
+          other.errorSummary == this.errorSummary &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.syncedAt == this.syncedAt);
+}
+
+class NotificationDispatchesTableCompanion
+    extends UpdateCompanion<LocalNotificationDispatch> {
+  final Value<String> uuidNotificationDispatch;
+  final Value<String> uuidNotificationEvent;
+  final Value<String> triggerSource;
+  final Value<String?> uuidTriggeredByProfile;
+  final Value<String?> sourceEntityType;
+  final Value<String?> sourceEntityUuid;
+  final Value<String> idempotencyKey;
+  final Value<String> titleSnapshot;
+  final Value<String> bodySnapshot;
+  final Value<String> categorySnapshot;
+  final Value<String> audienceTypeSnapshot;
+  final Value<String> actionTypeSnapshot;
+  final Value<String> actionPayloadSnapshotJson;
+  final Value<String> status;
+  final Value<int> targetProfileCount;
+  final Value<int> targetDeviceCount;
+  final Value<int> successDeviceCount;
+  final Value<int> failureDeviceCount;
+  final Value<int> invalidTokenCount;
+  final Value<DateTime?> startedAt;
+  final Value<DateTime?> completedAt;
+  final Value<String?> errorSummary;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
+  final Value<DateTime?> syncedAt;
+  final Value<int> rowid;
+  const NotificationDispatchesTableCompanion({
+    this.uuidNotificationDispatch = const Value.absent(),
+    this.uuidNotificationEvent = const Value.absent(),
+    this.triggerSource = const Value.absent(),
+    this.uuidTriggeredByProfile = const Value.absent(),
+    this.sourceEntityType = const Value.absent(),
+    this.sourceEntityUuid = const Value.absent(),
+    this.idempotencyKey = const Value.absent(),
+    this.titleSnapshot = const Value.absent(),
+    this.bodySnapshot = const Value.absent(),
+    this.categorySnapshot = const Value.absent(),
+    this.audienceTypeSnapshot = const Value.absent(),
+    this.actionTypeSnapshot = const Value.absent(),
+    this.actionPayloadSnapshotJson = const Value.absent(),
+    this.status = const Value.absent(),
+    this.targetProfileCount = const Value.absent(),
+    this.targetDeviceCount = const Value.absent(),
+    this.successDeviceCount = const Value.absent(),
+    this.failureDeviceCount = const Value.absent(),
+    this.invalidTokenCount = const Value.absent(),
+    this.startedAt = const Value.absent(),
+    this.completedAt = const Value.absent(),
+    this.errorSummary = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  NotificationDispatchesTableCompanion.insert({
+    required String uuidNotificationDispatch,
+    required String uuidNotificationEvent,
+    required String triggerSource,
+    this.uuidTriggeredByProfile = const Value.absent(),
+    this.sourceEntityType = const Value.absent(),
+    this.sourceEntityUuid = const Value.absent(),
+    required String idempotencyKey,
+    required String titleSnapshot,
+    required String bodySnapshot,
+    required String categorySnapshot,
+    required String audienceTypeSnapshot,
+    required String actionTypeSnapshot,
+    this.actionPayloadSnapshotJson = const Value.absent(),
+    this.status = const Value.absent(),
+    this.targetProfileCount = const Value.absent(),
+    this.targetDeviceCount = const Value.absent(),
+    this.successDeviceCount = const Value.absent(),
+    this.failureDeviceCount = const Value.absent(),
+    this.invalidTokenCount = const Value.absent(),
+    this.startedAt = const Value.absent(),
+    this.completedAt = const Value.absent(),
+    this.errorSummary = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : uuidNotificationDispatch = Value(uuidNotificationDispatch),
+       uuidNotificationEvent = Value(uuidNotificationEvent),
+       triggerSource = Value(triggerSource),
+       idempotencyKey = Value(idempotencyKey),
+       titleSnapshot = Value(titleSnapshot),
+       bodySnapshot = Value(bodySnapshot),
+       categorySnapshot = Value(categorySnapshot),
+       audienceTypeSnapshot = Value(audienceTypeSnapshot),
+       actionTypeSnapshot = Value(actionTypeSnapshot);
+  static Insertable<LocalNotificationDispatch> custom({
+    Expression<String>? uuidNotificationDispatch,
+    Expression<String>? uuidNotificationEvent,
+    Expression<String>? triggerSource,
+    Expression<String>? uuidTriggeredByProfile,
+    Expression<String>? sourceEntityType,
+    Expression<String>? sourceEntityUuid,
+    Expression<String>? idempotencyKey,
+    Expression<String>? titleSnapshot,
+    Expression<String>? bodySnapshot,
+    Expression<String>? categorySnapshot,
+    Expression<String>? audienceTypeSnapshot,
+    Expression<String>? actionTypeSnapshot,
+    Expression<String>? actionPayloadSnapshotJson,
+    Expression<String>? status,
+    Expression<int>? targetProfileCount,
+    Expression<int>? targetDeviceCount,
+    Expression<int>? successDeviceCount,
+    Expression<int>? failureDeviceCount,
+    Expression<int>? invalidTokenCount,
+    Expression<DateTime>? startedAt,
+    Expression<DateTime>? completedAt,
+    Expression<String>? errorSummary,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
+    Expression<DateTime>? syncedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (uuidNotificationDispatch != null)
+        'uuid_notification_dispatch': uuidNotificationDispatch,
+      if (uuidNotificationEvent != null)
+        'uuid_notification_event': uuidNotificationEvent,
+      if (triggerSource != null) 'trigger_source': triggerSource,
+      if (uuidTriggeredByProfile != null)
+        'uuid_triggered_by_profile': uuidTriggeredByProfile,
+      if (sourceEntityType != null) 'source_entity_type': sourceEntityType,
+      if (sourceEntityUuid != null) 'source_entity_uuid': sourceEntityUuid,
+      if (idempotencyKey != null) 'idempotency_key': idempotencyKey,
+      if (titleSnapshot != null) 'title_snapshot': titleSnapshot,
+      if (bodySnapshot != null) 'body_snapshot': bodySnapshot,
+      if (categorySnapshot != null) 'category_snapshot': categorySnapshot,
+      if (audienceTypeSnapshot != null)
+        'audience_type_snapshot': audienceTypeSnapshot,
+      if (actionTypeSnapshot != null)
+        'action_type_snapshot': actionTypeSnapshot,
+      if (actionPayloadSnapshotJson != null)
+        'action_payload_snapshot': actionPayloadSnapshotJson,
+      if (status != null) 'status': status,
+      if (targetProfileCount != null)
+        'target_profile_count': targetProfileCount,
+      if (targetDeviceCount != null) 'target_device_count': targetDeviceCount,
+      if (successDeviceCount != null)
+        'success_device_count': successDeviceCount,
+      if (failureDeviceCount != null)
+        'failure_device_count': failureDeviceCount,
+      if (invalidTokenCount != null) 'invalid_token_count': invalidTokenCount,
+      if (startedAt != null) 'started_at': startedAt,
+      if (completedAt != null) 'completed_at': completedAt,
+      if (errorSummary != null) 'error_summary': errorSummary,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (syncedAt != null) 'synced_at': syncedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  NotificationDispatchesTableCompanion copyWith({
+    Value<String>? uuidNotificationDispatch,
+    Value<String>? uuidNotificationEvent,
+    Value<String>? triggerSource,
+    Value<String?>? uuidTriggeredByProfile,
+    Value<String?>? sourceEntityType,
+    Value<String?>? sourceEntityUuid,
+    Value<String>? idempotencyKey,
+    Value<String>? titleSnapshot,
+    Value<String>? bodySnapshot,
+    Value<String>? categorySnapshot,
+    Value<String>? audienceTypeSnapshot,
+    Value<String>? actionTypeSnapshot,
+    Value<String>? actionPayloadSnapshotJson,
+    Value<String>? status,
+    Value<int>? targetProfileCount,
+    Value<int>? targetDeviceCount,
+    Value<int>? successDeviceCount,
+    Value<int>? failureDeviceCount,
+    Value<int>? invalidTokenCount,
+    Value<DateTime?>? startedAt,
+    Value<DateTime?>? completedAt,
+    Value<String?>? errorSummary,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
+    Value<DateTime?>? syncedAt,
+    Value<int>? rowid,
+  }) {
+    return NotificationDispatchesTableCompanion(
+      uuidNotificationDispatch:
+          uuidNotificationDispatch ?? this.uuidNotificationDispatch,
+      uuidNotificationEvent:
+          uuidNotificationEvent ?? this.uuidNotificationEvent,
+      triggerSource: triggerSource ?? this.triggerSource,
+      uuidTriggeredByProfile:
+          uuidTriggeredByProfile ?? this.uuidTriggeredByProfile,
+      sourceEntityType: sourceEntityType ?? this.sourceEntityType,
+      sourceEntityUuid: sourceEntityUuid ?? this.sourceEntityUuid,
+      idempotencyKey: idempotencyKey ?? this.idempotencyKey,
+      titleSnapshot: titleSnapshot ?? this.titleSnapshot,
+      bodySnapshot: bodySnapshot ?? this.bodySnapshot,
+      categorySnapshot: categorySnapshot ?? this.categorySnapshot,
+      audienceTypeSnapshot: audienceTypeSnapshot ?? this.audienceTypeSnapshot,
+      actionTypeSnapshot: actionTypeSnapshot ?? this.actionTypeSnapshot,
+      actionPayloadSnapshotJson:
+          actionPayloadSnapshotJson ?? this.actionPayloadSnapshotJson,
+      status: status ?? this.status,
+      targetProfileCount: targetProfileCount ?? this.targetProfileCount,
+      targetDeviceCount: targetDeviceCount ?? this.targetDeviceCount,
+      successDeviceCount: successDeviceCount ?? this.successDeviceCount,
+      failureDeviceCount: failureDeviceCount ?? this.failureDeviceCount,
+      invalidTokenCount: invalidTokenCount ?? this.invalidTokenCount,
+      startedAt: startedAt ?? this.startedAt,
+      completedAt: completedAt ?? this.completedAt,
+      errorSummary: errorSummary ?? this.errorSummary,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      syncedAt: syncedAt ?? this.syncedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (uuidNotificationDispatch.present) {
+      map['uuid_notification_dispatch'] = Variable<String>(
+        uuidNotificationDispatch.value,
+      );
+    }
+    if (uuidNotificationEvent.present) {
+      map['uuid_notification_event'] = Variable<String>(
+        uuidNotificationEvent.value,
+      );
+    }
+    if (triggerSource.present) {
+      map['trigger_source'] = Variable<String>(triggerSource.value);
+    }
+    if (uuidTriggeredByProfile.present) {
+      map['uuid_triggered_by_profile'] = Variable<String>(
+        uuidTriggeredByProfile.value,
+      );
+    }
+    if (sourceEntityType.present) {
+      map['source_entity_type'] = Variable<String>(sourceEntityType.value);
+    }
+    if (sourceEntityUuid.present) {
+      map['source_entity_uuid'] = Variable<String>(sourceEntityUuid.value);
+    }
+    if (idempotencyKey.present) {
+      map['idempotency_key'] = Variable<String>(idempotencyKey.value);
+    }
+    if (titleSnapshot.present) {
+      map['title_snapshot'] = Variable<String>(titleSnapshot.value);
+    }
+    if (bodySnapshot.present) {
+      map['body_snapshot'] = Variable<String>(bodySnapshot.value);
+    }
+    if (categorySnapshot.present) {
+      map['category_snapshot'] = Variable<String>(categorySnapshot.value);
+    }
+    if (audienceTypeSnapshot.present) {
+      map['audience_type_snapshot'] = Variable<String>(
+        audienceTypeSnapshot.value,
+      );
+    }
+    if (actionTypeSnapshot.present) {
+      map['action_type_snapshot'] = Variable<String>(actionTypeSnapshot.value);
+    }
+    if (actionPayloadSnapshotJson.present) {
+      map['action_payload_snapshot'] = Variable<String>(
+        actionPayloadSnapshotJson.value,
+      );
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (targetProfileCount.present) {
+      map['target_profile_count'] = Variable<int>(targetProfileCount.value);
+    }
+    if (targetDeviceCount.present) {
+      map['target_device_count'] = Variable<int>(targetDeviceCount.value);
+    }
+    if (successDeviceCount.present) {
+      map['success_device_count'] = Variable<int>(successDeviceCount.value);
+    }
+    if (failureDeviceCount.present) {
+      map['failure_device_count'] = Variable<int>(failureDeviceCount.value);
+    }
+    if (invalidTokenCount.present) {
+      map['invalid_token_count'] = Variable<int>(invalidTokenCount.value);
+    }
+    if (startedAt.present) {
+      map['started_at'] = Variable<DateTime>(startedAt.value);
+    }
+    if (completedAt.present) {
+      map['completed_at'] = Variable<DateTime>(completedAt.value);
+    }
+    if (errorSummary.present) {
+      map['error_summary'] = Variable<String>(errorSummary.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NotificationDispatchesTableCompanion(')
+          ..write('uuidNotificationDispatch: $uuidNotificationDispatch, ')
+          ..write('uuidNotificationEvent: $uuidNotificationEvent, ')
+          ..write('triggerSource: $triggerSource, ')
+          ..write('uuidTriggeredByProfile: $uuidTriggeredByProfile, ')
+          ..write('sourceEntityType: $sourceEntityType, ')
+          ..write('sourceEntityUuid: $sourceEntityUuid, ')
+          ..write('idempotencyKey: $idempotencyKey, ')
+          ..write('titleSnapshot: $titleSnapshot, ')
+          ..write('bodySnapshot: $bodySnapshot, ')
+          ..write('categorySnapshot: $categorySnapshot, ')
+          ..write('audienceTypeSnapshot: $audienceTypeSnapshot, ')
+          ..write('actionTypeSnapshot: $actionTypeSnapshot, ')
+          ..write('actionPayloadSnapshotJson: $actionPayloadSnapshotJson, ')
+          ..write('status: $status, ')
+          ..write('targetProfileCount: $targetProfileCount, ')
+          ..write('targetDeviceCount: $targetDeviceCount, ')
+          ..write('successDeviceCount: $successDeviceCount, ')
+          ..write('failureDeviceCount: $failureDeviceCount, ')
+          ..write('invalidTokenCount: $invalidTokenCount, ')
+          ..write('startedAt: $startedAt, ')
+          ..write('completedAt: $completedAt, ')
+          ..write('errorSummary: $errorSummary, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $NotificationsInboxTableTable extends NotificationsInboxTable
+    with TableInfo<$NotificationsInboxTableTable, LocalNotificationInboxItem> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $NotificationsInboxTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _uuidNotificationInboxMeta =
+      const VerificationMeta('uuidNotificationInbox');
+  @override
+  late final GeneratedColumn<String> uuidNotificationInbox =
+      GeneratedColumn<String>(
+        'uuid_notification_inbox',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _uuidNotificationDispatchMeta =
+      const VerificationMeta('uuidNotificationDispatch');
+  @override
+  late final GeneratedColumn<String> uuidNotificationDispatch =
+      GeneratedColumn<String>(
+        'uuid_notification_dispatch',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _uuidProfileMeta = const VerificationMeta(
+    'uuidProfile',
+  );
+  @override
+  late final GeneratedColumn<String> uuidProfile = GeneratedColumn<String>(
+    'uuid_profile',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _bodyMeta = const VerificationMeta('body');
+  @override
+  late final GeneratedColumn<String> body = GeneratedColumn<String>(
+    'body',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _categoryMeta = const VerificationMeta(
+    'category',
+  );
+  @override
+  late final GeneratedColumn<String> category = GeneratedColumn<String>(
+    'category',
+    aliasedName,
+    false,
+    check: () => category.isIn(notificationCategories),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _actionTypeMeta = const VerificationMeta(
+    'actionType',
+  );
+  @override
+  late final GeneratedColumn<String> actionType = GeneratedColumn<String>(
+    'action_type',
+    aliasedName,
+    false,
+    check: () => actionType.isIn(notificationActionTypes),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _actionPayloadJsonMeta = const VerificationMeta(
+    'actionPayloadJson',
+  );
+  @override
+  late final GeneratedColumn<String> actionPayloadJson =
+      GeneratedColumn<String>(
+        'action_payload',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant('{}'),
+      );
+  static const VerificationMeta _readAtMeta = const VerificationMeta('readAt');
+  @override
+  late final GeneratedColumn<DateTime> readAt = GeneratedColumn<DateTime>(
+    'read_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _openedAtMeta = const VerificationMeta(
+    'openedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> openedAt = GeneratedColumn<DateTime>(
+    'opened_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    uuidNotificationInbox,
+    uuidNotificationDispatch,
+    uuidProfile,
+    title,
+    body,
+    category,
+    actionType,
+    actionPayloadJson,
+    readAt,
+    openedAt,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    syncedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'local_notifications_inbox';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocalNotificationInboxItem> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('uuid_notification_inbox')) {
+      context.handle(
+        _uuidNotificationInboxMeta,
+        uuidNotificationInbox.isAcceptableOrUnknown(
+          data['uuid_notification_inbox']!,
+          _uuidNotificationInboxMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_uuidNotificationInboxMeta);
+    }
+    if (data.containsKey('uuid_notification_dispatch')) {
+      context.handle(
+        _uuidNotificationDispatchMeta,
+        uuidNotificationDispatch.isAcceptableOrUnknown(
+          data['uuid_notification_dispatch']!,
+          _uuidNotificationDispatchMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_uuidNotificationDispatchMeta);
+    }
+    if (data.containsKey('uuid_profile')) {
+      context.handle(
+        _uuidProfileMeta,
+        uuidProfile.isAcceptableOrUnknown(
+          data['uuid_profile']!,
+          _uuidProfileMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_uuidProfileMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('body')) {
+      context.handle(
+        _bodyMeta,
+        body.isAcceptableOrUnknown(data['body']!, _bodyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_bodyMeta);
+    }
+    if (data.containsKey('category')) {
+      context.handle(
+        _categoryMeta,
+        category.isAcceptableOrUnknown(data['category']!, _categoryMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_categoryMeta);
+    }
+    if (data.containsKey('action_type')) {
+      context.handle(
+        _actionTypeMeta,
+        actionType.isAcceptableOrUnknown(data['action_type']!, _actionTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_actionTypeMeta);
+    }
+    if (data.containsKey('action_payload')) {
+      context.handle(
+        _actionPayloadJsonMeta,
+        actionPayloadJson.isAcceptableOrUnknown(
+          data['action_payload']!,
+          _actionPayloadJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('read_at')) {
+      context.handle(
+        _readAtMeta,
+        readAt.isAcceptableOrUnknown(data['read_at']!, _readAtMeta),
+      );
+    }
+    if (data.containsKey('opened_at')) {
+      context.handle(
+        _openedAtMeta,
+        openedAt.isAcceptableOrUnknown(data['opened_at']!, _openedAtMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {uuidNotificationInbox};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {uuidNotificationDispatch, uuidProfile},
+  ];
+  @override
+  LocalNotificationInboxItem map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalNotificationInboxItem(
+      uuidNotificationInbox: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid_notification_inbox'],
+      )!,
+      uuidNotificationDispatch: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid_notification_dispatch'],
+      )!,
+      uuidProfile: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid_profile'],
+      )!,
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
+      body: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}body'],
+      )!,
+      category: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}category'],
+      )!,
+      actionType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}action_type'],
+      )!,
+      actionPayloadJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}action_payload'],
+      )!,
+      readAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}read_at'],
+      ),
+      openedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}opened_at'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
+    );
+  }
+
+  @override
+  $NotificationsInboxTableTable createAlias(String alias) {
+    return $NotificationsInboxTableTable(attachedDatabase, alias);
+  }
+}
+
+class LocalNotificationInboxItem extends DataClass
+    implements Insertable<LocalNotificationInboxItem> {
+  final String uuidNotificationInbox;
+  final String uuidNotificationDispatch;
+  final String uuidProfile;
+  final String title;
+  final String body;
+  final String category;
+  final String actionType;
+  final String actionPayloadJson;
+  final DateTime? readAt;
+  final DateTime? openedAt;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
+  final DateTime? syncedAt;
+  const LocalNotificationInboxItem({
+    required this.uuidNotificationInbox,
+    required this.uuidNotificationDispatch,
+    required this.uuidProfile,
+    required this.title,
+    required this.body,
+    required this.category,
+    required this.actionType,
+    required this.actionPayloadJson,
+    this.readAt,
+    this.openedAt,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+    this.syncedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['uuid_notification_inbox'] = Variable<String>(uuidNotificationInbox);
+    map['uuid_notification_dispatch'] = Variable<String>(
+      uuidNotificationDispatch,
+    );
+    map['uuid_profile'] = Variable<String>(uuidProfile);
+    map['title'] = Variable<String>(title);
+    map['body'] = Variable<String>(body);
+    map['category'] = Variable<String>(category);
+    map['action_type'] = Variable<String>(actionType);
+    map['action_payload'] = Variable<String>(actionPayloadJson);
+    if (!nullToAbsent || readAt != null) {
+      map['read_at'] = Variable<DateTime>(readAt);
+    }
+    if (!nullToAbsent || openedAt != null) {
+      map['opened_at'] = Variable<DateTime>(openedAt);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
+    return map;
+  }
+
+  NotificationsInboxTableCompanion toCompanion(bool nullToAbsent) {
+    return NotificationsInboxTableCompanion(
+      uuidNotificationInbox: Value(uuidNotificationInbox),
+      uuidNotificationDispatch: Value(uuidNotificationDispatch),
+      uuidProfile: Value(uuidProfile),
+      title: Value(title),
+      body: Value(body),
+      category: Value(category),
+      actionType: Value(actionType),
+      actionPayloadJson: Value(actionPayloadJson),
+      readAt: readAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(readAt),
+      openedAt: openedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(openedAt),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
+    );
+  }
+
+  factory LocalNotificationInboxItem.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalNotificationInboxItem(
+      uuidNotificationInbox: serializer.fromJson<String>(
+        json['uuidNotificationInbox'],
+      ),
+      uuidNotificationDispatch: serializer.fromJson<String>(
+        json['uuidNotificationDispatch'],
+      ),
+      uuidProfile: serializer.fromJson<String>(json['uuidProfile']),
+      title: serializer.fromJson<String>(json['title']),
+      body: serializer.fromJson<String>(json['body']),
+      category: serializer.fromJson<String>(json['category']),
+      actionType: serializer.fromJson<String>(json['actionType']),
+      actionPayloadJson: serializer.fromJson<String>(json['actionPayloadJson']),
+      readAt: serializer.fromJson<DateTime?>(json['readAt']),
+      openedAt: serializer.fromJson<DateTime?>(json['openedAt']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'uuidNotificationInbox': serializer.toJson<String>(uuidNotificationInbox),
+      'uuidNotificationDispatch': serializer.toJson<String>(
+        uuidNotificationDispatch,
+      ),
+      'uuidProfile': serializer.toJson<String>(uuidProfile),
+      'title': serializer.toJson<String>(title),
+      'body': serializer.toJson<String>(body),
+      'category': serializer.toJson<String>(category),
+      'actionType': serializer.toJson<String>(actionType),
+      'actionPayloadJson': serializer.toJson<String>(actionPayloadJson),
+      'readAt': serializer.toJson<DateTime?>(readAt),
+      'openedAt': serializer.toJson<DateTime?>(openedAt),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
+    };
+  }
+
+  LocalNotificationInboxItem copyWith({
+    String? uuidNotificationInbox,
+    String? uuidNotificationDispatch,
+    String? uuidProfile,
+    String? title,
+    String? body,
+    String? category,
+    String? actionType,
+    String? actionPayloadJson,
+    Value<DateTime?> readAt = const Value.absent(),
+    Value<DateTime?> openedAt = const Value.absent(),
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
+    Value<DateTime?> syncedAt = const Value.absent(),
+  }) => LocalNotificationInboxItem(
+    uuidNotificationInbox: uuidNotificationInbox ?? this.uuidNotificationInbox,
+    uuidNotificationDispatch:
+        uuidNotificationDispatch ?? this.uuidNotificationDispatch,
+    uuidProfile: uuidProfile ?? this.uuidProfile,
+    title: title ?? this.title,
+    body: body ?? this.body,
+    category: category ?? this.category,
+    actionType: actionType ?? this.actionType,
+    actionPayloadJson: actionPayloadJson ?? this.actionPayloadJson,
+    readAt: readAt.present ? readAt.value : this.readAt,
+    openedAt: openedAt.present ? openedAt.value : this.openedAt,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+  );
+  LocalNotificationInboxItem copyWithCompanion(
+    NotificationsInboxTableCompanion data,
+  ) {
+    return LocalNotificationInboxItem(
+      uuidNotificationInbox: data.uuidNotificationInbox.present
+          ? data.uuidNotificationInbox.value
+          : this.uuidNotificationInbox,
+      uuidNotificationDispatch: data.uuidNotificationDispatch.present
+          ? data.uuidNotificationDispatch.value
+          : this.uuidNotificationDispatch,
+      uuidProfile: data.uuidProfile.present
+          ? data.uuidProfile.value
+          : this.uuidProfile,
+      title: data.title.present ? data.title.value : this.title,
+      body: data.body.present ? data.body.value : this.body,
+      category: data.category.present ? data.category.value : this.category,
+      actionType: data.actionType.present
+          ? data.actionType.value
+          : this.actionType,
+      actionPayloadJson: data.actionPayloadJson.present
+          ? data.actionPayloadJson.value
+          : this.actionPayloadJson,
+      readAt: data.readAt.present ? data.readAt.value : this.readAt,
+      openedAt: data.openedAt.present ? data.openedAt.value : this.openedAt,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalNotificationInboxItem(')
+          ..write('uuidNotificationInbox: $uuidNotificationInbox, ')
+          ..write('uuidNotificationDispatch: $uuidNotificationDispatch, ')
+          ..write('uuidProfile: $uuidProfile, ')
+          ..write('title: $title, ')
+          ..write('body: $body, ')
+          ..write('category: $category, ')
+          ..write('actionType: $actionType, ')
+          ..write('actionPayloadJson: $actionPayloadJson, ')
+          ..write('readAt: $readAt, ')
+          ..write('openedAt: $openedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('syncedAt: $syncedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    uuidNotificationInbox,
+    uuidNotificationDispatch,
+    uuidProfile,
+    title,
+    body,
+    category,
+    actionType,
+    actionPayloadJson,
+    readAt,
+    openedAt,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    syncedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalNotificationInboxItem &&
+          other.uuidNotificationInbox == this.uuidNotificationInbox &&
+          other.uuidNotificationDispatch == this.uuidNotificationDispatch &&
+          other.uuidProfile == this.uuidProfile &&
+          other.title == this.title &&
+          other.body == this.body &&
+          other.category == this.category &&
+          other.actionType == this.actionType &&
+          other.actionPayloadJson == this.actionPayloadJson &&
+          other.readAt == this.readAt &&
+          other.openedAt == this.openedAt &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.syncedAt == this.syncedAt);
+}
+
+class NotificationsInboxTableCompanion
+    extends UpdateCompanion<LocalNotificationInboxItem> {
+  final Value<String> uuidNotificationInbox;
+  final Value<String> uuidNotificationDispatch;
+  final Value<String> uuidProfile;
+  final Value<String> title;
+  final Value<String> body;
+  final Value<String> category;
+  final Value<String> actionType;
+  final Value<String> actionPayloadJson;
+  final Value<DateTime?> readAt;
+  final Value<DateTime?> openedAt;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
+  final Value<DateTime?> syncedAt;
+  final Value<int> rowid;
+  const NotificationsInboxTableCompanion({
+    this.uuidNotificationInbox = const Value.absent(),
+    this.uuidNotificationDispatch = const Value.absent(),
+    this.uuidProfile = const Value.absent(),
+    this.title = const Value.absent(),
+    this.body = const Value.absent(),
+    this.category = const Value.absent(),
+    this.actionType = const Value.absent(),
+    this.actionPayloadJson = const Value.absent(),
+    this.readAt = const Value.absent(),
+    this.openedAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  NotificationsInboxTableCompanion.insert({
+    required String uuidNotificationInbox,
+    required String uuidNotificationDispatch,
+    required String uuidProfile,
+    required String title,
+    required String body,
+    required String category,
+    required String actionType,
+    this.actionPayloadJson = const Value.absent(),
+    this.readAt = const Value.absent(),
+    this.openedAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : uuidNotificationInbox = Value(uuidNotificationInbox),
+       uuidNotificationDispatch = Value(uuidNotificationDispatch),
+       uuidProfile = Value(uuidProfile),
+       title = Value(title),
+       body = Value(body),
+       category = Value(category),
+       actionType = Value(actionType);
+  static Insertable<LocalNotificationInboxItem> custom({
+    Expression<String>? uuidNotificationInbox,
+    Expression<String>? uuidNotificationDispatch,
+    Expression<String>? uuidProfile,
+    Expression<String>? title,
+    Expression<String>? body,
+    Expression<String>? category,
+    Expression<String>? actionType,
+    Expression<String>? actionPayloadJson,
+    Expression<DateTime>? readAt,
+    Expression<DateTime>? openedAt,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
+    Expression<DateTime>? syncedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (uuidNotificationInbox != null)
+        'uuid_notification_inbox': uuidNotificationInbox,
+      if (uuidNotificationDispatch != null)
+        'uuid_notification_dispatch': uuidNotificationDispatch,
+      if (uuidProfile != null) 'uuid_profile': uuidProfile,
+      if (title != null) 'title': title,
+      if (body != null) 'body': body,
+      if (category != null) 'category': category,
+      if (actionType != null) 'action_type': actionType,
+      if (actionPayloadJson != null) 'action_payload': actionPayloadJson,
+      if (readAt != null) 'read_at': readAt,
+      if (openedAt != null) 'opened_at': openedAt,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (syncedAt != null) 'synced_at': syncedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  NotificationsInboxTableCompanion copyWith({
+    Value<String>? uuidNotificationInbox,
+    Value<String>? uuidNotificationDispatch,
+    Value<String>? uuidProfile,
+    Value<String>? title,
+    Value<String>? body,
+    Value<String>? category,
+    Value<String>? actionType,
+    Value<String>? actionPayloadJson,
+    Value<DateTime?>? readAt,
+    Value<DateTime?>? openedAt,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
+    Value<DateTime?>? syncedAt,
+    Value<int>? rowid,
+  }) {
+    return NotificationsInboxTableCompanion(
+      uuidNotificationInbox:
+          uuidNotificationInbox ?? this.uuidNotificationInbox,
+      uuidNotificationDispatch:
+          uuidNotificationDispatch ?? this.uuidNotificationDispatch,
+      uuidProfile: uuidProfile ?? this.uuidProfile,
+      title: title ?? this.title,
+      body: body ?? this.body,
+      category: category ?? this.category,
+      actionType: actionType ?? this.actionType,
+      actionPayloadJson: actionPayloadJson ?? this.actionPayloadJson,
+      readAt: readAt ?? this.readAt,
+      openedAt: openedAt ?? this.openedAt,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      syncedAt: syncedAt ?? this.syncedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (uuidNotificationInbox.present) {
+      map['uuid_notification_inbox'] = Variable<String>(
+        uuidNotificationInbox.value,
+      );
+    }
+    if (uuidNotificationDispatch.present) {
+      map['uuid_notification_dispatch'] = Variable<String>(
+        uuidNotificationDispatch.value,
+      );
+    }
+    if (uuidProfile.present) {
+      map['uuid_profile'] = Variable<String>(uuidProfile.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (body.present) {
+      map['body'] = Variable<String>(body.value);
+    }
+    if (category.present) {
+      map['category'] = Variable<String>(category.value);
+    }
+    if (actionType.present) {
+      map['action_type'] = Variable<String>(actionType.value);
+    }
+    if (actionPayloadJson.present) {
+      map['action_payload'] = Variable<String>(actionPayloadJson.value);
+    }
+    if (readAt.present) {
+      map['read_at'] = Variable<DateTime>(readAt.value);
+    }
+    if (openedAt.present) {
+      map['opened_at'] = Variable<DateTime>(openedAt.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NotificationsInboxTableCompanion(')
+          ..write('uuidNotificationInbox: $uuidNotificationInbox, ')
+          ..write('uuidNotificationDispatch: $uuidNotificationDispatch, ')
+          ..write('uuidProfile: $uuidProfile, ')
+          ..write('title: $title, ')
+          ..write('body: $body, ')
+          ..write('category: $category, ')
+          ..write('actionType: $actionType, ')
+          ..write('actionPayloadJson: $actionPayloadJson, ')
+          ..write('readAt: $readAt, ')
+          ..write('openedAt: $openedAt, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('deletedAt: $deletedAt, ')
@@ -6018,10 +11319,20 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $CompanyInfoTableTable companyInfoTable = $CompanyInfoTableTable(
     this,
   );
+  late final $ContentDownloadsTableTable contentDownloadsTable =
+      $ContentDownloadsTableTable(this);
   late final $ContentItemsTableTable contentItemsTable =
       $ContentItemsTableTable(this);
   late final $ContentMediaTableTable contentMediaTable =
       $ContentMediaTableTable(this);
+  late final $NotificationDevicesTableTable notificationDevicesTable =
+      $NotificationDevicesTableTable(this);
+  late final $NotificationEventsTableTable notificationEventsTable =
+      $NotificationEventsTableTable(this);
+  late final $NotificationDispatchesTableTable notificationDispatchesTable =
+      $NotificationDispatchesTableTable(this);
+  late final $NotificationsInboxTableTable notificationsInboxTable =
+      $NotificationsInboxTableTable(this);
   late final $UserContentStatesTableTable userContentStatesTable =
       $UserContentStatesTableTable(this);
   late final $WellnessDailyLogsTableTable wellnessDailyLogsTable =
@@ -6035,8 +11346,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     profilesTable,
     companyInfoTable,
+    contentDownloadsTable,
     contentItemsTable,
     contentMediaTable,
+    notificationDevicesTable,
+    notificationEventsTable,
+    notificationDispatchesTable,
+    notificationsInboxTable,
     userContentStatesTable,
     wellnessDailyLogsTable,
     wellnessProfileStatsTable,
@@ -6972,6 +12288,397 @@ typedef $$CompanyInfoTableTableProcessedTableManager =
       LocalCompanyInfo,
       PrefetchHooks Function()
     >;
+typedef $$ContentDownloadsTableTableCreateCompanionBuilder =
+    ContentDownloadsTableCompanion Function({
+      required String uuidContentDownload,
+      required String uuidProfile,
+      required String uuidContentItem,
+      required String uuidContentMedia,
+      required String storagePathSupabase,
+      Value<String?> storagePathLocal,
+      Value<String> status,
+      Value<int> bytesDownloaded,
+      Value<int> totalBytes,
+      Value<DateTime?> downloadedAt,
+      Value<DateTime?> accessExpiresAt,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+typedef $$ContentDownloadsTableTableUpdateCompanionBuilder =
+    ContentDownloadsTableCompanion Function({
+      Value<String> uuidContentDownload,
+      Value<String> uuidProfile,
+      Value<String> uuidContentItem,
+      Value<String> uuidContentMedia,
+      Value<String> storagePathSupabase,
+      Value<String?> storagePathLocal,
+      Value<String> status,
+      Value<int> bytesDownloaded,
+      Value<int> totalBytes,
+      Value<DateTime?> downloadedAt,
+      Value<DateTime?> accessExpiresAt,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$ContentDownloadsTableTableFilterComposer
+    extends Composer<_$AppDatabase, $ContentDownloadsTableTable> {
+  $$ContentDownloadsTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get uuidContentDownload => $composableBuilder(
+    column: $table.uuidContentDownload,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get uuidProfile => $composableBuilder(
+    column: $table.uuidProfile,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get uuidContentItem => $composableBuilder(
+    column: $table.uuidContentItem,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get uuidContentMedia => $composableBuilder(
+    column: $table.uuidContentMedia,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get storagePathSupabase => $composableBuilder(
+    column: $table.storagePathSupabase,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get storagePathLocal => $composableBuilder(
+    column: $table.storagePathLocal,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get bytesDownloaded => $composableBuilder(
+    column: $table.bytesDownloaded,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get totalBytes => $composableBuilder(
+    column: $table.totalBytes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get downloadedAt => $composableBuilder(
+    column: $table.downloadedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get accessExpiresAt => $composableBuilder(
+    column: $table.accessExpiresAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ContentDownloadsTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $ContentDownloadsTableTable> {
+  $$ContentDownloadsTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get uuidContentDownload => $composableBuilder(
+    column: $table.uuidContentDownload,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get uuidProfile => $composableBuilder(
+    column: $table.uuidProfile,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get uuidContentItem => $composableBuilder(
+    column: $table.uuidContentItem,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get uuidContentMedia => $composableBuilder(
+    column: $table.uuidContentMedia,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get storagePathSupabase => $composableBuilder(
+    column: $table.storagePathSupabase,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get storagePathLocal => $composableBuilder(
+    column: $table.storagePathLocal,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get bytesDownloaded => $composableBuilder(
+    column: $table.bytesDownloaded,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get totalBytes => $composableBuilder(
+    column: $table.totalBytes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get downloadedAt => $composableBuilder(
+    column: $table.downloadedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get accessExpiresAt => $composableBuilder(
+    column: $table.accessExpiresAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ContentDownloadsTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ContentDownloadsTableTable> {
+  $$ContentDownloadsTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get uuidContentDownload => $composableBuilder(
+    column: $table.uuidContentDownload,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get uuidProfile => $composableBuilder(
+    column: $table.uuidProfile,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get uuidContentItem => $composableBuilder(
+    column: $table.uuidContentItem,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get uuidContentMedia => $composableBuilder(
+    column: $table.uuidContentMedia,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get storagePathSupabase => $composableBuilder(
+    column: $table.storagePathSupabase,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get storagePathLocal => $composableBuilder(
+    column: $table.storagePathLocal,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<int> get bytesDownloaded => $composableBuilder(
+    column: $table.bytesDownloaded,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get totalBytes => $composableBuilder(
+    column: $table.totalBytes,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get downloadedAt => $composableBuilder(
+    column: $table.downloadedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get accessExpiresAt => $composableBuilder(
+    column: $table.accessExpiresAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$ContentDownloadsTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ContentDownloadsTableTable,
+          LocalContentDownload,
+          $$ContentDownloadsTableTableFilterComposer,
+          $$ContentDownloadsTableTableOrderingComposer,
+          $$ContentDownloadsTableTableAnnotationComposer,
+          $$ContentDownloadsTableTableCreateCompanionBuilder,
+          $$ContentDownloadsTableTableUpdateCompanionBuilder,
+          (
+            LocalContentDownload,
+            BaseReferences<
+              _$AppDatabase,
+              $ContentDownloadsTableTable,
+              LocalContentDownload
+            >,
+          ),
+          LocalContentDownload,
+          PrefetchHooks Function()
+        > {
+  $$ContentDownloadsTableTableTableManager(
+    _$AppDatabase db,
+    $ContentDownloadsTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ContentDownloadsTableTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$ContentDownloadsTableTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$ContentDownloadsTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> uuidContentDownload = const Value.absent(),
+                Value<String> uuidProfile = const Value.absent(),
+                Value<String> uuidContentItem = const Value.absent(),
+                Value<String> uuidContentMedia = const Value.absent(),
+                Value<String> storagePathSupabase = const Value.absent(),
+                Value<String?> storagePathLocal = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<int> bytesDownloaded = const Value.absent(),
+                Value<int> totalBytes = const Value.absent(),
+                Value<DateTime?> downloadedAt = const Value.absent(),
+                Value<DateTime?> accessExpiresAt = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ContentDownloadsTableCompanion(
+                uuidContentDownload: uuidContentDownload,
+                uuidProfile: uuidProfile,
+                uuidContentItem: uuidContentItem,
+                uuidContentMedia: uuidContentMedia,
+                storagePathSupabase: storagePathSupabase,
+                storagePathLocal: storagePathLocal,
+                status: status,
+                bytesDownloaded: bytesDownloaded,
+                totalBytes: totalBytes,
+                downloadedAt: downloadedAt,
+                accessExpiresAt: accessExpiresAt,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String uuidContentDownload,
+                required String uuidProfile,
+                required String uuidContentItem,
+                required String uuidContentMedia,
+                required String storagePathSupabase,
+                Value<String?> storagePathLocal = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<int> bytesDownloaded = const Value.absent(),
+                Value<int> totalBytes = const Value.absent(),
+                Value<DateTime?> downloadedAt = const Value.absent(),
+                Value<DateTime?> accessExpiresAt = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ContentDownloadsTableCompanion.insert(
+                uuidContentDownload: uuidContentDownload,
+                uuidProfile: uuidProfile,
+                uuidContentItem: uuidContentItem,
+                uuidContentMedia: uuidContentMedia,
+                storagePathSupabase: storagePathSupabase,
+                storagePathLocal: storagePathLocal,
+                status: status,
+                bytesDownloaded: bytesDownloaded,
+                totalBytes: totalBytes,
+                downloadedAt: downloadedAt,
+                accessExpiresAt: accessExpiresAt,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ContentDownloadsTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ContentDownloadsTableTable,
+      LocalContentDownload,
+      $$ContentDownloadsTableTableFilterComposer,
+      $$ContentDownloadsTableTableOrderingComposer,
+      $$ContentDownloadsTableTableAnnotationComposer,
+      $$ContentDownloadsTableTableCreateCompanionBuilder,
+      $$ContentDownloadsTableTableUpdateCompanionBuilder,
+      (
+        LocalContentDownload,
+        BaseReferences<
+          _$AppDatabase,
+          $ContentDownloadsTableTable,
+          LocalContentDownload
+        >,
+      ),
+      LocalContentDownload,
+      PrefetchHooks Function()
+    >;
 typedef $$ContentItemsTableTableCreateCompanionBuilder =
     ContentItemsTableCompanion Function({
       required String uuidContentItem,
@@ -7779,6 +13486,2013 @@ typedef $$ContentMediaTableTableProcessedTableManager =
         >,
       ),
       LocalContentMedia,
+      PrefetchHooks Function()
+    >;
+typedef $$NotificationDevicesTableTableCreateCompanionBuilder =
+    NotificationDevicesTableCompanion Function({
+      required String uuidNotificationDevice,
+      required String uuidProfile,
+      required String installationId,
+      Value<String?> fcmToken,
+      required String platform,
+      Value<String> permissionStatus,
+      Value<String?> appVersion,
+      Value<String?> timeZone,
+      Value<bool> isActive,
+      Value<DateTime?> registrationRefreshedAt,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<DateTime?> syncedAt,
+      Value<int> rowid,
+    });
+typedef $$NotificationDevicesTableTableUpdateCompanionBuilder =
+    NotificationDevicesTableCompanion Function({
+      Value<String> uuidNotificationDevice,
+      Value<String> uuidProfile,
+      Value<String> installationId,
+      Value<String?> fcmToken,
+      Value<String> platform,
+      Value<String> permissionStatus,
+      Value<String?> appVersion,
+      Value<String?> timeZone,
+      Value<bool> isActive,
+      Value<DateTime?> registrationRefreshedAt,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<DateTime?> syncedAt,
+      Value<int> rowid,
+    });
+
+class $$NotificationDevicesTableTableFilterComposer
+    extends Composer<_$AppDatabase, $NotificationDevicesTableTable> {
+  $$NotificationDevicesTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get uuidNotificationDevice => $composableBuilder(
+    column: $table.uuidNotificationDevice,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get uuidProfile => $composableBuilder(
+    column: $table.uuidProfile,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get installationId => $composableBuilder(
+    column: $table.installationId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get fcmToken => $composableBuilder(
+    column: $table.fcmToken,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get platform => $composableBuilder(
+    column: $table.platform,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get permissionStatus => $composableBuilder(
+    column: $table.permissionStatus,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get appVersion => $composableBuilder(
+    column: $table.appVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get timeZone => $composableBuilder(
+    column: $table.timeZone,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get registrationRefreshedAt => $composableBuilder(
+    column: $table.registrationRefreshedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$NotificationDevicesTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $NotificationDevicesTableTable> {
+  $$NotificationDevicesTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get uuidNotificationDevice => $composableBuilder(
+    column: $table.uuidNotificationDevice,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get uuidProfile => $composableBuilder(
+    column: $table.uuidProfile,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get installationId => $composableBuilder(
+    column: $table.installationId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get fcmToken => $composableBuilder(
+    column: $table.fcmToken,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get platform => $composableBuilder(
+    column: $table.platform,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get permissionStatus => $composableBuilder(
+    column: $table.permissionStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get appVersion => $composableBuilder(
+    column: $table.appVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get timeZone => $composableBuilder(
+    column: $table.timeZone,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get registrationRefreshedAt => $composableBuilder(
+    column: $table.registrationRefreshedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$NotificationDevicesTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $NotificationDevicesTableTable> {
+  $$NotificationDevicesTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get uuidNotificationDevice => $composableBuilder(
+    column: $table.uuidNotificationDevice,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get uuidProfile => $composableBuilder(
+    column: $table.uuidProfile,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get installationId => $composableBuilder(
+    column: $table.installationId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get fcmToken =>
+      $composableBuilder(column: $table.fcmToken, builder: (column) => column);
+
+  GeneratedColumn<String> get platform =>
+      $composableBuilder(column: $table.platform, builder: (column) => column);
+
+  GeneratedColumn<String> get permissionStatus => $composableBuilder(
+    column: $table.permissionStatus,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get appVersion => $composableBuilder(
+    column: $table.appVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get timeZone =>
+      $composableBuilder(column: $table.timeZone, builder: (column) => column);
+
+  GeneratedColumn<bool> get isActive =>
+      $composableBuilder(column: $table.isActive, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get registrationRefreshedAt => $composableBuilder(
+    column: $table.registrationRefreshedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+}
+
+class $$NotificationDevicesTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $NotificationDevicesTableTable,
+          LocalNotificationDevice,
+          $$NotificationDevicesTableTableFilterComposer,
+          $$NotificationDevicesTableTableOrderingComposer,
+          $$NotificationDevicesTableTableAnnotationComposer,
+          $$NotificationDevicesTableTableCreateCompanionBuilder,
+          $$NotificationDevicesTableTableUpdateCompanionBuilder,
+          (
+            LocalNotificationDevice,
+            BaseReferences<
+              _$AppDatabase,
+              $NotificationDevicesTableTable,
+              LocalNotificationDevice
+            >,
+          ),
+          LocalNotificationDevice,
+          PrefetchHooks Function()
+        > {
+  $$NotificationDevicesTableTableTableManager(
+    _$AppDatabase db,
+    $NotificationDevicesTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$NotificationDevicesTableTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$NotificationDevicesTableTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$NotificationDevicesTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> uuidNotificationDevice = const Value.absent(),
+                Value<String> uuidProfile = const Value.absent(),
+                Value<String> installationId = const Value.absent(),
+                Value<String?> fcmToken = const Value.absent(),
+                Value<String> platform = const Value.absent(),
+                Value<String> permissionStatus = const Value.absent(),
+                Value<String?> appVersion = const Value.absent(),
+                Value<String?> timeZone = const Value.absent(),
+                Value<bool> isActive = const Value.absent(),
+                Value<DateTime?> registrationRefreshedAt = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => NotificationDevicesTableCompanion(
+                uuidNotificationDevice: uuidNotificationDevice,
+                uuidProfile: uuidProfile,
+                installationId: installationId,
+                fcmToken: fcmToken,
+                platform: platform,
+                permissionStatus: permissionStatus,
+                appVersion: appVersion,
+                timeZone: timeZone,
+                isActive: isActive,
+                registrationRefreshedAt: registrationRefreshedAt,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String uuidNotificationDevice,
+                required String uuidProfile,
+                required String installationId,
+                Value<String?> fcmToken = const Value.absent(),
+                required String platform,
+                Value<String> permissionStatus = const Value.absent(),
+                Value<String?> appVersion = const Value.absent(),
+                Value<String?> timeZone = const Value.absent(),
+                Value<bool> isActive = const Value.absent(),
+                Value<DateTime?> registrationRefreshedAt = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => NotificationDevicesTableCompanion.insert(
+                uuidNotificationDevice: uuidNotificationDevice,
+                uuidProfile: uuidProfile,
+                installationId: installationId,
+                fcmToken: fcmToken,
+                platform: platform,
+                permissionStatus: permissionStatus,
+                appVersion: appVersion,
+                timeZone: timeZone,
+                isActive: isActive,
+                registrationRefreshedAt: registrationRefreshedAt,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$NotificationDevicesTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $NotificationDevicesTableTable,
+      LocalNotificationDevice,
+      $$NotificationDevicesTableTableFilterComposer,
+      $$NotificationDevicesTableTableOrderingComposer,
+      $$NotificationDevicesTableTableAnnotationComposer,
+      $$NotificationDevicesTableTableCreateCompanionBuilder,
+      $$NotificationDevicesTableTableUpdateCompanionBuilder,
+      (
+        LocalNotificationDevice,
+        BaseReferences<
+          _$AppDatabase,
+          $NotificationDevicesTableTable,
+          LocalNotificationDevice
+        >,
+      ),
+      LocalNotificationDevice,
+      PrefetchHooks Function()
+    >;
+typedef $$NotificationEventsTableTableCreateCompanionBuilder =
+    NotificationEventsTableCompanion Function({
+      required String uuidNotificationEvent,
+      required String name,
+      required String category,
+      required String titleTemplate,
+      required String bodyTemplate,
+      required String triggerType,
+      Value<String?> triggerKey,
+      required String executionMode,
+      required String audienceType,
+      required String actionType,
+      Value<String> actionPayloadTemplateJson,
+      Value<String> triggerConfigJson,
+      Value<DateTime> startsAt,
+      Value<DateTime?> endsAt,
+      Value<String> status,
+      Value<String?> uuidCreatedByProfile,
+      Value<String?> uuidUpdatedByProfile,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<DateTime?> syncedAt,
+      Value<int> rowid,
+    });
+typedef $$NotificationEventsTableTableUpdateCompanionBuilder =
+    NotificationEventsTableCompanion Function({
+      Value<String> uuidNotificationEvent,
+      Value<String> name,
+      Value<String> category,
+      Value<String> titleTemplate,
+      Value<String> bodyTemplate,
+      Value<String> triggerType,
+      Value<String?> triggerKey,
+      Value<String> executionMode,
+      Value<String> audienceType,
+      Value<String> actionType,
+      Value<String> actionPayloadTemplateJson,
+      Value<String> triggerConfigJson,
+      Value<DateTime> startsAt,
+      Value<DateTime?> endsAt,
+      Value<String> status,
+      Value<String?> uuidCreatedByProfile,
+      Value<String?> uuidUpdatedByProfile,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<DateTime?> syncedAt,
+      Value<int> rowid,
+    });
+
+class $$NotificationEventsTableTableFilterComposer
+    extends Composer<_$AppDatabase, $NotificationEventsTableTable> {
+  $$NotificationEventsTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get uuidNotificationEvent => $composableBuilder(
+    column: $table.uuidNotificationEvent,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get category => $composableBuilder(
+    column: $table.category,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get titleTemplate => $composableBuilder(
+    column: $table.titleTemplate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get bodyTemplate => $composableBuilder(
+    column: $table.bodyTemplate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get triggerType => $composableBuilder(
+    column: $table.triggerType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get triggerKey => $composableBuilder(
+    column: $table.triggerKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get executionMode => $composableBuilder(
+    column: $table.executionMode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get audienceType => $composableBuilder(
+    column: $table.audienceType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get actionType => $composableBuilder(
+    column: $table.actionType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get actionPayloadTemplateJson => $composableBuilder(
+    column: $table.actionPayloadTemplateJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get triggerConfigJson => $composableBuilder(
+    column: $table.triggerConfigJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get startsAt => $composableBuilder(
+    column: $table.startsAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get endsAt => $composableBuilder(
+    column: $table.endsAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get uuidCreatedByProfile => $composableBuilder(
+    column: $table.uuidCreatedByProfile,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get uuidUpdatedByProfile => $composableBuilder(
+    column: $table.uuidUpdatedByProfile,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$NotificationEventsTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $NotificationEventsTableTable> {
+  $$NotificationEventsTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get uuidNotificationEvent => $composableBuilder(
+    column: $table.uuidNotificationEvent,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get category => $composableBuilder(
+    column: $table.category,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get titleTemplate => $composableBuilder(
+    column: $table.titleTemplate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get bodyTemplate => $composableBuilder(
+    column: $table.bodyTemplate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get triggerType => $composableBuilder(
+    column: $table.triggerType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get triggerKey => $composableBuilder(
+    column: $table.triggerKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get executionMode => $composableBuilder(
+    column: $table.executionMode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get audienceType => $composableBuilder(
+    column: $table.audienceType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get actionType => $composableBuilder(
+    column: $table.actionType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get actionPayloadTemplateJson => $composableBuilder(
+    column: $table.actionPayloadTemplateJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get triggerConfigJson => $composableBuilder(
+    column: $table.triggerConfigJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get startsAt => $composableBuilder(
+    column: $table.startsAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get endsAt => $composableBuilder(
+    column: $table.endsAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get uuidCreatedByProfile => $composableBuilder(
+    column: $table.uuidCreatedByProfile,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get uuidUpdatedByProfile => $composableBuilder(
+    column: $table.uuidUpdatedByProfile,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$NotificationEventsTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $NotificationEventsTableTable> {
+  $$NotificationEventsTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get uuidNotificationEvent => $composableBuilder(
+    column: $table.uuidNotificationEvent,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get category =>
+      $composableBuilder(column: $table.category, builder: (column) => column);
+
+  GeneratedColumn<String> get titleTemplate => $composableBuilder(
+    column: $table.titleTemplate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get bodyTemplate => $composableBuilder(
+    column: $table.bodyTemplate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get triggerType => $composableBuilder(
+    column: $table.triggerType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get triggerKey => $composableBuilder(
+    column: $table.triggerKey,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get executionMode => $composableBuilder(
+    column: $table.executionMode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get audienceType => $composableBuilder(
+    column: $table.audienceType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get actionType => $composableBuilder(
+    column: $table.actionType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get actionPayloadTemplateJson => $composableBuilder(
+    column: $table.actionPayloadTemplateJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get triggerConfigJson => $composableBuilder(
+    column: $table.triggerConfigJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get startsAt =>
+      $composableBuilder(column: $table.startsAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get endsAt =>
+      $composableBuilder(column: $table.endsAt, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get uuidCreatedByProfile => $composableBuilder(
+    column: $table.uuidCreatedByProfile,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get uuidUpdatedByProfile => $composableBuilder(
+    column: $table.uuidUpdatedByProfile,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+}
+
+class $$NotificationEventsTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $NotificationEventsTableTable,
+          LocalNotificationEvent,
+          $$NotificationEventsTableTableFilterComposer,
+          $$NotificationEventsTableTableOrderingComposer,
+          $$NotificationEventsTableTableAnnotationComposer,
+          $$NotificationEventsTableTableCreateCompanionBuilder,
+          $$NotificationEventsTableTableUpdateCompanionBuilder,
+          (
+            LocalNotificationEvent,
+            BaseReferences<
+              _$AppDatabase,
+              $NotificationEventsTableTable,
+              LocalNotificationEvent
+            >,
+          ),
+          LocalNotificationEvent,
+          PrefetchHooks Function()
+        > {
+  $$NotificationEventsTableTableTableManager(
+    _$AppDatabase db,
+    $NotificationEventsTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$NotificationEventsTableTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$NotificationEventsTableTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$NotificationEventsTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> uuidNotificationEvent = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> category = const Value.absent(),
+                Value<String> titleTemplate = const Value.absent(),
+                Value<String> bodyTemplate = const Value.absent(),
+                Value<String> triggerType = const Value.absent(),
+                Value<String?> triggerKey = const Value.absent(),
+                Value<String> executionMode = const Value.absent(),
+                Value<String> audienceType = const Value.absent(),
+                Value<String> actionType = const Value.absent(),
+                Value<String> actionPayloadTemplateJson = const Value.absent(),
+                Value<String> triggerConfigJson = const Value.absent(),
+                Value<DateTime> startsAt = const Value.absent(),
+                Value<DateTime?> endsAt = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> uuidCreatedByProfile = const Value.absent(),
+                Value<String?> uuidUpdatedByProfile = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => NotificationEventsTableCompanion(
+                uuidNotificationEvent: uuidNotificationEvent,
+                name: name,
+                category: category,
+                titleTemplate: titleTemplate,
+                bodyTemplate: bodyTemplate,
+                triggerType: triggerType,
+                triggerKey: triggerKey,
+                executionMode: executionMode,
+                audienceType: audienceType,
+                actionType: actionType,
+                actionPayloadTemplateJson: actionPayloadTemplateJson,
+                triggerConfigJson: triggerConfigJson,
+                startsAt: startsAt,
+                endsAt: endsAt,
+                status: status,
+                uuidCreatedByProfile: uuidCreatedByProfile,
+                uuidUpdatedByProfile: uuidUpdatedByProfile,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String uuidNotificationEvent,
+                required String name,
+                required String category,
+                required String titleTemplate,
+                required String bodyTemplate,
+                required String triggerType,
+                Value<String?> triggerKey = const Value.absent(),
+                required String executionMode,
+                required String audienceType,
+                required String actionType,
+                Value<String> actionPayloadTemplateJson = const Value.absent(),
+                Value<String> triggerConfigJson = const Value.absent(),
+                Value<DateTime> startsAt = const Value.absent(),
+                Value<DateTime?> endsAt = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> uuidCreatedByProfile = const Value.absent(),
+                Value<String?> uuidUpdatedByProfile = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => NotificationEventsTableCompanion.insert(
+                uuidNotificationEvent: uuidNotificationEvent,
+                name: name,
+                category: category,
+                titleTemplate: titleTemplate,
+                bodyTemplate: bodyTemplate,
+                triggerType: triggerType,
+                triggerKey: triggerKey,
+                executionMode: executionMode,
+                audienceType: audienceType,
+                actionType: actionType,
+                actionPayloadTemplateJson: actionPayloadTemplateJson,
+                triggerConfigJson: triggerConfigJson,
+                startsAt: startsAt,
+                endsAt: endsAt,
+                status: status,
+                uuidCreatedByProfile: uuidCreatedByProfile,
+                uuidUpdatedByProfile: uuidUpdatedByProfile,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$NotificationEventsTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $NotificationEventsTableTable,
+      LocalNotificationEvent,
+      $$NotificationEventsTableTableFilterComposer,
+      $$NotificationEventsTableTableOrderingComposer,
+      $$NotificationEventsTableTableAnnotationComposer,
+      $$NotificationEventsTableTableCreateCompanionBuilder,
+      $$NotificationEventsTableTableUpdateCompanionBuilder,
+      (
+        LocalNotificationEvent,
+        BaseReferences<
+          _$AppDatabase,
+          $NotificationEventsTableTable,
+          LocalNotificationEvent
+        >,
+      ),
+      LocalNotificationEvent,
+      PrefetchHooks Function()
+    >;
+typedef $$NotificationDispatchesTableTableCreateCompanionBuilder =
+    NotificationDispatchesTableCompanion Function({
+      required String uuidNotificationDispatch,
+      required String uuidNotificationEvent,
+      required String triggerSource,
+      Value<String?> uuidTriggeredByProfile,
+      Value<String?> sourceEntityType,
+      Value<String?> sourceEntityUuid,
+      required String idempotencyKey,
+      required String titleSnapshot,
+      required String bodySnapshot,
+      required String categorySnapshot,
+      required String audienceTypeSnapshot,
+      required String actionTypeSnapshot,
+      Value<String> actionPayloadSnapshotJson,
+      Value<String> status,
+      Value<int> targetProfileCount,
+      Value<int> targetDeviceCount,
+      Value<int> successDeviceCount,
+      Value<int> failureDeviceCount,
+      Value<int> invalidTokenCount,
+      Value<DateTime?> startedAt,
+      Value<DateTime?> completedAt,
+      Value<String?> errorSummary,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<DateTime?> syncedAt,
+      Value<int> rowid,
+    });
+typedef $$NotificationDispatchesTableTableUpdateCompanionBuilder =
+    NotificationDispatchesTableCompanion Function({
+      Value<String> uuidNotificationDispatch,
+      Value<String> uuidNotificationEvent,
+      Value<String> triggerSource,
+      Value<String?> uuidTriggeredByProfile,
+      Value<String?> sourceEntityType,
+      Value<String?> sourceEntityUuid,
+      Value<String> idempotencyKey,
+      Value<String> titleSnapshot,
+      Value<String> bodySnapshot,
+      Value<String> categorySnapshot,
+      Value<String> audienceTypeSnapshot,
+      Value<String> actionTypeSnapshot,
+      Value<String> actionPayloadSnapshotJson,
+      Value<String> status,
+      Value<int> targetProfileCount,
+      Value<int> targetDeviceCount,
+      Value<int> successDeviceCount,
+      Value<int> failureDeviceCount,
+      Value<int> invalidTokenCount,
+      Value<DateTime?> startedAt,
+      Value<DateTime?> completedAt,
+      Value<String?> errorSummary,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<DateTime?> syncedAt,
+      Value<int> rowid,
+    });
+
+class $$NotificationDispatchesTableTableFilterComposer
+    extends Composer<_$AppDatabase, $NotificationDispatchesTableTable> {
+  $$NotificationDispatchesTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get uuidNotificationDispatch => $composableBuilder(
+    column: $table.uuidNotificationDispatch,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get uuidNotificationEvent => $composableBuilder(
+    column: $table.uuidNotificationEvent,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get triggerSource => $composableBuilder(
+    column: $table.triggerSource,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get uuidTriggeredByProfile => $composableBuilder(
+    column: $table.uuidTriggeredByProfile,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sourceEntityType => $composableBuilder(
+    column: $table.sourceEntityType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sourceEntityUuid => $composableBuilder(
+    column: $table.sourceEntityUuid,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get titleSnapshot => $composableBuilder(
+    column: $table.titleSnapshot,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get bodySnapshot => $composableBuilder(
+    column: $table.bodySnapshot,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get categorySnapshot => $composableBuilder(
+    column: $table.categorySnapshot,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get audienceTypeSnapshot => $composableBuilder(
+    column: $table.audienceTypeSnapshot,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get actionTypeSnapshot => $composableBuilder(
+    column: $table.actionTypeSnapshot,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get actionPayloadSnapshotJson => $composableBuilder(
+    column: $table.actionPayloadSnapshotJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get targetProfileCount => $composableBuilder(
+    column: $table.targetProfileCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get targetDeviceCount => $composableBuilder(
+    column: $table.targetDeviceCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get successDeviceCount => $composableBuilder(
+    column: $table.successDeviceCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get failureDeviceCount => $composableBuilder(
+    column: $table.failureDeviceCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get invalidTokenCount => $composableBuilder(
+    column: $table.invalidTokenCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get startedAt => $composableBuilder(
+    column: $table.startedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get errorSummary => $composableBuilder(
+    column: $table.errorSummary,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$NotificationDispatchesTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $NotificationDispatchesTableTable> {
+  $$NotificationDispatchesTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get uuidNotificationDispatch => $composableBuilder(
+    column: $table.uuidNotificationDispatch,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get uuidNotificationEvent => $composableBuilder(
+    column: $table.uuidNotificationEvent,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get triggerSource => $composableBuilder(
+    column: $table.triggerSource,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get uuidTriggeredByProfile => $composableBuilder(
+    column: $table.uuidTriggeredByProfile,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get sourceEntityType => $composableBuilder(
+    column: $table.sourceEntityType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get sourceEntityUuid => $composableBuilder(
+    column: $table.sourceEntityUuid,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get titleSnapshot => $composableBuilder(
+    column: $table.titleSnapshot,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get bodySnapshot => $composableBuilder(
+    column: $table.bodySnapshot,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get categorySnapshot => $composableBuilder(
+    column: $table.categorySnapshot,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get audienceTypeSnapshot => $composableBuilder(
+    column: $table.audienceTypeSnapshot,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get actionTypeSnapshot => $composableBuilder(
+    column: $table.actionTypeSnapshot,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get actionPayloadSnapshotJson => $composableBuilder(
+    column: $table.actionPayloadSnapshotJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get targetProfileCount => $composableBuilder(
+    column: $table.targetProfileCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get targetDeviceCount => $composableBuilder(
+    column: $table.targetDeviceCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get successDeviceCount => $composableBuilder(
+    column: $table.successDeviceCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get failureDeviceCount => $composableBuilder(
+    column: $table.failureDeviceCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get invalidTokenCount => $composableBuilder(
+    column: $table.invalidTokenCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get startedAt => $composableBuilder(
+    column: $table.startedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get errorSummary => $composableBuilder(
+    column: $table.errorSummary,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$NotificationDispatchesTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $NotificationDispatchesTableTable> {
+  $$NotificationDispatchesTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get uuidNotificationDispatch => $composableBuilder(
+    column: $table.uuidNotificationDispatch,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get uuidNotificationEvent => $composableBuilder(
+    column: $table.uuidNotificationEvent,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get triggerSource => $composableBuilder(
+    column: $table.triggerSource,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get uuidTriggeredByProfile => $composableBuilder(
+    column: $table.uuidTriggeredByProfile,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get sourceEntityType => $composableBuilder(
+    column: $table.sourceEntityType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get sourceEntityUuid => $composableBuilder(
+    column: $table.sourceEntityUuid,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get titleSnapshot => $composableBuilder(
+    column: $table.titleSnapshot,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get bodySnapshot => $composableBuilder(
+    column: $table.bodySnapshot,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get categorySnapshot => $composableBuilder(
+    column: $table.categorySnapshot,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get audienceTypeSnapshot => $composableBuilder(
+    column: $table.audienceTypeSnapshot,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get actionTypeSnapshot => $composableBuilder(
+    column: $table.actionTypeSnapshot,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get actionPayloadSnapshotJson => $composableBuilder(
+    column: $table.actionPayloadSnapshotJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<int> get targetProfileCount => $composableBuilder(
+    column: $table.targetProfileCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get targetDeviceCount => $composableBuilder(
+    column: $table.targetDeviceCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get successDeviceCount => $composableBuilder(
+    column: $table.successDeviceCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get failureDeviceCount => $composableBuilder(
+    column: $table.failureDeviceCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get invalidTokenCount => $composableBuilder(
+    column: $table.invalidTokenCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get startedAt =>
+      $composableBuilder(column: $table.startedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get errorSummary => $composableBuilder(
+    column: $table.errorSummary,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+}
+
+class $$NotificationDispatchesTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $NotificationDispatchesTableTable,
+          LocalNotificationDispatch,
+          $$NotificationDispatchesTableTableFilterComposer,
+          $$NotificationDispatchesTableTableOrderingComposer,
+          $$NotificationDispatchesTableTableAnnotationComposer,
+          $$NotificationDispatchesTableTableCreateCompanionBuilder,
+          $$NotificationDispatchesTableTableUpdateCompanionBuilder,
+          (
+            LocalNotificationDispatch,
+            BaseReferences<
+              _$AppDatabase,
+              $NotificationDispatchesTableTable,
+              LocalNotificationDispatch
+            >,
+          ),
+          LocalNotificationDispatch,
+          PrefetchHooks Function()
+        > {
+  $$NotificationDispatchesTableTableTableManager(
+    _$AppDatabase db,
+    $NotificationDispatchesTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$NotificationDispatchesTableTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$NotificationDispatchesTableTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$NotificationDispatchesTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> uuidNotificationDispatch = const Value.absent(),
+                Value<String> uuidNotificationEvent = const Value.absent(),
+                Value<String> triggerSource = const Value.absent(),
+                Value<String?> uuidTriggeredByProfile = const Value.absent(),
+                Value<String?> sourceEntityType = const Value.absent(),
+                Value<String?> sourceEntityUuid = const Value.absent(),
+                Value<String> idempotencyKey = const Value.absent(),
+                Value<String> titleSnapshot = const Value.absent(),
+                Value<String> bodySnapshot = const Value.absent(),
+                Value<String> categorySnapshot = const Value.absent(),
+                Value<String> audienceTypeSnapshot = const Value.absent(),
+                Value<String> actionTypeSnapshot = const Value.absent(),
+                Value<String> actionPayloadSnapshotJson = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<int> targetProfileCount = const Value.absent(),
+                Value<int> targetDeviceCount = const Value.absent(),
+                Value<int> successDeviceCount = const Value.absent(),
+                Value<int> failureDeviceCount = const Value.absent(),
+                Value<int> invalidTokenCount = const Value.absent(),
+                Value<DateTime?> startedAt = const Value.absent(),
+                Value<DateTime?> completedAt = const Value.absent(),
+                Value<String?> errorSummary = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => NotificationDispatchesTableCompanion(
+                uuidNotificationDispatch: uuidNotificationDispatch,
+                uuidNotificationEvent: uuidNotificationEvent,
+                triggerSource: triggerSource,
+                uuidTriggeredByProfile: uuidTriggeredByProfile,
+                sourceEntityType: sourceEntityType,
+                sourceEntityUuid: sourceEntityUuid,
+                idempotencyKey: idempotencyKey,
+                titleSnapshot: titleSnapshot,
+                bodySnapshot: bodySnapshot,
+                categorySnapshot: categorySnapshot,
+                audienceTypeSnapshot: audienceTypeSnapshot,
+                actionTypeSnapshot: actionTypeSnapshot,
+                actionPayloadSnapshotJson: actionPayloadSnapshotJson,
+                status: status,
+                targetProfileCount: targetProfileCount,
+                targetDeviceCount: targetDeviceCount,
+                successDeviceCount: successDeviceCount,
+                failureDeviceCount: failureDeviceCount,
+                invalidTokenCount: invalidTokenCount,
+                startedAt: startedAt,
+                completedAt: completedAt,
+                errorSummary: errorSummary,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String uuidNotificationDispatch,
+                required String uuidNotificationEvent,
+                required String triggerSource,
+                Value<String?> uuidTriggeredByProfile = const Value.absent(),
+                Value<String?> sourceEntityType = const Value.absent(),
+                Value<String?> sourceEntityUuid = const Value.absent(),
+                required String idempotencyKey,
+                required String titleSnapshot,
+                required String bodySnapshot,
+                required String categorySnapshot,
+                required String audienceTypeSnapshot,
+                required String actionTypeSnapshot,
+                Value<String> actionPayloadSnapshotJson = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<int> targetProfileCount = const Value.absent(),
+                Value<int> targetDeviceCount = const Value.absent(),
+                Value<int> successDeviceCount = const Value.absent(),
+                Value<int> failureDeviceCount = const Value.absent(),
+                Value<int> invalidTokenCount = const Value.absent(),
+                Value<DateTime?> startedAt = const Value.absent(),
+                Value<DateTime?> completedAt = const Value.absent(),
+                Value<String?> errorSummary = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => NotificationDispatchesTableCompanion.insert(
+                uuidNotificationDispatch: uuidNotificationDispatch,
+                uuidNotificationEvent: uuidNotificationEvent,
+                triggerSource: triggerSource,
+                uuidTriggeredByProfile: uuidTriggeredByProfile,
+                sourceEntityType: sourceEntityType,
+                sourceEntityUuid: sourceEntityUuid,
+                idempotencyKey: idempotencyKey,
+                titleSnapshot: titleSnapshot,
+                bodySnapshot: bodySnapshot,
+                categorySnapshot: categorySnapshot,
+                audienceTypeSnapshot: audienceTypeSnapshot,
+                actionTypeSnapshot: actionTypeSnapshot,
+                actionPayloadSnapshotJson: actionPayloadSnapshotJson,
+                status: status,
+                targetProfileCount: targetProfileCount,
+                targetDeviceCount: targetDeviceCount,
+                successDeviceCount: successDeviceCount,
+                failureDeviceCount: failureDeviceCount,
+                invalidTokenCount: invalidTokenCount,
+                startedAt: startedAt,
+                completedAt: completedAt,
+                errorSummary: errorSummary,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$NotificationDispatchesTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $NotificationDispatchesTableTable,
+      LocalNotificationDispatch,
+      $$NotificationDispatchesTableTableFilterComposer,
+      $$NotificationDispatchesTableTableOrderingComposer,
+      $$NotificationDispatchesTableTableAnnotationComposer,
+      $$NotificationDispatchesTableTableCreateCompanionBuilder,
+      $$NotificationDispatchesTableTableUpdateCompanionBuilder,
+      (
+        LocalNotificationDispatch,
+        BaseReferences<
+          _$AppDatabase,
+          $NotificationDispatchesTableTable,
+          LocalNotificationDispatch
+        >,
+      ),
+      LocalNotificationDispatch,
+      PrefetchHooks Function()
+    >;
+typedef $$NotificationsInboxTableTableCreateCompanionBuilder =
+    NotificationsInboxTableCompanion Function({
+      required String uuidNotificationInbox,
+      required String uuidNotificationDispatch,
+      required String uuidProfile,
+      required String title,
+      required String body,
+      required String category,
+      required String actionType,
+      Value<String> actionPayloadJson,
+      Value<DateTime?> readAt,
+      Value<DateTime?> openedAt,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<DateTime?> syncedAt,
+      Value<int> rowid,
+    });
+typedef $$NotificationsInboxTableTableUpdateCompanionBuilder =
+    NotificationsInboxTableCompanion Function({
+      Value<String> uuidNotificationInbox,
+      Value<String> uuidNotificationDispatch,
+      Value<String> uuidProfile,
+      Value<String> title,
+      Value<String> body,
+      Value<String> category,
+      Value<String> actionType,
+      Value<String> actionPayloadJson,
+      Value<DateTime?> readAt,
+      Value<DateTime?> openedAt,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<DateTime?> syncedAt,
+      Value<int> rowid,
+    });
+
+class $$NotificationsInboxTableTableFilterComposer
+    extends Composer<_$AppDatabase, $NotificationsInboxTableTable> {
+  $$NotificationsInboxTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get uuidNotificationInbox => $composableBuilder(
+    column: $table.uuidNotificationInbox,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get uuidNotificationDispatch => $composableBuilder(
+    column: $table.uuidNotificationDispatch,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get uuidProfile => $composableBuilder(
+    column: $table.uuidProfile,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get body => $composableBuilder(
+    column: $table.body,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get category => $composableBuilder(
+    column: $table.category,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get actionType => $composableBuilder(
+    column: $table.actionType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get actionPayloadJson => $composableBuilder(
+    column: $table.actionPayloadJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get readAt => $composableBuilder(
+    column: $table.readAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get openedAt => $composableBuilder(
+    column: $table.openedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$NotificationsInboxTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $NotificationsInboxTableTable> {
+  $$NotificationsInboxTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get uuidNotificationInbox => $composableBuilder(
+    column: $table.uuidNotificationInbox,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get uuidNotificationDispatch => $composableBuilder(
+    column: $table.uuidNotificationDispatch,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get uuidProfile => $composableBuilder(
+    column: $table.uuidProfile,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get body => $composableBuilder(
+    column: $table.body,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get category => $composableBuilder(
+    column: $table.category,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get actionType => $composableBuilder(
+    column: $table.actionType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get actionPayloadJson => $composableBuilder(
+    column: $table.actionPayloadJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get readAt => $composableBuilder(
+    column: $table.readAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get openedAt => $composableBuilder(
+    column: $table.openedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$NotificationsInboxTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $NotificationsInboxTableTable> {
+  $$NotificationsInboxTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get uuidNotificationInbox => $composableBuilder(
+    column: $table.uuidNotificationInbox,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get uuidNotificationDispatch => $composableBuilder(
+    column: $table.uuidNotificationDispatch,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get uuidProfile => $composableBuilder(
+    column: $table.uuidProfile,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get body =>
+      $composableBuilder(column: $table.body, builder: (column) => column);
+
+  GeneratedColumn<String> get category =>
+      $composableBuilder(column: $table.category, builder: (column) => column);
+
+  GeneratedColumn<String> get actionType => $composableBuilder(
+    column: $table.actionType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get actionPayloadJson => $composableBuilder(
+    column: $table.actionPayloadJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get readAt =>
+      $composableBuilder(column: $table.readAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get openedAt =>
+      $composableBuilder(column: $table.openedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+}
+
+class $$NotificationsInboxTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $NotificationsInboxTableTable,
+          LocalNotificationInboxItem,
+          $$NotificationsInboxTableTableFilterComposer,
+          $$NotificationsInboxTableTableOrderingComposer,
+          $$NotificationsInboxTableTableAnnotationComposer,
+          $$NotificationsInboxTableTableCreateCompanionBuilder,
+          $$NotificationsInboxTableTableUpdateCompanionBuilder,
+          (
+            LocalNotificationInboxItem,
+            BaseReferences<
+              _$AppDatabase,
+              $NotificationsInboxTableTable,
+              LocalNotificationInboxItem
+            >,
+          ),
+          LocalNotificationInboxItem,
+          PrefetchHooks Function()
+        > {
+  $$NotificationsInboxTableTableTableManager(
+    _$AppDatabase db,
+    $NotificationsInboxTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$NotificationsInboxTableTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$NotificationsInboxTableTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$NotificationsInboxTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> uuidNotificationInbox = const Value.absent(),
+                Value<String> uuidNotificationDispatch = const Value.absent(),
+                Value<String> uuidProfile = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String> body = const Value.absent(),
+                Value<String> category = const Value.absent(),
+                Value<String> actionType = const Value.absent(),
+                Value<String> actionPayloadJson = const Value.absent(),
+                Value<DateTime?> readAt = const Value.absent(),
+                Value<DateTime?> openedAt = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => NotificationsInboxTableCompanion(
+                uuidNotificationInbox: uuidNotificationInbox,
+                uuidNotificationDispatch: uuidNotificationDispatch,
+                uuidProfile: uuidProfile,
+                title: title,
+                body: body,
+                category: category,
+                actionType: actionType,
+                actionPayloadJson: actionPayloadJson,
+                readAt: readAt,
+                openedAt: openedAt,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String uuidNotificationInbox,
+                required String uuidNotificationDispatch,
+                required String uuidProfile,
+                required String title,
+                required String body,
+                required String category,
+                required String actionType,
+                Value<String> actionPayloadJson = const Value.absent(),
+                Value<DateTime?> readAt = const Value.absent(),
+                Value<DateTime?> openedAt = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => NotificationsInboxTableCompanion.insert(
+                uuidNotificationInbox: uuidNotificationInbox,
+                uuidNotificationDispatch: uuidNotificationDispatch,
+                uuidProfile: uuidProfile,
+                title: title,
+                body: body,
+                category: category,
+                actionType: actionType,
+                actionPayloadJson: actionPayloadJson,
+                readAt: readAt,
+                openedAt: openedAt,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$NotificationsInboxTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $NotificationsInboxTableTable,
+      LocalNotificationInboxItem,
+      $$NotificationsInboxTableTableFilterComposer,
+      $$NotificationsInboxTableTableOrderingComposer,
+      $$NotificationsInboxTableTableAnnotationComposer,
+      $$NotificationsInboxTableTableCreateCompanionBuilder,
+      $$NotificationsInboxTableTableUpdateCompanionBuilder,
+      (
+        LocalNotificationInboxItem,
+        BaseReferences<
+          _$AppDatabase,
+          $NotificationsInboxTableTable,
+          LocalNotificationInboxItem
+        >,
+      ),
+      LocalNotificationInboxItem,
       PrefetchHooks Function()
     >;
 typedef $$UserContentStatesTableTableCreateCompanionBuilder =
@@ -8858,10 +16572,33 @@ class $AppDatabaseManager {
       $$ProfilesTableTableTableManager(_db, _db.profilesTable);
   $$CompanyInfoTableTableTableManager get companyInfoTable =>
       $$CompanyInfoTableTableTableManager(_db, _db.companyInfoTable);
+  $$ContentDownloadsTableTableTableManager get contentDownloadsTable =>
+      $$ContentDownloadsTableTableTableManager(_db, _db.contentDownloadsTable);
   $$ContentItemsTableTableTableManager get contentItemsTable =>
       $$ContentItemsTableTableTableManager(_db, _db.contentItemsTable);
   $$ContentMediaTableTableTableManager get contentMediaTable =>
       $$ContentMediaTableTableTableManager(_db, _db.contentMediaTable);
+  $$NotificationDevicesTableTableTableManager get notificationDevicesTable =>
+      $$NotificationDevicesTableTableTableManager(
+        _db,
+        _db.notificationDevicesTable,
+      );
+  $$NotificationEventsTableTableTableManager get notificationEventsTable =>
+      $$NotificationEventsTableTableTableManager(
+        _db,
+        _db.notificationEventsTable,
+      );
+  $$NotificationDispatchesTableTableTableManager
+  get notificationDispatchesTable =>
+      $$NotificationDispatchesTableTableTableManager(
+        _db,
+        _db.notificationDispatchesTable,
+      );
+  $$NotificationsInboxTableTableTableManager get notificationsInboxTable =>
+      $$NotificationsInboxTableTableTableManager(
+        _db,
+        _db.notificationsInboxTable,
+      );
   $$UserContentStatesTableTableTableManager get userContentStatesTable =>
       $$UserContentStatesTableTableTableManager(
         _db,

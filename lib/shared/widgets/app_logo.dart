@@ -17,6 +17,8 @@ class AppLogo extends StatelessWidget {
   final bool compact;
   final bool light;
 
+  static const double _completeLogoAspectRatio = 2550 / 1130;
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -25,12 +27,15 @@ class AppLogo extends StatelessWidget {
         : light || isDark
         ? AppAssets.logoCompleteColorWhiteLetters
         : AppAssets.logoCompleteColor;
+    final effectiveHeight =
+        height ?? (compact ? width : width / _completeLogoAspectRatio);
 
     return Image.asset(
       asset,
       width: width,
-      height: height,
+      height: effectiveHeight,
       fit: BoxFit.contain,
+      gaplessPlayback: true,
       errorBuilder: (context, error, stackTrace) {
         return Row(
           mainAxisSize: MainAxisSize.min,

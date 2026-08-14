@@ -1,13 +1,12 @@
-import 'dart:io';
-
-import 'package:video_player/video_player.dart';
+import 'content_media_duration_reader_stub.dart'
+    if (dart.library.io) 'content_media_duration_reader_io.dart';
 
 typedef ContentMediaDurationLoader =
     Future<Duration?> Function(String localPath);
 
 class ContentMediaDurationReader {
   const ContentMediaDurationReader({ContentMediaDurationLoader? durationLoader})
-    : _durationLoader = durationLoader ?? _loadWithVideoPlayer;
+    : _durationLoader = durationLoader ?? loadContentMediaDuration;
 
   final ContentMediaDurationLoader _durationLoader;
 
@@ -32,14 +31,4 @@ int? _secondsFromDuration(Duration? duration) {
 
   final seconds = (duration.inMilliseconds / 1000).round();
   return seconds <= 0 ? null : seconds;
-}
-
-Future<Duration?> _loadWithVideoPlayer(String localPath) async {
-  final controller = VideoPlayerController.file(File(localPath));
-  try {
-    await controller.initialize();
-    return controller.value.duration;
-  } finally {
-    await controller.dispose();
-  }
 }

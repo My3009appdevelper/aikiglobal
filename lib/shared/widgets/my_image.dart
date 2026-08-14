@@ -94,7 +94,18 @@ class _MyImageState extends State<MyImage> {
       return;
     }
 
-    _resolvedUrl = resolver(imagePath);
+    _resolvedUrl = _resolveSafely(resolver, imagePath);
+  }
+
+  Future<String?> _resolveSafely(
+    Future<String?> Function(String imagePath) resolver,
+    String imagePath,
+  ) async {
+    try {
+      return await resolver(imagePath);
+    } catch (_) {
+      return null;
+    }
   }
 
   Widget _fallback() {

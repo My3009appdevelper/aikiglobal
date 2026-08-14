@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/app_router.dart';
 import '../../core/data/providers/app_data_scope.dart';
+import '../../core/data/providers/app_load_coordinator.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../shared/widgets/app_logo.dart';
 import '../../shared/widgets/app_refresh_indicator.dart';
@@ -30,7 +31,9 @@ class PerfilPage extends StatelessWidget {
   }
 
   Future<void> _refreshProfile(BuildContext context) async {
-    await AppDataScope.currentProfile(context).syncWithRemote();
+    await AppDataScope.loadCoordinator(
+      context,
+    ).syncWithRemote(scope: AppLoadScope.profile);
   }
 
   @override
@@ -53,10 +56,7 @@ class PerfilPage extends StatelessWidget {
                     const SizedBox(height: AppSpacing.lg),
                     const SubscriptionCard(),
                     const SizedBox(height: AppSpacing.xl),
-                    Text(
-                      'Configuración',
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
+                    const PerfilConfigurationTitle(),
                     const SizedBox(height: AppSpacing.md),
                     SettingsSection(onLogout: () => _logout(context)),
                     const SizedBox(height: 130),
@@ -66,6 +66,20 @@ class PerfilPage extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class PerfilConfigurationTitle extends StatelessWidget {
+  const PerfilConfigurationTitle({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      'Configuración',
+      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+        color: Theme.of(context).colorScheme.onSurface,
       ),
     );
   }

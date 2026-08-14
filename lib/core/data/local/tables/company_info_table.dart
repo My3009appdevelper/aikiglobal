@@ -20,12 +20,12 @@ class CompanyInfoTable extends Table {
   TextColumn get mision => text()();
   TextColumn get vision => text()();
   TextColumn get filosofia => text()();
-  TextColumn get mensajeFundadoresTitulo =>
-      text()
-          .named('mensaje_fundadores_titulo')
-          .withDefault(const Constant(''))();
-  TextColumn get mensajeFundadoresTexto =>
-      text().named('mensaje_fundadores_texto').withDefault(const Constant(''))();
+  TextColumn get mensajeFundadoresTitulo => text()
+      .named('mensaje_fundadores_titulo')
+      .withDefault(const Constant(''))();
+  TextColumn get mensajeFundadoresTexto => text()
+      .named('mensaje_fundadores_texto')
+      .withDefault(const Constant(''))();
   TextColumn get mensajeFundadoresImagePath1 =>
       text().named('mensaje_fundadores_image_path1').nullable()();
   TextColumn get mensajeFundadoresImagePath2 =>

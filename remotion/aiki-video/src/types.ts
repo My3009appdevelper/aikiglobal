@@ -15,6 +15,11 @@ export const AikiVideoSchema = z.object({
   introKicker: z.string(),
   accentColor: zColor(),
   phoneScale: z.number().min(0.8).max(1.35),
+  phoneWidthScale: z.number().min(0.8).max(1.3),
+  phoneHeightScale: z.number().min(0.8).max(1.5),
+  phoneContentScale: z.number().min(0.75).max(1.4),
+  phoneContentOffsetY: z.number().min(-300).max(300),
+  phoneContentFit: z.enum(["cover", "contain"]),
   callouts: z.object({
     explore: calloutSchema,
     content: calloutSchema,

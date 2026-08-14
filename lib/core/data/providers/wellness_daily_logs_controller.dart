@@ -96,7 +96,7 @@ class WellnessDailyLogsController extends ChangeNotifier {
     return null;
   }
 
-  void watchForProfile(String uuidProfile) {
+  void watchForProfile(String uuidProfile, {bool pullRemote = true}) {
     final cleanProfile = uuidProfile.trim();
     if (cleanProfile.isEmpty) {
       clear();
@@ -126,7 +126,9 @@ class WellnessDailyLogsController extends ChangeNotifier {
           },
         );
 
-    unawaited(pullFromRemote(uuidProfile: cleanProfile));
+    if (pullRemote) {
+      unawaited(pullFromRemote(uuidProfile: cleanProfile));
+    }
   }
 
   Future<void> loadForProfile(String uuidProfile) async {

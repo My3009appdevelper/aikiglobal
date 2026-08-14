@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
+import '../../core/theme/app_typography.dart';
 import 'app_interactive.dart';
 
 class AppSettingTile extends StatelessWidget {
@@ -12,7 +13,6 @@ class AppSettingTile extends StatelessWidget {
     required this.subtitle,
     this.trailing,
     this.onTap,
-    this.danger = false,
   });
 
   final IconData icon;
@@ -20,17 +20,13 @@ class AppSettingTile extends StatelessWidget {
   final String subtitle;
   final Widget? trailing;
   final VoidCallback? onTap;
-  final bool danger;
 
   @override
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
-    final iconColor = danger
-        ? AppColors.danger
-        : Theme.of(context).colorScheme.primary;
-    final tileColor = brightness == Brightness.dark
-        ? AppColors.darkSurfaceSoft
-        : AppColors.sandLight;
+    final scheme = Theme.of(context).colorScheme;
+    final iconColor = scheme.onPrimary;
+    final tileColor = scheme.primary;
 
     return AppInteractive(
       tooltip: title,
@@ -45,9 +41,7 @@ class AppSettingTile extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: danger
-                    ? AppColors.danger.withValues(alpha: 0.12)
-                    : tileColor,
+                color: tileColor,
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: iconColor),
@@ -60,7 +54,9 @@ class AppSettingTile extends StatelessWidget {
                   Text(
                     title,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: danger ? AppColors.danger : null,
+                      color: scheme.onSurface,
+                      fontFamily: AppTypography.displayFont,
+                      fontFamilyFallback: AppTypography.fallbackFonts,
                     ),
                   ),
                   const SizedBox(height: 3),
@@ -68,7 +64,11 @@ class AppSettingTile extends StatelessWidget {
                     subtitle,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodySmall,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: scheme.onSurface,
+                      fontFamily: AppTypography.primaryFont,
+                      fontFamilyFallback: AppTypography.fallbackFonts,
+                    ),
                   ),
                 ],
               ),

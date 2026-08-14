@@ -13,6 +13,7 @@ class AppTertiaryButton extends StatelessWidget {
     this.tooltip,
     this.expand = false,
     this.height = 40,
+    this.labelStyle,
   }) : assert(label != null || icon != null);
 
   final String? label;
@@ -21,6 +22,7 @@ class AppTertiaryButton extends StatelessWidget {
   final String? tooltip;
   final bool expand;
   final double height;
+  final TextStyle? labelStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -68,10 +70,16 @@ class AppTertiaryButton extends StatelessWidget {
                     label!,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: foreground,
-                      fontWeight: FontWeight.w800,
-                    ),
+                    style:
+                        (Theme.of(
+                                  context,
+                                ).textTheme.labelMedium?.merge(labelStyle) ??
+                                labelStyle)
+                            ?.copyWith(
+                              color: foreground,
+                              fontWeight:
+                                  labelStyle?.fontWeight ?? FontWeight.w800,
+                            ),
                   ),
                 ),
             ],

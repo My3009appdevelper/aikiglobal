@@ -80,6 +80,15 @@ class LocalMediaCache {
     return File(cleanPath).exists();
   }
 
+  bool existsSync(String? localPath) {
+    final cleanPath = _cleanLocalPath(localPath);
+    if (cleanPath == null) {
+      return false;
+    }
+
+    return File(cleanPath).existsSync();
+  }
+
   Future<void> delete(String? localPath) async {
     final cleanPath = _cleanLocalPath(localPath);
     if (cleanPath == null) {
@@ -87,6 +96,18 @@ class LocalMediaCache {
     }
 
     final file = File(cleanPath);
+    if (await file.exists()) {
+      await file.delete();
+    }
+  }
+
+  Future<void> deletePartial(String? localPath) async {
+    final cleanPath = _cleanLocalPath(localPath);
+    if (cleanPath == null) {
+      return;
+    }
+
+    final file = File('$cleanPath.part');
     if (await file.exists()) {
       await file.delete();
     }

@@ -107,12 +107,34 @@ export const PhoneMockup: React.FC<PhoneMockupProps> = ({
         width: "100%",
         height: "100%",
         backgroundColor: aikiPalette.background,
-        scale: contentScale,
-        translate: `0px ${contentTranslateY}px`,
-        transformOrigin: "50% 50%",
       }}
     />
   ) : null;
+
+  const screenContentNode = hasScreenContent ? (
+    screenContent
+  ) : usableSource ? (
+    sourceSegments && sourceSegments.length > 0 ? (
+      <SegmentedRecording
+        name={`Grabacion real - ${label}`}
+        source={usableSource}
+        segments={sourceSegments}
+        durationInFrames={durationInFrames}
+        fps={fps}
+        objectFit={objectFit}
+      />
+    ) : sourceFromSeconds === undefined ? (
+      sourceVideo
+    ) : (
+      <Sequence from={Math.round(sourceFromSeconds * fps)} layout="none">
+        {sourceVideo}
+      </Sequence>
+    )
+  ) : demoKind ? (
+    <AikiDemoScreen kind={demoKind} label={label} detail={detail} side={side} accentColor={accentColor} />
+  ) : (
+    <RecordingPlaceholder label={label} side={side} detail={detail} />
+  );
 
   return (
     <div
@@ -184,32 +206,21 @@ export const PhoneMockup: React.FC<PhoneMockupProps> = ({
               display: "flex",
               minHeight: 0,
               height: usableSource || hasScreenContent ? "100%" : "calc(100% - 64px)",
+              overflow: "hidden",
             }}
           >
-            {hasScreenContent ? (
-              screenContent
-            ) : usableSource ? (
-              sourceSegments && sourceSegments.length > 0 ? (
-                <SegmentedRecording
-                  name={`Grabacion real - ${label}`}
-                  source={usableSource}
-                  segments={sourceSegments}
-                  durationInFrames={durationInFrames}
-                  fps={fps}
-                  objectFit={objectFit}
-                />
-              ) : sourceFromSeconds === undefined ? (
-                sourceVideo
-              ) : (
-                <Sequence from={Math.round(sourceFromSeconds * fps)} layout="none">
-                  {sourceVideo}
-                </Sequence>
-              )
-            ) : demoKind ? (
-              <AikiDemoScreen kind={demoKind} label={label} detail={detail} side={side} accentColor={accentColor} />
-            ) : (
-              <RecordingPlaceholder label={label} side={side} detail={detail} />
-            )}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                overflow: "hidden",
+                scale: contentScale,
+                translate: `0px ${contentTranslateY}px`,
+                transformOrigin: "50% 50%",
+              }}
+            >
+              {screenContentNode}
+            </div>
           </div>
           {screenOverlay && (
             <div style={{ position: "absolute", inset: 0, zIndex: 2 }}>{screenOverlay}</div>

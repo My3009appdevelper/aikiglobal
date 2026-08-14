@@ -1,9 +1,14 @@
 import 'package:drift/drift.dart';
 
+import '../common/json_object_codec.dart';
 import '../local/app_database.dart';
 import '../models/app_company_info.dart';
 import '../models/app_content_media.dart';
 import '../models/app_content_item.dart';
+import '../models/app_notification_device.dart';
+import '../models/app_notification_dispatch.dart';
+import '../models/app_notification_event.dart';
+import '../models/app_notification_inbox_item.dart';
 import '../models/app_profile.dart';
 import '../models/app_user_content_state.dart';
 import '../models/app_wellness_daily_log.dart';
@@ -109,6 +114,10 @@ DateTime? _nullableDateTimeValue(Map<String, dynamic> json, String key) {
 }
 
 String? _dateToRemote(DateTime? date) => date?.toUtc().toIso8601String();
+
+Map<String, dynamic> _jsonObjectValue(Map<String, dynamic> json, String key) {
+  return decodeJsonObject(json[key]);
+}
 
 String _dateOnlyValue(
   Map<String, dynamic> json,
@@ -231,10 +240,7 @@ AppCompanyInfo companyInfoRemoteToApp(Map<String, dynamic> json) {
     mision: _stringValue(json, 'mision'),
     vision: _stringValue(json, 'vision'),
     filosofia: _stringValue(json, 'filosofia'),
-    mensajeFundadoresTitulo: _stringValue(
-      json,
-      'mensaje_fundadores_titulo',
-    ),
+    mensajeFundadoresTitulo: _stringValue(json, 'mensaje_fundadores_titulo'),
     mensajeFundadoresTexto: _stringValue(json, 'mensaje_fundadores_texto'),
     mensajeFundadoresImagePath1: _nullableStringValue(
       json,
@@ -324,6 +330,299 @@ AppProfile profileRemoteToApp(Map<String, dynamic> json) {
     deletedAt: _nullableDateTimeValue(json, 'deleted_at'),
     syncedAt: _nullableDateTimeValue(json, 'synced_at'),
   );
+}
+
+Map<String, dynamic> notificationDeviceToRemote(
+  LocalNotificationDevice device,
+) {
+  return {
+    'uuid_notification_device': device.uuidNotificationDevice,
+    'uuid_profile': device.uuidProfile,
+    'installation_id': device.installationId,
+    'fcm_token': device.fcmToken,
+    'platform': device.platform,
+    'permission_status': device.permissionStatus,
+    'app_version': device.appVersion,
+    'timezone': device.timeZone,
+    'is_active': device.isActive,
+    'registration_refreshed_at': _dateToRemote(device.registrationRefreshedAt),
+    'created_at': _dateToRemote(device.createdAt),
+    'updated_at': _dateToRemote(device.updatedAt),
+    'deleted_at': _dateToRemote(device.deletedAt),
+  };
+}
+
+NotificationDevicesTableCompanion notificationDeviceRemoteToCompanion(
+  Map<String, dynamic> json,
+) {
+  final syncedAt = DateTime.now().toUtc();
+  return NotificationDevicesTableCompanion.insert(
+    uuidNotificationDevice: _stringValue(json, 'uuid_notification_device'),
+    uuidProfile: _stringValue(json, 'uuid_profile'),
+    installationId: _stringValue(json, 'installation_id'),
+    fcmToken: Value(_nullableStringValue(json, 'fcm_token')),
+    platform: _stringValue(json, 'platform'),
+    permissionStatus: Value(
+      _stringValue(json, 'permission_status', fallback: 'not_determined'),
+    ),
+    appVersion: Value(_nullableStringValue(json, 'app_version')),
+    timeZone: Value(_nullableStringValue(json, 'timezone')),
+    isActive: Value(_boolValue(json, 'is_active', fallback: true)),
+    registrationRefreshedAt: Value(
+      _nullableDateTimeValue(json, 'registration_refreshed_at'),
+    ),
+    createdAt: Value(_dateTimeValue(json, 'created_at')),
+    updatedAt: Value(_dateTimeValue(json, 'updated_at')),
+    deletedAt: Value(_nullableDateTimeValue(json, 'deleted_at')),
+    syncedAt: Value(syncedAt),
+  );
+}
+
+AppNotificationDevice notificationDeviceRemoteToApp(Map<String, dynamic> json) {
+  return AppNotificationDevice(
+    uuidNotificationDevice: _stringValue(json, 'uuid_notification_device'),
+    uuidProfile: _stringValue(json, 'uuid_profile'),
+    installationId: _stringValue(json, 'installation_id'),
+    fcmToken: _nullableStringValue(json, 'fcm_token'),
+    platform: _stringValue(json, 'platform'),
+    permissionStatus: _stringValue(
+      json,
+      'permission_status',
+      fallback: 'not_determined',
+    ),
+    appVersion: _nullableStringValue(json, 'app_version'),
+    timeZone: _nullableStringValue(json, 'timezone'),
+    isActive: _boolValue(json, 'is_active', fallback: true),
+    registrationRefreshedAt: _nullableDateTimeValue(
+      json,
+      'registration_refreshed_at',
+    ),
+    createdAt: _dateTimeValue(json, 'created_at'),
+    updatedAt: _dateTimeValue(json, 'updated_at'),
+    deletedAt: _nullableDateTimeValue(json, 'deleted_at'),
+    syncedAt: _nullableDateTimeValue(json, 'synced_at'),
+  );
+}
+
+Map<String, dynamic> notificationEventToRemote(LocalNotificationEvent event) {
+  return {
+    'uuid_notification_event': event.uuidNotificationEvent,
+    'name': event.name,
+    'category': event.category,
+    'title_template': event.titleTemplate,
+    'body_template': event.bodyTemplate,
+    'trigger_type': event.triggerType,
+    'trigger_key': event.triggerKey,
+    'execution_mode': event.executionMode,
+    'audience_type': event.audienceType,
+    'action_type': event.actionType,
+    'action_payload_template': decodeJsonObject(
+      event.actionPayloadTemplateJson,
+    ),
+    'trigger_config': decodeJsonObject(event.triggerConfigJson),
+    'starts_at': _dateToRemote(event.startsAt),
+    'ends_at': _dateToRemote(event.endsAt),
+    'status': event.status,
+    'uuid_created_by_profile': event.uuidCreatedByProfile,
+    'uuid_updated_by_profile': event.uuidUpdatedByProfile,
+    'created_at': _dateToRemote(event.createdAt),
+    'updated_at': _dateToRemote(event.updatedAt),
+    'deleted_at': _dateToRemote(event.deletedAt),
+  };
+}
+
+NotificationEventsTableCompanion notificationEventRemoteToCompanion(
+  Map<String, dynamic> json,
+) {
+  return NotificationEventsTableCompanion.insert(
+    uuidNotificationEvent: _stringValue(json, 'uuid_notification_event'),
+    name: _stringValue(json, 'name'),
+    category: _stringValue(json, 'category'),
+    titleTemplate: _stringValue(json, 'title_template'),
+    bodyTemplate: _stringValue(json, 'body_template'),
+    triggerType: _stringValue(json, 'trigger_type'),
+    triggerKey: Value(_nullableStringValue(json, 'trigger_key')),
+    executionMode: _stringValue(json, 'execution_mode'),
+    audienceType: _stringValue(json, 'audience_type'),
+    actionType: _stringValue(json, 'action_type'),
+    actionPayloadTemplateJson: Value(
+      encodeJsonObject(_jsonObjectValue(json, 'action_payload_template')),
+    ),
+    triggerConfigJson: Value(
+      encodeJsonObject(_jsonObjectValue(json, 'trigger_config')),
+    ),
+    startsAt: Value(_dateTimeValue(json, 'starts_at')),
+    endsAt: Value(_nullableDateTimeValue(json, 'ends_at')),
+    status: Value(_stringValue(json, 'status', fallback: 'draft')),
+    uuidCreatedByProfile: Value(
+      _nullableStringValue(json, 'uuid_created_by_profile'),
+    ),
+    uuidUpdatedByProfile: Value(
+      _nullableStringValue(json, 'uuid_updated_by_profile'),
+    ),
+    createdAt: Value(_dateTimeValue(json, 'created_at')),
+    updatedAt: Value(_dateTimeValue(json, 'updated_at')),
+    deletedAt: Value(_nullableDateTimeValue(json, 'deleted_at')),
+    syncedAt: Value(DateTime.now().toUtc()),
+  );
+}
+
+AppNotificationEvent notificationEventRemoteToApp(Map<String, dynamic> json) {
+  return AppNotificationEvent(
+    uuidNotificationEvent: _stringValue(json, 'uuid_notification_event'),
+    name: _stringValue(json, 'name'),
+    category: _stringValue(json, 'category'),
+    titleTemplate: _stringValue(json, 'title_template'),
+    bodyTemplate: _stringValue(json, 'body_template'),
+    triggerType: _stringValue(json, 'trigger_type'),
+    triggerKey: _nullableStringValue(json, 'trigger_key'),
+    executionMode: _stringValue(json, 'execution_mode'),
+    audienceType: _stringValue(json, 'audience_type'),
+    actionType: _stringValue(json, 'action_type'),
+    actionPayloadTemplate: _jsonObjectValue(json, 'action_payload_template'),
+    triggerConfig: _jsonObjectValue(json, 'trigger_config'),
+    startsAt: _dateTimeValue(json, 'starts_at'),
+    endsAt: _nullableDateTimeValue(json, 'ends_at'),
+    status: _stringValue(json, 'status', fallback: 'draft'),
+    uuidCreatedByProfile: _nullableStringValue(json, 'uuid_created_by_profile'),
+    uuidUpdatedByProfile: _nullableStringValue(json, 'uuid_updated_by_profile'),
+    createdAt: _dateTimeValue(json, 'created_at'),
+    updatedAt: _dateTimeValue(json, 'updated_at'),
+    deletedAt: _nullableDateTimeValue(json, 'deleted_at'),
+    syncedAt:
+        _nullableDateTimeValue(json, 'synced_at') ??
+        _dateTimeValue(json, 'updated_at'),
+  );
+}
+
+NotificationDispatchesTableCompanion notificationDispatchRemoteToCompanion(
+  Map<String, dynamic> json,
+) {
+  return NotificationDispatchesTableCompanion.insert(
+    uuidNotificationDispatch: _stringValue(json, 'uuid_notification_dispatch'),
+    uuidNotificationEvent: _stringValue(json, 'uuid_notification_event'),
+    triggerSource: _stringValue(json, 'trigger_source'),
+    uuidTriggeredByProfile: Value(
+      _nullableStringValue(json, 'uuid_triggered_by_profile'),
+    ),
+    sourceEntityType: Value(_nullableStringValue(json, 'source_entity_type')),
+    sourceEntityUuid: Value(_nullableStringValue(json, 'source_entity_uuid')),
+    idempotencyKey: _stringValue(json, 'idempotency_key'),
+    titleSnapshot: _stringValue(json, 'title_snapshot'),
+    bodySnapshot: _stringValue(json, 'body_snapshot'),
+    categorySnapshot: _stringValue(json, 'category_snapshot'),
+    audienceTypeSnapshot: _stringValue(json, 'audience_type_snapshot'),
+    actionTypeSnapshot: _stringValue(json, 'action_type_snapshot'),
+    actionPayloadSnapshotJson: Value(
+      encodeJsonObject(_jsonObjectValue(json, 'action_payload_snapshot')),
+    ),
+    status: Value(_stringValue(json, 'status', fallback: 'pending')),
+    targetProfileCount: Value(_intValue(json, 'target_profile_count')),
+    targetDeviceCount: Value(_intValue(json, 'target_device_count')),
+    successDeviceCount: Value(_intValue(json, 'success_device_count')),
+    failureDeviceCount: Value(_intValue(json, 'failure_device_count')),
+    invalidTokenCount: Value(_intValue(json, 'invalid_token_count')),
+    startedAt: Value(_nullableDateTimeValue(json, 'started_at')),
+    completedAt: Value(_nullableDateTimeValue(json, 'completed_at')),
+    errorSummary: Value(_nullableStringValue(json, 'error_summary')),
+    createdAt: Value(_dateTimeValue(json, 'created_at')),
+    updatedAt: Value(_dateTimeValue(json, 'updated_at')),
+    deletedAt: Value(_nullableDateTimeValue(json, 'deleted_at')),
+    syncedAt: Value(DateTime.now().toUtc()),
+  );
+}
+
+AppNotificationDispatch notificationDispatchRemoteToApp(
+  Map<String, dynamic> json,
+) {
+  return AppNotificationDispatch(
+    uuidNotificationDispatch: _stringValue(json, 'uuid_notification_dispatch'),
+    uuidNotificationEvent: _stringValue(json, 'uuid_notification_event'),
+    triggerSource: _stringValue(json, 'trigger_source'),
+    uuidTriggeredByProfile: _nullableStringValue(
+      json,
+      'uuid_triggered_by_profile',
+    ),
+    sourceEntityType: _nullableStringValue(json, 'source_entity_type'),
+    sourceEntityUuid: _nullableStringValue(json, 'source_entity_uuid'),
+    idempotencyKey: _stringValue(json, 'idempotency_key'),
+    titleSnapshot: _stringValue(json, 'title_snapshot'),
+    bodySnapshot: _stringValue(json, 'body_snapshot'),
+    categorySnapshot: _stringValue(json, 'category_snapshot'),
+    audienceTypeSnapshot: _stringValue(json, 'audience_type_snapshot'),
+    actionTypeSnapshot: _stringValue(json, 'action_type_snapshot'),
+    actionPayloadSnapshot: _jsonObjectValue(json, 'action_payload_snapshot'),
+    status: _stringValue(json, 'status', fallback: 'pending'),
+    targetProfileCount: _intValue(json, 'target_profile_count'),
+    targetDeviceCount: _intValue(json, 'target_device_count'),
+    successDeviceCount: _intValue(json, 'success_device_count'),
+    failureDeviceCount: _intValue(json, 'failure_device_count'),
+    invalidTokenCount: _intValue(json, 'invalid_token_count'),
+    startedAt: _nullableDateTimeValue(json, 'started_at'),
+    completedAt: _nullableDateTimeValue(json, 'completed_at'),
+    errorSummary: _nullableStringValue(json, 'error_summary'),
+    createdAt: _dateTimeValue(json, 'created_at'),
+    updatedAt: _dateTimeValue(json, 'updated_at'),
+    deletedAt: _nullableDateTimeValue(json, 'deleted_at'),
+    syncedAt:
+        _nullableDateTimeValue(json, 'synced_at') ??
+        _dateTimeValue(json, 'updated_at'),
+  );
+}
+
+NotificationsInboxTableCompanion notificationInboxRemoteToCompanion(
+  Map<String, dynamic> json,
+) {
+  return NotificationsInboxTableCompanion.insert(
+    uuidNotificationInbox: _stringValue(json, 'uuid_notification_inbox'),
+    uuidNotificationDispatch: _stringValue(json, 'uuid_notification_dispatch'),
+    uuidProfile: _stringValue(json, 'uuid_profile'),
+    title: _stringValue(json, 'title'),
+    body: _stringValue(json, 'body'),
+    category: _stringValue(json, 'category'),
+    actionType: _stringValue(json, 'action_type'),
+    actionPayloadJson: Value(
+      encodeJsonObject(_jsonObjectValue(json, 'action_payload')),
+    ),
+    readAt: Value(_nullableDateTimeValue(json, 'read_at')),
+    openedAt: Value(_nullableDateTimeValue(json, 'opened_at')),
+    createdAt: Value(_dateTimeValue(json, 'created_at')),
+    updatedAt: Value(_dateTimeValue(json, 'updated_at')),
+    deletedAt: Value(_nullableDateTimeValue(json, 'deleted_at')),
+    syncedAt: Value(DateTime.now().toUtc()),
+  );
+}
+
+AppNotificationInboxItem notificationInboxRemoteToApp(
+  Map<String, dynamic> json,
+) {
+  return AppNotificationInboxItem(
+    uuidNotificationInbox: _stringValue(json, 'uuid_notification_inbox'),
+    uuidNotificationDispatch: _stringValue(json, 'uuid_notification_dispatch'),
+    uuidProfile: _stringValue(json, 'uuid_profile'),
+    title: _stringValue(json, 'title'),
+    body: _stringValue(json, 'body'),
+    category: _stringValue(json, 'category'),
+    actionType: _stringValue(json, 'action_type'),
+    actionPayload: _jsonObjectValue(json, 'action_payload'),
+    readAt: _nullableDateTimeValue(json, 'read_at'),
+    openedAt: _nullableDateTimeValue(json, 'opened_at'),
+    createdAt: _dateTimeValue(json, 'created_at'),
+    updatedAt: _dateTimeValue(json, 'updated_at'),
+    deletedAt: _nullableDateTimeValue(json, 'deleted_at'),
+    syncedAt:
+        _nullableDateTimeValue(json, 'synced_at') ??
+        _dateTimeValue(json, 'updated_at'),
+  );
+}
+
+Map<String, dynamic> notificationInboxReadStateToRemote(
+  LocalNotificationInboxItem item,
+) {
+  return {
+    'read_at': _dateToRemote(item.readAt),
+    'opened_at': _dateToRemote(item.openedAt),
+  };
 }
 
 Map<String, dynamic> contentItemToRemote(LocalContentItem item) {

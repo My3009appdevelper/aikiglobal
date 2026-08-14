@@ -22,7 +22,11 @@ export const phoneMockupFrameSize = {
   height: Math.round(((phoneMockupSize.width + 50) / phoneMockupSize.width) * phoneMockupSize.height),
 } as const;
 
-export const getPhoneMockupFrameSize = (scale: number) => ({
-  width: Math.round(phoneMockupFrameSize.width * scale),
-  height: Math.round(phoneMockupFrameSize.height * scale),
+export const getPhoneMockupFrameSize = (
+  scale: number,
+  widthScale = 1,
+  heightScale = 1,
+) => ({
+  width: Math.round(phoneMockupFrameSize.width * scale * widthScale),
+  height: Math.round(phoneMockupFrameSize.height * scale * heightScale),
 });

@@ -111,14 +111,18 @@ class AppCompanyInfo {
 
   List<String> get mensajeFundadoresImagePaths {
     return [
-      mensajeFundadoresImagePath1,
-      mensajeFundadoresImagePath2,
-      mensajeFundadoresImagePath3,
-      mensajeFundadoresImagePath4,
-      mensajeFundadoresImagePath5,
-    ].whereType<String>().map((path) => path.trim()).where((path) {
-      return path.isNotEmpty;
-    }).toList(growable: false);
+          mensajeFundadoresImagePath1,
+          mensajeFundadoresImagePath2,
+          mensajeFundadoresImagePath3,
+          mensajeFundadoresImagePath4,
+          mensajeFundadoresImagePath5,
+        ]
+        .whereType<String>()
+        .map((path) => path.trim())
+        .where((path) {
+          return path.isNotEmpty;
+        })
+        .toList(growable: false);
   }
 
   bool get hasMensajeFundadores {

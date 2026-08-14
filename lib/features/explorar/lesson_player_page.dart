@@ -5,24 +5,30 @@ import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../core/data/models/app_content_media.dart';
+import '../../core/data/models/app_user_content_state.dart';
 import '../../core/data/models/content_media_file_metadata.dart';
+import '../../core/data/media/content_media_playback_source.dart';
 import '../../core/data/providers/app_data_scope.dart';
 import '../../core/data/providers/content_media_controller.dart';
+import '../../core/data/providers/user_content_states_controller.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_typography.dart';
+import '../../shared/widgets/app_back_button.dart';
 import '../../shared/widgets/app_cover_image.dart';
 import '../../shared/widgets/app_interactive.dart';
 import '../../shared/widgets/app_logo.dart';
 import 'content_item_media_display_policy.dart';
 import 'content_media_playback_selection.dart';
 import 'content_media_presentation.dart';
+import 'content_playback_progress.dart';
 import 'models/content_item.dart';
 import 'player_autoplay_policy.dart';
 import 'player_seek_position.dart';
 import 'player_stage_controls_visibility.dart';
 
 const _playerControlsAutoHideDelay = Duration(seconds: 2);
+const _playbackProgressSaveInterval = Duration(seconds: 10);
 
 class LessonPlayerPage extends StatefulWidget {
   const LessonPlayerPage({
@@ -40,9 +46,11 @@ class LessonPlayerPage extends StatefulWidget {
 
 class _LessonPlayerPageState extends State<LessonPlayerPage> {
   ContentMediaController? _mediaController;
+  UserContentStatesController? _userContentStatesController;
   VideoPlayerController? _videoController;
   AppContentMedia? _selectedMedia;
   String? _requestedMediaUuid;
+  String? _activeProfileUuid;
   bool _initialized = false;
   bool _isPreparing = false;
   Object? _playbackError;
@@ -50,6 +58,10 @@ class _LessonPlayerPageState extends State<LessonPlayerPage> {
   bool _initialPlaybackRequested = false;
   bool _stageControlsRequested = true;
   bool _audioScreenDarkened = false;
+  bool _resumeSeekApplied = false;
+  bool _completionSaved = false;
+  bool _isClosing = false;
+  int? _lastSavedProgressSecond;
   Timer? _stageControlsAutoHideTimer;
 
   @override
@@ -62,6 +74,23 @@ class _LessonPlayerPageState extends State<LessonPlayerPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final nextController = AppDataScope.contentMedia(context);
+    final nextUserContentStatesController = AppDataScope.userContentStates(
+      context,
+    );
+    _activeProfileUuid = AppDataScope.currentProfile(
+      context,
+    ).profile?.uuidProfile;
+
+    if (_userContentStatesController != nextUserContentStatesController) {
+      _userContentStatesController?.removeListener(
+        _handleUserContentStatesChanged,
+      );
+      _userContentStatesController = nextUserContentStatesController;
+      nextUserContentStatesController.addListener(
+        _handleUserContentStatesChanged,
+      );
+    }
+
     if (_mediaController != nextController) {
       _mediaController?.removeListener(_handleMediaControllerChanged);
       _mediaController = nextController;
@@ -83,8 +112,15 @@ class _LessonPlayerPageState extends State<LessonPlayerPage> {
 
   @override
   void dispose() {
+    if (_audioScreenDarkened) {
+      _setAudioDarkSystemUi(false);
+    }
     _prepareGeneration++;
     _stageControlsAutoHideTimer?.cancel();
+    unawaited(_savePlaybackProgress(force: true));
+    _userContentStatesController?.removeListener(
+      _handleUserContentStatesChanged,
+    );
     _mediaController?.removeListener(_handleMediaControllerChanged);
     final controller = _videoController;
     if (controller != null) {
@@ -107,9 +143,183 @@ class _LessonPlayerPageState extends State<LessonPlayerPage> {
     }
   }
 
+  void _handleUserContentStatesChanged() {
+    unawaited(_applySavedPlaybackPositionIfNeeded());
+  }
+
+  String? get _uuidContentItem {
+    final uuidContentItem = widget.item.uuidContentItem?.trim();
+    return uuidContentItem == null || uuidContentItem.isEmpty
+        ? null
+        : uuidContentItem;
+  }
+
+  AppUserContentState? get _currentContentState {
+    final uuidContentItem = _uuidContentItem;
+    if (uuidContentItem == null) {
+      return null;
+    }
+
+    return _userContentStatesController?.stateForContent(uuidContentItem);
+  }
+
+  bool get _canTrackPlaybackProgress {
+    final uuidProfile = _activeProfileUuid?.trim();
+    final uuidContentItem = _uuidContentItem;
+    return _userContentStatesController != null &&
+        uuidProfile != null &&
+        uuidProfile.isNotEmpty &&
+        uuidContentItem != null &&
+        uuidContentItem.isNotEmpty;
+  }
+
+  Future<void> _applySavedPlaybackPositionIfNeeded() async {
+    if (_resumeSeekApplied) {
+      return;
+    }
+
+    final controller = _videoController;
+    if (controller == null || !controller.value.isInitialized) {
+      return;
+    }
+
+    if (controller.value.isPlaying || controller.value.position.inSeconds > 0) {
+      _resumeSeekApplied = true;
+      return;
+    }
+
+    final state = _currentContentState;
+    if (state == null ||
+        state.completado ||
+        state.ultimaPosicionSegundos <= 0) {
+      return;
+    }
+
+    final duration = controller.value.duration;
+    if (duration.inSeconds <= 1) {
+      return;
+    }
+
+    final maxSecond = duration.inSeconds - 1;
+    final targetSeconds = state.ultimaPosicionSegundos
+        .clamp(0, maxSecond)
+        .toInt();
+    if (targetSeconds <= 0) {
+      return;
+    }
+
+    _resumeSeekApplied = true;
+    _lastSavedProgressSecond = targetSeconds;
+    await controller.seekTo(Duration(seconds: targetSeconds));
+  }
+
+  Future<void> _savePlaybackProgress({required bool force}) async {
+    if (!_canTrackPlaybackProgress) {
+      return;
+    }
+
+    final controller = _videoController;
+    if (controller == null || !controller.value.isInitialized) {
+      return;
+    }
+
+    final value = controller.value;
+    final position = value.position;
+    final duration = value.duration;
+    if (duration.inMilliseconds <= 0 || position.inSeconds <= 0) {
+      return;
+    }
+
+    if (shouldMarkPlaybackCompleted(position: position, duration: duration)) {
+      await _markPlaybackCompleted();
+      return;
+    }
+
+    if (!force &&
+        !shouldSavePlaybackProgress(
+          position: position,
+          lastSavedPositionSeconds: _lastSavedProgressSecond,
+          interval: _playbackProgressSaveInterval,
+        )) {
+      return;
+    }
+
+    final uuidProfile = _activeProfileUuid?.trim();
+    final uuidContentItem = _uuidContentItem;
+    final controllerStates = _userContentStatesController;
+    if (uuidProfile == null ||
+        uuidProfile.isEmpty ||
+        uuidContentItem == null ||
+        controllerStates == null) {
+      return;
+    }
+
+    _lastSavedProgressSecond = position.inSeconds;
+    await controllerStates.updateProgress(
+      uuidProfile,
+      uuidContentItem,
+      playbackProgressPercentage(position: position, duration: duration),
+      position.inSeconds,
+    );
+    if (playbackProgressPercentage(position: position, duration: duration) <
+        100) {
+      _completionSaved = false;
+    }
+  }
+
+  Future<void> _markPlaybackCompleted() async {
+    if (_completionSaved || !_canTrackPlaybackProgress) {
+      return;
+    }
+
+    final state = _currentContentState;
+    if (state?.completado ?? false) {
+      _completionSaved = true;
+      return;
+    }
+
+    final uuidProfile = _activeProfileUuid?.trim();
+    final uuidContentItem = _uuidContentItem;
+    final controllerStates = _userContentStatesController;
+    if (uuidProfile == null ||
+        uuidProfile.isEmpty ||
+        uuidContentItem == null ||
+        controllerStates == null) {
+      return;
+    }
+
+    _completionSaved = true;
+    final value = _videoController?.value;
+    final position = value == null
+        ? null
+        : value.duration.inSeconds > 0
+        ? value.duration.inSeconds
+        : value.position.inSeconds;
+    if (position != null && position > 0) {
+      _lastSavedProgressSecond = position;
+    }
+    await controllerStates.markCompleted(
+      uuidProfile,
+      uuidContentItem,
+      ultimaPosicionSegundos: position,
+    );
+  }
+
   void _handleVideoChanged() {
+    final controller = _videoController;
+    if (controller != null && controller.value.isInitialized) {
+      final value = controller.value;
+      if (shouldMarkPlaybackCompleted(
+        position: value.position,
+        duration: value.duration,
+      )) {
+        unawaited(_markPlaybackCompleted());
+      } else if (value.isPlaying) {
+        unawaited(_savePlaybackProgress(force: false));
+      }
+    }
+
     if (mounted) {
-      final controller = _videoController;
       final shouldRevealControls =
           !_stageControlsRequested &&
           (controller == null ||
@@ -204,6 +414,7 @@ class _LessonPlayerPageState extends State<LessonPlayerPage> {
     setState(() {
       _audioScreenDarkened = true;
     });
+    _setAudioDarkSystemUi(true);
   }
 
   void _disableAudioDarkScreen() {
@@ -215,7 +426,36 @@ class _LessonPlayerPageState extends State<LessonPlayerPage> {
     setState(() {
       _audioScreenDarkened = false;
     });
+    _setAudioDarkSystemUi(false);
     _showStageControls(autoHide: isPlaying);
+  }
+
+  void _setAudioDarkSystemUi(bool darkened) {
+    final scheme = Theme.of(context).colorScheme;
+    final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
+    final style = darkened
+        ? const SystemUiOverlayStyle(
+            statusBarColor: AppColors.black,
+            statusBarIconBrightness: Brightness.light,
+            systemNavigationBarColor: AppColors.black,
+            systemNavigationBarIconBrightness: Brightness.light,
+            systemNavigationBarDividerColor: AppColors.black,
+            systemNavigationBarContrastEnforced: false,
+          )
+        : SystemUiOverlayStyle(
+            statusBarColor: scheme.surface,
+            statusBarIconBrightness: isDarkTheme
+                ? Brightness.light
+                : Brightness.dark,
+            systemNavigationBarColor: scheme.surface,
+            systemNavigationBarIconBrightness: isDarkTheme
+                ? Brightness.light
+                : Brightness.dark,
+            systemNavigationBarDividerColor: scheme.surface,
+            systemNavigationBarContrastEnforced: false,
+          );
+
+    SystemChrome.setSystemUIOverlayStyle(style);
   }
 
   Future<void> _openFullscreen() async {
@@ -235,6 +475,8 @@ class _LessonPlayerPageState extends State<LessonPlayerPage> {
           controller: controller,
           title: _mediaTitle(selectedMedia!),
           onPlayPause: _togglePlayback,
+          onSeek: _seekTo,
+          onSeekRelative: _seekRelative,
         ),
       ),
     );
@@ -300,6 +542,7 @@ class _LessonPlayerPageState extends State<LessonPlayerPage> {
     required bool autoPlay,
   }) async {
     final generation = ++_prepareGeneration;
+    final downloadsController = AppDataScope.contentDownloads(context);
 
     _stageControlsAutoHideTimer?.cancel();
     setState(() {
@@ -314,19 +557,35 @@ class _LessonPlayerPageState extends State<LessonPlayerPage> {
 
     VideoPlayerController? nextVideoController;
     try {
-      final signedUrl = await _mediaController?.resolveMediaUrl(
-        media.storagePathSupabase,
+      final localPath = await downloadsController.openDownloadedMedia(
+        uuidContentMedia: media.uuidContentMedia,
       );
       if (!mounted || generation != _prepareGeneration) {
         return;
       }
-      if (signedUrl == null || signedUrl.trim().isEmpty) {
-        throw StateError('No se pudo preparar este contenido.');
+
+      if (localPath != null && localPath.trim().isNotEmpty) {
+        nextVideoController = await createLocalContentMediaController(
+          localPath,
+        );
       }
 
-      nextVideoController = VideoPlayerController.networkUrl(
-        Uri.parse(signedUrl),
-      );
+      if (nextVideoController == null) {
+        final signedUrl = await _mediaController?.resolveMediaUrl(
+          media.storagePathSupabase,
+        );
+        if (!mounted || generation != _prepareGeneration) {
+          return;
+        }
+        if (signedUrl == null || signedUrl.trim().isEmpty) {
+          throw StateError('No se pudo preparar este contenido.');
+        }
+
+        nextVideoController = VideoPlayerController.networkUrl(
+          Uri.parse(signedUrl),
+        );
+      }
+
       await nextVideoController.initialize();
       nextVideoController.addListener(_handleVideoChanged);
 
@@ -340,6 +599,11 @@ class _LessonPlayerPageState extends State<LessonPlayerPage> {
         _videoController = nextVideoController;
         _isPreparing = false;
       });
+
+      await _applySavedPlaybackPositionIfNeeded();
+      if (!mounted || generation != _prepareGeneration) {
+        return;
+      }
 
       if (autoPlay) {
         await nextVideoController.play();
@@ -374,9 +638,24 @@ class _LessonPlayerPageState extends State<LessonPlayerPage> {
       return;
     }
 
+    await _savePlaybackProgress(force: true);
     controller.removeListener(_handleVideoChanged);
     _videoController = null;
     await controller.dispose();
+  }
+
+  Future<void> _closePlayer() async {
+    if (_isClosing) {
+      return;
+    }
+
+    _isClosing = true;
+    await _savePlaybackProgress(force: true);
+    if (!mounted) {
+      return;
+    }
+
+    Navigator.of(context).pop();
   }
 
   Future<void> _selectMedia(AppContentMedia media) async {
@@ -400,10 +679,13 @@ class _LessonPlayerPageState extends State<LessonPlayerPage> {
 
     if (controller.value.isPlaying) {
       await controller.pause();
+      await _savePlaybackProgress(force: true);
       _showStageControls(autoHide: false);
     } else {
       if (controller.value.position >= controller.value.duration) {
         await controller.seekTo(Duration.zero);
+        _completionSaved = false;
+        _lastSavedProgressSecond = null;
       }
       await controller.play();
       _showStageControls(autoHide: true);
@@ -422,6 +704,7 @@ class _LessonPlayerPageState extends State<LessonPlayerPage> {
       duration: controller.value.duration,
     );
     await controller.seekTo(targetPosition);
+    await _savePlaybackProgress(force: true);
   }
 
   Future<void> _seekTo(Duration position) async {
@@ -431,6 +714,7 @@ class _LessonPlayerPageState extends State<LessonPlayerPage> {
     }
 
     await controller.seekTo(position);
+    await _savePlaybackProgress(force: true);
   }
 
   @override
@@ -479,99 +763,108 @@ class _LessonPlayerPageState extends State<LessonPlayerPage> {
       selectedMedia: selectedMedia,
     );
 
-    return Scaffold(
-      backgroundColor: scheme.surface,
-      body: Stack(
-        children: [
-          SafeArea(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Row(
-                      children: [
-                        _CircleIcon(
-                          icon: Icons.arrow_back_rounded,
-                          tooltip: 'Regresar',
-                          onTap: () => Navigator.of(context).pop(),
-                        ),
-                        const Spacer(),
-                        const AppLogo(width: 132),
-                        const Spacer(),
-                        const SizedBox(width: 52),
-                      ],
-                    ),
-                  ),
-                  _PlaybackStage(
-                    item: widget.item,
-                    selectedMedia: selectedMedia,
-                    controller: videoController,
-                    isPreparing: _isPreparing,
-                    isLoadingMedia: isLoadingMedia,
-                    playbackError: _playbackError,
-                    controlsVisible: stageControlsVisible,
-                    canDarkenScreen: canDarkenScreen,
-                    onStageTap: _handleStageTap,
-                    onPlayPause: _togglePlayback,
-                    onSeek: _seekTo,
-                    onReplay10: () =>
-                        unawaited(_seekRelative(const Duration(seconds: -10))),
-                    onForward10: () =>
-                        unawaited(_seekRelative(const Duration(seconds: 10))),
-                    onFullscreen: _openFullscreen,
-                    onDarkenScreen: _enableAudioDarkScreen,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          mediaLabel,
-                          style: Theme.of(context).textTheme.labelMedium
-                              ?.copyWith(
-                                fontFamily: AppTypography.displayFont,
-                                color: scheme.onSurface,
-                              ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          displayTitle,
-                          style: Theme.of(context).textTheme.displayMedium
-                              ?.copyWith(color: titleColor),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          widget.item.description ??
-                              'Una práctica para revitalizar tu cuerpo y mente. Conecta contigo y eleva tu vitalidad.',
-                          style: Theme.of(
-                            context,
-                          ).textTheme.bodyLarge?.copyWith(color: bodyColor),
-                        ),
-                        const SizedBox(height: 24),
-                        if (showsMediaStages) ...[
-                          const SizedBox(height: 34),
-                          _PlayerMediaList(
-                            items: mediaItems,
-                            selectedMediaUuid: selectedMedia?.uuidContentMedia,
-                            isLoading: isLoadingMedia,
-                            onSelected: (item) => unawaited(_selectMedia(item)),
-                          ),
+    return PopScope<void>(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) {
+          unawaited(_closePlayer());
+        }
+      },
+      child: Scaffold(
+        backgroundColor: _audioScreenDarkened
+            ? AppColors.black
+            : scheme.surface,
+        body: Stack(
+          children: [
+            SafeArea(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Row(
+                        children: [
+                          AppBackButton(onTap: _closePlayer),
+                          const Spacer(),
+                          const AppLogo(width: 132),
+                          const Spacer(),
+                          const SizedBox(width: 56),
                         ],
-                      ],
+                      ),
                     ),
-                  ),
-                ],
+                    _PlaybackStage(
+                      item: widget.item,
+                      selectedMedia: selectedMedia,
+                      controller: videoController,
+                      isPreparing: _isPreparing,
+                      isLoadingMedia: isLoadingMedia,
+                      playbackError: _playbackError,
+                      controlsVisible: stageControlsVisible,
+                      canDarkenScreen: canDarkenScreen,
+                      onStageTap: _handleStageTap,
+                      onPlayPause: _togglePlayback,
+                      onSeek: _seekTo,
+                      onReplay10: () => unawaited(
+                        _seekRelative(const Duration(seconds: -10)),
+                      ),
+                      onForward10: () =>
+                          unawaited(_seekRelative(const Duration(seconds: 10))),
+                      onFullscreen: _openFullscreen,
+                      onDarkenScreen: _enableAudioDarkScreen,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            mediaLabel,
+                            style: Theme.of(context).textTheme.labelMedium
+                                ?.copyWith(
+                                  fontFamily: AppTypography.displayFont,
+                                  color: scheme.onSurface,
+                                ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            displayTitle,
+                            style: Theme.of(context).textTheme.displayMedium
+                                ?.copyWith(color: titleColor),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            widget.item.description ??
+                                'Una práctica para revitalizar tu cuerpo y mente. Conecta contigo y eleva tu vitalidad.',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodyLarge?.copyWith(color: bodyColor),
+                          ),
+                          const SizedBox(height: 24),
+                          if (showsMediaStages) ...[
+                            const SizedBox(height: 34),
+                            _PlayerMediaList(
+                              items: mediaItems,
+                              selectedMediaUuid:
+                                  selectedMedia?.uuidContentMedia,
+                              isLoading: isLoadingMedia,
+                              onSelected: (item) =>
+                                  unawaited(_selectMedia(item)),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          if (_audioScreenDarkened)
-            Positioned.fill(
-              child: _AudioDarkScreen(onTap: _disableAudioDarkScreen),
-            ),
-        ],
+            if (_audioScreenDarkened)
+              Positioned.fill(
+                child: _AudioDarkScreen(onTap: _disableAudioDarkScreen),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -896,11 +1189,15 @@ class _FullscreenMediaPlayer extends StatefulWidget {
     required this.controller,
     required this.title,
     required this.onPlayPause,
+    required this.onSeek,
+    required this.onSeekRelative,
   });
 
   final VideoPlayerController controller;
   final String title;
   final Future<void> Function() onPlayPause;
+  final Future<void> Function(Duration position) onSeek;
+  final Future<void> Function(Duration offset) onSeekRelative;
 
   @override
   State<_FullscreenMediaPlayer> createState() => _FullscreenMediaPlayerState();
@@ -1002,13 +1299,7 @@ class _FullscreenMediaPlayerState extends State<_FullscreenMediaPlayer> {
   }
 
   Future<void> _seekRelative(Duration offset) async {
-    final value = widget.controller.value;
-    final targetPosition = clampRelativeSeekPosition(
-      position: value.position,
-      offset: offset,
-      duration: value.duration,
-    );
-    await widget.controller.seekTo(targetPosition);
+    await widget.onSeekRelative(offset);
     if (!mounted) {
       return;
     }
@@ -1017,7 +1308,7 @@ class _FullscreenMediaPlayerState extends State<_FullscreenMediaPlayer> {
   }
 
   Future<void> _seekTo(Duration position) async {
-    await widget.controller.seekTo(position);
+    await widget.onSeek(position);
     if (!mounted) {
       return;
     }
@@ -1428,36 +1719,6 @@ class _PlayerMediaTile extends StatelessWidget {
               Icon(Icons.equalizer_rounded, color: scheme.primary),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _CircleIcon extends StatelessWidget {
-  const _CircleIcon({required this.icon, required this.tooltip, this.onTap});
-
-  final IconData icon;
-  final String tooltip;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
-    return AppInteractive(
-      tooltip: tooltip,
-      borderRadius: AppRadius.full,
-      hoverScale: 1,
-      pressedScale: 1,
-      onTap: onTap ?? () {},
-      child: Container(
-        width: 52,
-        height: 52,
-        decoration: BoxDecoration(
-          color: scheme.surface,
-          shape: BoxShape.circle,
-        ),
-        child: Icon(icon, color: scheme.onSurface),
       ),
     );
   }

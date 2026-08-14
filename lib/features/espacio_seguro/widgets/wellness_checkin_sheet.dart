@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/data/providers/app_data_scope.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_typography.dart';
 import '../../../shared/widgets/app_primary_button.dart';
 import '../../../shared/widgets/app_secondary_button.dart';
 import 'wellness_metric_selector.dart';
@@ -64,13 +64,7 @@ class _WellnessCheckInSheetState extends State<WellnessCheckInSheet> {
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
-    final brightness = Theme.of(context).brightness;
-    final surface = brightness == Brightness.dark
-        ? AppColors.darkSurface
-        : AppColors.background;
-    final muted = brightness == Brightness.dark
-        ? AppColors.darkTextMuted
-        : AppColors.textSecondary;
+    final scheme = Theme.of(context).colorScheme;
 
     return SafeArea(
       top: false,
@@ -81,7 +75,7 @@ class _WellnessCheckInSheetState extends State<WellnessCheckInSheet> {
         child: Container(
           padding: const EdgeInsets.fromLTRB(22, 12, 22, 22),
           decoration: BoxDecoration(
-            color: surface,
+            color: scheme.surface,
             borderRadius: const BorderRadius.vertical(top: AppRadius.xl),
           ),
           child: SingleChildScrollView(
@@ -94,7 +88,7 @@ class _WellnessCheckInSheetState extends State<WellnessCheckInSheet> {
                     width: 44,
                     height: 5,
                     decoration: BoxDecoration(
-                      color: muted.withValues(alpha: 0.34),
+                      color: scheme.onSurface.withValues(alpha: 0.34),
                       borderRadius: AppRadius.full,
                     ),
                   ),
@@ -104,7 +98,10 @@ class _WellnessCheckInSheetState extends State<WellnessCheckInSheet> {
                   child: Text(
                     '¿Cómo te sientes hoy?',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineMedium,
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      color: scheme.onSurface,
+                      fontFamily: AppTypography.displayFont,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -113,7 +110,8 @@ class _WellnessCheckInSheetState extends State<WellnessCheckInSheet> {
                     'Registra tu energía interior para acompañar tu bienestar.',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: muted,
+                      color: scheme.onSurface,
+                      fontFamily: AppTypography.primaryFont,
                       height: 1.25,
                     ),
                   ),
@@ -166,13 +164,6 @@ class _WellnessCheckInSheetState extends State<WellnessCheckInSheet> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 10),
-                Text(
-                  'Elige un nivel del 1 al 5 en cada área. El mood es opcional.',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(color: muted),
-                ),
                 if (_errorMessage != null) ...[
                   const SizedBox(height: AppSpacing.sm),
                   Text(
@@ -188,6 +179,12 @@ class _WellnessCheckInSheetState extends State<WellnessCheckInSheet> {
                   label: _isSaving ? 'Guardando...' : 'Guardar registro',
                   icon: Icons.check_rounded,
                   height: 54,
+                  backgroundColor: scheme.primary,
+                  foregroundColor: scheme.onPrimary,
+                  labelStyle: const TextStyle(
+                    fontFamily: AppTypography.displayFont,
+                    fontWeight: FontWeight.w700,
+                  ),
                   onPressed: _isComplete && !_isSaving ? _save : null,
                 ),
                 const SizedBox(height: AppSpacing.sm),
@@ -195,6 +192,13 @@ class _WellnessCheckInSheetState extends State<WellnessCheckInSheet> {
                   label: 'Cancelar',
                   icon: Icons.close_rounded,
                   height: 52,
+                  backgroundColor: scheme.surface,
+                  foregroundColor: scheme.onSurface,
+                  borderColor: scheme.onSurface.withValues(alpha: 0.16),
+                  labelStyle: const TextStyle(
+                    fontFamily: AppTypography.displayFont,
+                    fontWeight: FontWeight.w700,
+                  ),
                   onPressed: _isSaving
                       ? null
                       : () => Navigator.of(context).pop(),

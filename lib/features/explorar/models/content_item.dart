@@ -10,6 +10,8 @@ class ContentItem {
     this.lessons,
     this.isNew = false,
     this.isFavorite = false,
+    this.descargable = false,
+    this.progressPercentage,
   });
 
   final String? uuidContentItem;
@@ -22,6 +24,8 @@ class ContentItem {
   final int? lessons;
   final bool isNew;
   final bool isFavorite;
+  final bool descargable;
+  final int? progressPercentage;
 
   String get subtitle {
     if (lessons != null) return '$lessons lecciones · $duration';

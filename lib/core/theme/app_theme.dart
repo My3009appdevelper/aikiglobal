@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'app_colors.dart';
-import 'app_radius.dart';
 import 'app_typography.dart';
 
 class AppTheme {
@@ -28,6 +27,10 @@ class AppTheme {
     required Color card,
   }) {
     final textTheme = AppTypography.textTheme(brightness);
+    final inputBorderRadius = BorderRadius.circular(20);
+    final inputLabelStyle = textTheme.bodyMedium?.copyWith(
+      color: scheme.onSurface,
+    );
 
     return ThemeData(
       useMaterial3: true,
@@ -47,36 +50,24 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: brightness == Brightness.dark
-            ? AppColors.darkSurfaceSoft
-            : AppColors.background.withValues(alpha: 0.96),
-        hintStyle: textTheme.bodyMedium?.copyWith(
-          color: brightness == Brightness.dark
-              ? AppColors.darkTextMuted.withValues(alpha: 0.72)
-              : AppColors.textMuted,
-        ),
+        fillColor: scheme.surface,
+        labelStyle: inputLabelStyle,
+        floatingLabelStyle: inputLabelStyle,
+        hintStyle: textTheme.bodyMedium?.copyWith(color: scheme.onSurface),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 18,
           vertical: 18,
         ),
         border: OutlineInputBorder(
-          borderRadius: AppRadius.full,
-          borderSide: BorderSide(
-            color: brightness == Brightness.dark
-                ? AppColors.darkStroke
-                : AppColors.stroke,
-          ),
+          borderRadius: inputBorderRadius,
+          borderSide: BorderSide(color: scheme.tertiary),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: AppRadius.full,
-          borderSide: BorderSide(
-            color: brightness == Brightness.dark
-                ? AppColors.darkStroke
-                : AppColors.stroke,
-          ),
+          borderRadius: inputBorderRadius,
+          borderSide: BorderSide(color: scheme.tertiary),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: AppRadius.full,
+          borderRadius: inputBorderRadius,
           borderSide: BorderSide(color: scheme.secondary, width: 1.4),
         ),
       ),

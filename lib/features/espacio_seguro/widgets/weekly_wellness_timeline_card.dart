@@ -4,10 +4,10 @@ import '../../../core/constants/app_assets.dart';
 import '../../../core/data/models/app_wellness_daily_log.dart';
 import '../../../core/data/providers/app_data_scope.dart';
 import '../../../core/data/providers/wellness_profile_stats_controller.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_shadows.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_typography.dart';
 import '../../../shared/widgets/app_background.dart';
 import '../../../shared/widgets/app_interactive.dart';
 import '../../../shared/widgets/app_progress_celebration_overlay.dart';
@@ -117,19 +117,14 @@ class _WeeklyWellnessTimelineContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
-    final surface = brightness == Brightness.dark
-        ? AppColors.darkSurface
-        : AppColors.background;
-    final stroke = brightness == Brightness.dark
-        ? AppColors.darkStroke
-        : AppColors.stroke;
+    final scheme = Theme.of(context).colorScheme;
 
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: surface.withValues(alpha: 0.92),
+        color: scheme.surface,
         borderRadius: AppRadius.large,
-        border: Border.all(color: stroke),
+        border: Border.all(color: scheme.onSurface.withValues(alpha: 0.1)),
         boxShadow: AppShadows.soft(brightness),
       ),
       child: Column(
@@ -139,7 +134,10 @@ class _WeeklyWellnessTimelineContent extends StatelessWidget {
             'Tu energía interior',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.headlineMedium,
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              color: scheme.onSurface,
+              fontFamily: AppTypography.displayFont,
+            ),
           ),
           const SizedBox(height: AppSpacing.md),
           SizedBox(
@@ -227,18 +225,9 @@ class _DayWellnessChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final isDark = brightness == Brightness.dark;
-    final accent = Theme.of(context).colorScheme.primary;
-    final selectedForeground = Theme.of(context).colorScheme.onPrimary;
-    final muted = isDark ? AppColors.darkTextMuted : AppColors.textMuted;
-    final baseSurface = isDark
-        ? AppColors.darkSurfaceSoft
-        : AppColors.sandLight;
-    final selectedSurface = isDark ? AppColors.sand : AppColors.primary;
-    final textColor = selected
-        ? selectedForeground
-        : Theme.of(context).colorScheme.onSurface;
+    final scheme = Theme.of(context).colorScheme;
+    final textColor = selected ? scheme.onPrimary : scheme.onTertiary;
+
     return AppInteractive(
       borderRadius: AppRadius.medium,
       onTap: onTap,
@@ -250,12 +239,12 @@ class _DayWellnessChip extends StatelessWidget {
         width: 78,
         padding: const EdgeInsets.fromLTRB(10, 10, 10, 9),
         decoration: BoxDecoration(
-          color: selected
-              ? selectedSurface
-              : baseSurface.withValues(alpha: 0.8),
+          color: selected ? scheme.primary : scheme.tertiary,
           borderRadius: AppRadius.medium,
           border: Border.all(
-            color: selected ? accent : AppColors.transparent,
+            color: selected
+                ? scheme.primary
+                : scheme.onTertiary.withValues(alpha: 0.08),
             width: selected ? 1.4 : 1,
           ),
         ),
@@ -269,7 +258,8 @@ class _DayWellnessChip extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: selected ? textColor : muted,
+                    color: textColor,
+                    fontFamily: AppTypography.displayFont,
                     fontWeight: FontWeight.w700,
                     fontSize: 11,
                   ),
@@ -280,6 +270,7 @@ class _DayWellnessChip extends StatelessWidget {
                   maxLines: 1,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: textColor,
+                    fontFamily: AppTypography.displayFont,
                     fontWeight: FontWeight.w800,
                     height: 1,
                   ),
@@ -292,7 +283,7 @@ class _DayWellnessChip extends StatelessWidget {
                 width: 18,
                 height: 3,
                 decoration: BoxDecoration(
-                  color: selected ? textColor : accent,
+                  color: selected ? textColor : scheme.primary,
                   borderRadius: AppRadius.full,
                 ),
               )
@@ -314,13 +305,11 @@ class _MetricBars extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final values = [day.energia, day.calma, day.descanso, day.conexion];
-    final brightness = Theme.of(context).brightness;
-    final baseColor = selected
-        ? Theme.of(context).colorScheme.onPrimary
-        : Theme.of(context).colorScheme.primary;
-    final emptyColor = brightness == Brightness.dark
-        ? AppColors.darkStroke
-        : AppColors.stroke;
+    final scheme = Theme.of(context).colorScheme;
+    final baseColor = selected ? scheme.onPrimary : scheme.primary;
+    final emptyColor = selected
+        ? scheme.onPrimary.withValues(alpha: 0.32)
+        : scheme.onTertiary.withValues(alpha: 0.16);
 
     return SizedBox(
       height: 34,
@@ -398,19 +387,13 @@ class _SelectedDayDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final surface = brightness == Brightness.dark
-        ? AppColors.darkSurfaceSoft
-        : AppColors.sandLight;
-    final muted = brightness == Brightness.dark
-        ? AppColors.darkTextMuted
-        : AppColors.textSecondary;
+    final scheme = Theme.of(context).colorScheme;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: surface.withValues(alpha: 0.82),
+        color: scheme.tertiary,
         borderRadius: AppRadius.medium,
       ),
       child: Column(
@@ -420,18 +403,22 @@ class _SelectedDayDetails extends StatelessWidget {
             day.isToday ? 'Hoy' : _fullDateLabel(day.date),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: scheme.onTertiary,
+              fontFamily: AppTypography.displayFont,
+              fontWeight: FontWeight.w800,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
             _dayDescription(day),
             maxLines: 3,
             overflow: TextOverflow.ellipsis,
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(color: muted, height: 1.18),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: scheme.onTertiary,
+              fontFamily: AppTypography.primaryFont,
+              height: 1.18,
+            ),
           ),
           const SizedBox(height: 12),
           _MetricTileGrid(
@@ -474,6 +461,10 @@ class _SelectedDayDetails extends StatelessWidget {
               child: AppTertiaryButton(
                 label: day.hasActivity ? 'Check-in' : 'Check-in',
                 icon: Icons.edit_rounded,
+                labelStyle: const TextStyle(
+                  fontFamily: AppTypography.displayFont,
+                  fontWeight: FontWeight.w700,
+                ),
                 onPressed: onCheckInPressed,
               ),
             ),
@@ -534,7 +525,7 @@ void _showStreakCelebrationDialog(
         imageOpacity: 0.045,
         child: AppProgressCelebrationOverlay(
           data: AppProgressCelebrationData(
-            title: 'Racha actualizada',
+            title: 'Progreso actualizado',
             body: 'Ya llevas ${_streakDaysLabel(event.streak)} cuidando de ti.',
             icon: Icons.local_fire_department_rounded,
             fromValue: event.previousStreak,
@@ -580,27 +571,26 @@ class _MetricTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final color = brightness == Brightness.dark
-        ? AppColors.darkSurface
-        : AppColors.background.withValues(alpha: 0.72);
-    final textColor = Theme.of(context).colorScheme.onSurface;
+    final scheme = Theme.of(context).colorScheme;
 
     return Container(
       alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-      decoration: BoxDecoration(color: color, borderRadius: AppRadius.medium),
+      decoration: BoxDecoration(
+        color: scheme.surface,
+        borderRadius: AppRadius.medium,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 17, color: Theme.of(context).colorScheme.primary),
+          Icon(icon, size: 17, color: scheme.primary),
           const SizedBox(width: 8),
           Text(
             value.toString(),
             maxLines: 1,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: textColor,
+              color: scheme.onSurface,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -623,21 +613,17 @@ class _DayInfoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final textColor = Theme.of(context).colorScheme.onSurface;
-    final muted = brightness == Brightness.dark
-        ? AppColors.darkTextMuted
-        : AppColors.textMuted;
-    final fill = brightness == Brightness.dark
-        ? AppColors.darkSurface
-        : AppColors.background.withValues(alpha: 0.72);
+    final scheme = Theme.of(context).colorScheme;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
-      decoration: BoxDecoration(color: fill, borderRadius: AppRadius.medium),
+      decoration: BoxDecoration(
+        color: scheme.surface,
+        borderRadius: AppRadius.medium,
+      ),
       child: Row(
         children: [
-          Icon(icon, size: 17, color: Theme.of(context).colorScheme.primary),
+          Icon(icon, size: 17, color: scheme.primary),
           const SizedBox(width: 8),
           Expanded(
             child: Column(
@@ -649,7 +635,8 @@ class _DayInfoTile extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: muted,
+                    color: scheme.onSurface,
+                    fontFamily: AppTypography.displayFont,
                     fontWeight: FontWeight.w700,
                     height: 1,
                   ),
@@ -660,7 +647,8 @@ class _DayInfoTile extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: textColor,
+                    color: scheme.onSurface,
+                    fontFamily: AppTypography.primaryFont,
                     fontWeight: FontWeight.w800,
                     height: 1,
                   ),
@@ -749,7 +737,7 @@ int _metricValue(int value) => value.clamp(0, 5).toInt();
 int _positiveValue(int value) => value < 0 ? 0 : value;
 
 String _streakDaysLabel(int days) {
-  return days == 1 ? '1 día seguido' : '$days días seguidos';
+  return days == 1 ? '1 día de progreso' : '$days días de progreso';
 }
 
 String _dayDescription(_WellnessDaySnapshot day) {

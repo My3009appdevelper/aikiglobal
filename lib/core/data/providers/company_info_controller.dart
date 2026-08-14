@@ -175,6 +175,46 @@ class CompanyInfoController extends ChangeNotifier {
     PendingCompanyInfoImageUpload? mensajeFundadoresImageUpload5,
     bool syncAfterSave = false,
   }) async {
+    final cleanHeroTitulo = heroTitulo.trim();
+    final cleanHeroSubtitulo = heroSubtitulo.trim();
+    final cleanHeroImagePathInput = _cleanNullableText(heroImagePath);
+    final cleanTextoEntrada = textoEntrada.trim();
+    final cleanQuienesSomos = quienesSomos.trim();
+    final cleanSignificadoAiki = significadoAiki.trim();
+    final cleanMision = mision.trim();
+    final cleanVision = vision.trim();
+    final cleanFilosofia = filosofia.trim();
+    final cleanMensajeFundadoresTitulo = mensajeFundadoresTitulo.trim();
+    final cleanMensajeFundadoresTexto = mensajeFundadoresTexto.trim();
+    final cleanMensajeFundadoresImagePathInput1 = _cleanNullableText(
+      mensajeFundadoresImagePath1,
+    );
+    final cleanMensajeFundadoresImagePathInput2 = _cleanNullableText(
+      mensajeFundadoresImagePath2,
+    );
+    final cleanMensajeFundadoresImagePathInput3 = _cleanNullableText(
+      mensajeFundadoresImagePath3,
+    );
+    final cleanMensajeFundadoresImagePathInput4 = _cleanNullableText(
+      mensajeFundadoresImagePath4,
+    );
+    final cleanMensajeFundadoresImagePathInput5 = _cleanNullableText(
+      mensajeFundadoresImagePath5,
+    );
+
+    if (cleanHeroTitulo.isEmpty ||
+        cleanHeroSubtitulo.isEmpty ||
+        cleanTextoEntrada.isEmpty ||
+        cleanQuienesSomos.isEmpty ||
+        cleanSignificadoAiki.isEmpty ||
+        cleanMision.isEmpty ||
+        cleanVision.isEmpty ||
+        cleanFilosofia.isEmpty) {
+      throw ArgumentError(
+        'Completa todos los campos de información de la empresa.',
+      );
+    }
+
     final uploadedHeroImagePath = await _uploadImageIfNeeded(
       slot: companyInfoHeroImageSlot,
       upload: heroImageUpload,
@@ -199,47 +239,17 @@ class CompanyInfoController extends ChangeNotifier {
       slot: companyInfoFounderImageSlot(5),
       upload: mensajeFundadoresImageUpload5,
     );
-
-    final cleanHeroTitulo = heroTitulo.trim();
-    final cleanHeroSubtitulo = heroSubtitulo.trim();
-    final cleanHeroImagePath =
-        uploadedHeroImagePath ?? _cleanNullableText(heroImagePath);
-    final cleanTextoEntrada = textoEntrada.trim();
-    final cleanQuienesSomos = quienesSomos.trim();
-    final cleanSignificadoAiki = significadoAiki.trim();
-    final cleanMision = mision.trim();
-    final cleanVision = vision.trim();
-    final cleanFilosofia = filosofia.trim();
-    final cleanMensajeFundadoresTitulo = mensajeFundadoresTitulo.trim();
-    final cleanMensajeFundadoresTexto = mensajeFundadoresTexto.trim();
-    final cleanMensajeFundadoresImagePath1 = _cleanNullableText(
-      uploadedFundadoresImagePath1 ?? mensajeFundadoresImagePath1,
-    );
-    final cleanMensajeFundadoresImagePath2 = _cleanNullableText(
-      uploadedFundadoresImagePath2 ?? mensajeFundadoresImagePath2,
-    );
-    final cleanMensajeFundadoresImagePath3 = _cleanNullableText(
-      uploadedFundadoresImagePath3 ?? mensajeFundadoresImagePath3,
-    );
-    final cleanMensajeFundadoresImagePath4 = _cleanNullableText(
-      uploadedFundadoresImagePath4 ?? mensajeFundadoresImagePath4,
-    );
-    final cleanMensajeFundadoresImagePath5 = _cleanNullableText(
-      uploadedFundadoresImagePath5 ?? mensajeFundadoresImagePath5,
-    );
-
-    if (cleanHeroTitulo.isEmpty ||
-        cleanHeroSubtitulo.isEmpty ||
-        cleanTextoEntrada.isEmpty ||
-        cleanQuienesSomos.isEmpty ||
-        cleanSignificadoAiki.isEmpty ||
-        cleanMision.isEmpty ||
-        cleanVision.isEmpty ||
-        cleanFilosofia.isEmpty) {
-      throw ArgumentError(
-        'Completa todos los campos de información de la empresa.',
-      );
-    }
+    final cleanHeroImagePath = uploadedHeroImagePath ?? cleanHeroImagePathInput;
+    final cleanMensajeFundadoresImagePath1 =
+        uploadedFundadoresImagePath1 ?? cleanMensajeFundadoresImagePathInput1;
+    final cleanMensajeFundadoresImagePath2 =
+        uploadedFundadoresImagePath2 ?? cleanMensajeFundadoresImagePathInput2;
+    final cleanMensajeFundadoresImagePath3 =
+        uploadedFundadoresImagePath3 ?? cleanMensajeFundadoresImagePathInput3;
+    final cleanMensajeFundadoresImagePath4 =
+        uploadedFundadoresImagePath4 ?? cleanMensajeFundadoresImagePathInput4;
+    final cleanMensajeFundadoresImagePath5 =
+        uploadedFundadoresImagePath5 ?? cleanMensajeFundadoresImagePathInput5;
 
     final now = DateTime.now().toUtc();
     final current = _info;
@@ -363,6 +373,15 @@ class CompanyInfoController extends ChangeNotifier {
       if (syncError != null) {
         throw syncError;
       }
+      _deleteReplacedImages(
+        previous: current,
+        nextHeroImagePath: cleanHeroImagePath,
+        nextFounderImagePath1: cleanMensajeFundadoresImagePath1,
+        nextFounderImagePath2: cleanMensajeFundadoresImagePath2,
+        nextFounderImagePath3: cleanMensajeFundadoresImagePath3,
+        nextFounderImagePath4: cleanMensajeFundadoresImagePath4,
+        nextFounderImagePath5: cleanMensajeFundadoresImagePath5,
+      );
     }
   }
 
@@ -385,6 +404,56 @@ class CompanyInfoController extends ChangeNotifier {
       fileName: upload.fileName,
       contentType: upload.contentType,
     );
+  }
+
+  void _deleteReplacedImages({
+    required AppCompanyInfo? previous,
+    required String? nextHeroImagePath,
+    required String? nextFounderImagePath1,
+    required String? nextFounderImagePath2,
+    required String? nextFounderImagePath3,
+    required String? nextFounderImagePath4,
+    required String? nextFounderImagePath5,
+  }) {
+    if (previous == null) {
+      return;
+    }
+
+    _deleteReplacedImageIfNeeded(previous.heroImagePath, nextHeroImagePath);
+    _deleteReplacedImageIfNeeded(
+      previous.mensajeFundadoresImagePath1,
+      nextFounderImagePath1,
+    );
+    _deleteReplacedImageIfNeeded(
+      previous.mensajeFundadoresImagePath2,
+      nextFounderImagePath2,
+    );
+    _deleteReplacedImageIfNeeded(
+      previous.mensajeFundadoresImagePath3,
+      nextFounderImagePath3,
+    );
+    _deleteReplacedImageIfNeeded(
+      previous.mensajeFundadoresImagePath4,
+      nextFounderImagePath4,
+    );
+    _deleteReplacedImageIfNeeded(
+      previous.mensajeFundadoresImagePath5,
+      nextFounderImagePath5,
+    );
+  }
+
+  void _deleteReplacedImageIfNeeded(String? previousPath, String? nextPath) {
+    final cleanPreviousPath = _cleanNullableText(previousPath);
+    if (cleanPreviousPath == null || cleanPreviousPath == nextPath) {
+      return;
+    }
+
+    final storageService = _companyInfoStorageService;
+    if (storageService == null) {
+      return;
+    }
+
+    unawaited(storageService.deleteImage(cleanPreviousPath).catchError((_) {}));
   }
 
   String? _cleanNullableText(String? value) {

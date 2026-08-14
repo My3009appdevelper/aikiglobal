@@ -63,9 +63,16 @@ class ProfilePhotoStorageService {
       return null;
     }
 
-    return _supabase.storage
-        .from(bucket)
-        .createSignedUrl(cleanPath, signedUrlExpiresInSeconds);
+    try {
+      return await _supabase.storage
+          .from(bucket)
+          .createSignedUrl(cleanPath, signedUrlExpiresInSeconds);
+    } on StorageException catch (error) {
+      if (error.statusCode == '404') {
+        return null;
+      }
+      rethrow;
+    }
   }
 }
 

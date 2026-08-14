@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_assets.dart';
 import '../../../core/data/providers/app_data_scope.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_shadows.dart';
+import '../../../core/theme/app_typography.dart';
+import '../../../shared/widgets/app_hero_image_overlay.dart';
 
 class DailyStreakCard extends StatelessWidget {
   const DailyStreakCard({super.key});
@@ -13,8 +14,7 @@ class DailyStreakCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final statsController = AppDataScope.wellnessProfileStats(context);
     final brightness = Theme.of(context).brightness;
-    final isDark = brightness == Brightness.dark;
-    final foreground = AppColors.white;
+    final scheme = Theme.of(context).colorScheme;
 
     return AnimatedBuilder(
       animation: statsController,
@@ -34,32 +34,18 @@ class DailyStreakCard extends StatelessWidget {
                 fit: BoxFit.cover,
                 alignment: Alignment.centerRight,
                 errorBuilder: (context, error, stackTrace) {
-                  return const DecoratedBox(
+                  return DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [AppColors.primaryDeep, AppColors.primary],
+                        colors: [scheme.surface, scheme.tertiary],
                       ),
                     ),
                   );
                 },
               ),
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [
-                      AppColors.primaryDeep.withValues(
-                        alpha: isDark ? 0.96 : 0.9,
-                      ),
-                      AppColors.primaryDeep.withValues(alpha: 0.78),
-                      AppColors.gold31,
-                    ],
-                  ),
-                ),
-              ),
+              const AppHeroImageOverlay(),
               _DailyStreakContent(
-                foreground: foreground,
+                foreground: scheme.onSurface,
                 streak: statsController.currentStreak,
               ),
             ],
@@ -97,11 +83,12 @@ class _DailyStreakContent extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           Text(
-            hasStreak ? 'Estás cuidando de ti' : 'No has empezado tu racha',
+            hasStreak ? 'Estás cuidando de ti' : 'No has empezado tu progreso',
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               color: foreground,
+              fontFamily: AppTypography.displayFont,
               fontSize: hasStreak ? 23 : 24,
               height: 1.05,
             ),
@@ -118,6 +105,7 @@ class _DailyStreakContent extends StatelessWidget {
                   maxLines: 1,
                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
                     color: foreground,
+                    fontFamily: AppTypography.displayFont,
                     height: 1.03,
                   ),
                 ),
@@ -141,8 +129,8 @@ class _DailyStreakContent extends StatelessWidget {
 
 String _streakLabel(int streak) {
   if (streak == 1) {
-    return '1 día seguido';
+    return '1 día de progreso';
   }
 
-  return '$streak días seguidos';
+  return '$streak días de progreso';
 }

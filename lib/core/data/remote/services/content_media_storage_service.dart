@@ -3,6 +3,8 @@ import 'dart:typed_data';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../media/content_media_file_downloader.dart';
+
 class ContentMediaStorageService {
   ContentMediaStorageService({required SupabaseClient supabase})
     : _supabase = supabase;
@@ -107,15 +109,48 @@ class ContentMediaStorageService {
     return _supabase.storage.from(bucket).download(cleanPath);
   }
 
+  Future<int?> downloadMediaToFile({
+    required String remotePath,
+    required String localPath,
+    ContentMediaDownloadProgress? onProgress,
+  }) async {
+    final signedUrl = await createSignedUrl(remotePath);
+    if (signedUrl == null) {
+      return null;
+    }
+
+    return downloadUrlToFile(
+      url: signedUrl,
+      localPath: localPath,
+      onProgress: onProgress,
+    );
+  }
+
+  Future<void> deletePartialDownload(String? localPath) async {
+    final cleanPath = localPath?.trim();
+    if (cleanPath == null || cleanPath.isEmpty) {
+      return;
+    }
+
+    await deletePartialFile(cleanPath);
+  }
+
   Future<String?> createSignedUrl(String? remotePath) async {
     final cleanPath = remotePath?.trim();
     if (cleanPath == null || cleanPath.isEmpty) {
       return null;
     }
 
-    return _supabase.storage
-        .from(bucket)
-        .createSignedUrl(cleanPath, signedUrlExpiresInSeconds);
+    try {
+      return await _supabase.storage
+          .from(bucket)
+          .createSignedUrl(cleanPath, signedUrlExpiresInSeconds);
+    } on StorageException catch (error) {
+      if (error.statusCode == '404') {
+        return null;
+      }
+      rethrow;
+    }
   }
 }
 
@@ -169,6 +204,7 @@ String _mediaExtensionFor(String fileName, String contentType) {
       '.m4v',
       '.mp3',
       '.m4a',
+      '.mp4a',
       '.aac',
       '.wav',
       '.ogg',
@@ -215,6 +251,9 @@ String _mediaContentTypeFor(String fileName, String? contentType) {
     return 'audio/mpeg';
   }
   if (cleanName.endsWith('.m4a')) {
+    return 'audio/mp4';
+  }
+  if (cleanName.endsWith('.mp4a')) {
     return 'audio/mp4';
   }
   if (cleanName.endsWith('.aac')) {

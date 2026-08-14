@@ -8,13 +8,16 @@ import '../../core/data/providers/app_data_scope.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_typography.dart';
+import '../../shared/widgets/app_back_button.dart';
 import '../../shared/widgets/app_cover_image.dart';
 import '../../shared/widgets/app_interactive.dart';
 import '../../shared/widgets/app_primary_button.dart';
+import '../../shared/widgets/app_secondary_button.dart';
 import '../../shared/widgets/app_logo.dart';
 import 'content_item_media_display_policy.dart';
 import 'content_media_presentation.dart';
 import 'content_media_playback_selection.dart';
+import 'content_playback_progress.dart';
 import 'lesson_player_page.dart';
 import 'models/content_item.dart';
 
@@ -74,8 +77,209 @@ class ContentDetailPage extends StatelessWidget {
             left: 24,
             right: 24,
             bottom: 26,
-            child: AppPrimaryButton(
-              label: showsMediaStages ? 'Comenzar curso' : 'Reproducir ahora',
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (item.descargable && item.uuidContentItem != null) ...[
+                  _DownloadAction(item: item),
+                  const SizedBox(height: 10),
+                ],
+                _ContentPlaybackAction(
+                  item: item,
+                  showsMediaStages: showsMediaStages,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DownloadAction extends StatelessWidget {
+  const _DownloadAction({required this.item});
+
+  final ContentItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!item.descargable || item.uuidContentItem == null) {
+      return const SizedBox.shrink();
+    }
+
+    final downloadsController = AppDataScope.contentDownloads(context);
+    final subscriptionController = AppDataScope.subscription(context);
+    final scheme = Theme.of(context).colorScheme;
+
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        downloadsController,
+        subscriptionController,
+      ]),
+      builder: (context, _) {
+        final contentUuid = item.uuidContentItem!;
+        final downloaded = downloadsController.isContentDownloaded(contentUuid);
+        final downloading = downloadsController.isContentDownloading(
+          contentUuid,
+        );
+
+        if (!downloadsController.isSupported) {
+          return const SizedBox.shrink();
+        }
+
+        if (!subscriptionController.hasDownloadAccess) {
+          return Text(
+            subscriptionController.hasPremiumAccess
+                ? 'Tu suscripción actual no incluye descargas offline.'
+                : 'Las descargas offline están disponibles con Premium.',
+            textAlign: TextAlign.center,
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: scheme.onSurface),
+          );
+        }
+
+        if (downloading) {
+          return _DownloadProgressLabel(
+            progress: downloadsController.downloadProgressForContent(
+              contentUuid,
+            ),
+          );
+        }
+
+        return AppSecondaryButton(
+          label: downloaded ? 'Eliminar descarga' : 'Descargar',
+          icon: downloaded
+              ? Icons.delete_outline_rounded
+              : Icons.download_outlined,
+          height: 46,
+          foregroundColor: scheme.onSurface,
+          backgroundColor: scheme.surface,
+          onPressed: () => downloaded
+              ? _removeDownload(context, contentUuid)
+              : _downloadContent(context, contentUuid),
+        );
+      },
+    );
+  }
+
+  Future<void> _downloadContent(
+    BuildContext context,
+    String uuidContentItem,
+  ) async {
+    try {
+      await AppDataScope.contentDownloads(context).downloadContent(
+        uuidContentItem: uuidContentItem,
+        descargable: item.descargable,
+      );
+    } catch (error) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(_downloadErrorMessage(error))));
+    }
+  }
+
+  Future<void> _removeDownload(
+    BuildContext context,
+    String uuidContentItem,
+  ) async {
+    final controller = AppDataScope.contentDownloads(context);
+    final media = controller.downloads
+        .where((download) => download.uuidContentItem == uuidContentItem)
+        .toList();
+    for (final download in media) {
+      await controller.removeDownload(
+        uuidContentMedia: download.uuidContentMedia,
+      );
+    }
+  }
+}
+
+class _DownloadProgressLabel extends StatelessWidget {
+  const _DownloadProgressLabel({this.progress});
+
+  final double? progress;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final percentage = progress == null ? null : (progress! * 100).round();
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          width: 18,
+          height: 18,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            value: progress,
+            color: scheme.primary,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          percentage == null ? 'Descargando...' : 'Descargando $percentage%',
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(color: scheme.onSurface),
+        ),
+      ],
+    );
+  }
+}
+
+String _downloadErrorMessage(Object error) {
+  if (error is StateError) {
+    return error.message.toString();
+  }
+  return 'No se pudo descargar el contenido.';
+}
+
+class _ContentPlaybackAction extends StatelessWidget {
+  const _ContentPlaybackAction({
+    required this.item,
+    required this.showsMediaStages,
+  });
+
+  final ContentItem item;
+  final bool showsMediaStages;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final userContentStatesController = AppDataScope.userContentStates(context);
+
+    return AnimatedBuilder(
+      animation: userContentStatesController,
+      builder: (context, _) {
+        final uuidContentItem = item.uuidContentItem?.trim();
+        final state = uuidContentItem == null || uuidContentItem.isEmpty
+            ? null
+            : userContentStatesController.stateForContent(uuidContentItem);
+        final summary = contentPlaybackProgressSummary(
+          progresoPorcentaje: state?.progresoPorcentaje ?? 0,
+          ultimaPosicionSegundos: state?.ultimaPosicionSegundos ?? 0,
+          completado: state?.completado ?? false,
+          showsMediaStages: showsMediaStages,
+        );
+
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 180),
+              child: summary.statusText == null
+                  ? const SizedBox.shrink()
+                  : Padding(
+                      key: ValueKey(summary.statusText),
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: _PlaybackProgressPill(text: summary.statusText!),
+                    ),
+            ),
+            AppPrimaryButton(
+              label: summary.buttonLabel,
               backgroundColor: scheme.primary,
               foregroundColor: scheme.onPrimary,
               labelStyle: const TextStyle(
@@ -90,8 +294,44 @@ class ContentDetailPage extends StatelessWidget {
                 );
               },
             ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _PlaybackProgressPill extends StatelessWidget {
+  const _PlaybackProgressPill({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: scheme.surface,
+        borderRadius: AppRadius.full,
+        border: Border.all(color: scheme.primary.withValues(alpha: 0.22)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.10),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
           ),
         ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(color: scheme.onSurface),
+        ),
       ),
     );
   }
@@ -160,9 +400,9 @@ class _DetailHero extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          _HeroIcon(
-                            icon: Icons.arrow_back_rounded,
-                            tooltip: 'Regresar',
+                          AppBackButton.overlay(
+                            size: 48,
+                            iconSize: 30,
                             onTap: () => Navigator.of(context).pop(),
                           ),
                           const Spacer(),

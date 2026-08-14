@@ -8,7 +8,11 @@ import { getPhoneMockupFrameSize } from "../phoneSpec";
 
 export const ContentScene: React.FC<AikiVideoProps> = (props) => {
   const { fps } = useVideoConfig();
-  const { width: phoneWidth, height: phoneHeight } = getPhoneMockupFrameSize(props.phoneScale);
+  const { width: phoneWidth, height: phoneHeight } = getPhoneMockupFrameSize(
+    props.phoneScale,
+    props.phoneWidthScale,
+    props.phoneHeightScale,
+  );
   const callout = props.callouts.content;
   const calloutStartFrame = Math.round(callout.startAtSeconds * fps);
   const calloutEndFrame = Math.round((callout.startAtSeconds + callout.durationInSeconds) * fps);
@@ -29,7 +33,9 @@ export const ContentScene: React.FC<AikiVideoProps> = (props) => {
                 width={phoneWidth}
                 height={phoneHeight}
                 accentColor={props.accentColor}
-                objectFit="cover"
+                objectFit={props.phoneContentFit}
+                contentScale={props.phoneContentScale}
+                contentTranslateY={props.phoneContentOffsetY}
                 sourceStartAtSeconds={1}
                 centerVertically
               />

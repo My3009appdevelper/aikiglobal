@@ -32,12 +32,14 @@ class CurrentProfileController extends ChangeNotifier {
     AuthRemoteService? authService,
     ProfilePhotoStorageService? profilePhotoStorageService,
     LocalMediaCache? localMediaCache,
+    Future<void> Function()? beforeSignOut,
   }) : _profilesDao = profilesDao,
        _remoteService = remoteService,
        _syncService = syncService,
        _authService = authService,
        _profilePhotoStorageService = profilePhotoStorageService,
-       _localMediaCache = localMediaCache;
+       _localMediaCache = localMediaCache,
+       _beforeSignOut = beforeSignOut;
 
   final ProfilesDao? _profilesDao;
   final ProfilesRemoteService? _remoteService;
@@ -45,6 +47,7 @@ class CurrentProfileController extends ChangeNotifier {
   final AuthRemoteService? _authService;
   final ProfilePhotoStorageService? _profilePhotoStorageService;
   final LocalMediaCache? _localMediaCache;
+  final Future<void> Function()? _beforeSignOut;
 
   StreamSubscription<LocalProfile?>? _profileSubscription;
   StreamSubscription<AuthState>? _authSubscription;
@@ -203,26 +206,30 @@ class CurrentProfileController extends ChangeNotifier {
 
     final authService = _authService;
     try {
-      if (authService != null) {
-        await authService.signOut();
-      }
-    } finally {
-      await clear();
-    }
-  }
-
-  Future<void> signOut() async {
-    final authService = _authService;
-    _setLoading(true);
-
-    try {
+      await _beforeSignOut?.call();
       if (authService != null) {
         await authService.signOut();
       }
       await clear();
     } catch (error) {
       _error = error;
+      rethrow;
+    }
+  }
+
+  Future<void> signOut() async {
+    final authService = _authService;
+    _setLoading(true);
+    _error = null;
+
+    try {
+      await _beforeSignOut?.call();
+      if (authService != null) {
+        await authService.signOut();
+      }
       await clear();
+    } catch (error) {
+      _error = error;
       rethrow;
     } finally {
       _setLoading(false);

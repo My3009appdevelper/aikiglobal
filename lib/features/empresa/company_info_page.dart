@@ -3,13 +3,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_assets.dart';
+import '../../core/data/models/app_company_info.dart';
 import '../../core/data/providers/app_data_scope.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_shadows.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
+import '../../shared/widgets/app_back_button.dart';
 import '../../shared/widgets/app_background.dart';
+import '../../shared/widgets/app_cover_image.dart';
 import '../../shared/widgets/app_interactive.dart';
 import '../../shared/widgets/app_logo.dart';
 import '../../shared/widgets/app_responsive_container.dart';
@@ -34,7 +37,7 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
     _initialized = true;
     final controller = AppDataScope.companyInfo(context);
     controller.watch();
-    unawaited(controller.pullFromRemote());
+    unawaited(controller.syncWithRemote());
     unawaited(
       precacheImage(const AssetImage(AppAssets.companyMission), context),
     );
@@ -73,35 +76,9 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
                           children: [
                             const _CompanyHeader(),
                             const SizedBox(height: AppSpacing.xl),
-                            _CompanyIntro(text: info.textoEntrada),
-                            const SizedBox(height: AppSpacing.lg),
-                            _CompanyPlainSectionCard(
-                              title: '¿Quiénes somos?',
-                              body: info.quienesSomos,
-                            ),
-                            const SizedBox(height: AppSpacing.xl),
-                            _CompanyFeaturedSectionCard(
-                              title: '¿Y qué significa Aiki?',
-                              body: info.significadoAiki,
-                              icon: Icons.self_improvement_outlined,
-                            ),
-                            const SizedBox(height: AppSpacing.md),
-                            _CompanyFeaturedSectionCard(
-                              title: 'MISIÓN',
-                              body: info.mision,
-                              imageAsset: AppAssets.companyMission,
-                            ),
-                            const SizedBox(height: AppSpacing.md),
-                            _CompanyFeaturedSectionCard(
-                              title: 'VISIÓN',
-                              body: info.vision,
-                              imageAsset: AppAssets.companyVision,
-                            ),
-                            const SizedBox(height: AppSpacing.md),
-                            _CompanyFeaturedSectionCard(
-                              title: 'FILÓSOFIA',
-                              body: info.filosofia,
-                              imageAsset: AppAssets.companyPhilosophy,
+                            CompanyInfoContent(
+                              info: info,
+                              resolveImageUrl: controller.resolveInfoImageUrl,
                             ),
                           ],
                         ),
@@ -118,37 +95,68 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
   }
 }
 
-class _CompanyHeader extends StatelessWidget {
-  const _CompanyHeader();
+class CompanyInfoContent extends StatefulWidget {
+  const CompanyInfoContent({
+    super.key,
+    required this.info,
+    required this.resolveImageUrl,
+  });
+
+  final AppCompanyInfo info;
+  final Future<String?> Function(String imagePath) resolveImageUrl;
+
+  @override
+  State<CompanyInfoContent> createState() => _CompanyInfoContentState();
+}
+
+class _CompanyInfoContentState extends State<CompanyInfoContent> {
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    final info = widget.info;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _HeaderIconButton(
-          icon: Icons.arrow_back_rounded,
-          tooltip: 'Regresar',
-          onTap: () => Navigator.of(context).pop(),
+        _CompanyInfoTabs(
+          selectedIndex: _selectedIndex,
+          onChanged: (index) {
+            if (_selectedIndex == index) {
+              return;
+            }
+            setState(() => _selectedIndex = index);
+          },
         ),
-        const SizedBox(width: AppSpacing.md),
-        const Expanded(child: AppLogo(width: 132)),
-        const SizedBox(width: AppSpacing.md),
-        const SizedBox(width: 44),
+        const SizedBox(height: AppSpacing.lg),
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 220),
+          switchInCurve: Curves.easeOut,
+          switchOutCurve: Curves.easeIn,
+          child: _selectedIndex == 0
+              ? _CompanyFoundersTab(
+                  key: const ValueKey('fundadores'),
+                  info: info,
+                  resolveImageUrl: widget.resolveImageUrl,
+                )
+              : _CompanyAboutTab(
+                  key: const ValueKey('quienes-somos'),
+                  info: info,
+                ),
+        ),
       ],
     );
   }
 }
 
-class _HeaderIconButton extends StatelessWidget {
-  const _HeaderIconButton({
-    required this.icon,
-    required this.tooltip,
-    required this.onTap,
+class _CompanyInfoTabs extends StatelessWidget {
+  const _CompanyInfoTabs({
+    required this.selectedIndex,
+    required this.onChanged,
   });
 
-  final IconData icon;
-  final String tooltip;
-  final VoidCallback onTap;
+  final int selectedIndex;
+  final ValueChanged<int> onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -157,20 +165,182 @@ class _HeaderIconButton extends StatelessWidget {
         ? AppColors.darkSurface
         : AppColors.background;
 
-    return AppInteractive(
-      tooltip: tooltip,
-      borderRadius: AppRadius.full,
-      onTap: onTap,
-      child: Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          color: surface.withValues(alpha: 0.88),
-          shape: BoxShape.circle,
-          boxShadow: AppShadows.soft(brightness),
+    return Container(
+      padding: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: surface.withValues(alpha: 0.86),
+        borderRadius: AppRadius.full,
+        border: Border.all(
+          color: brightness == Brightness.dark
+              ? AppColors.darkStroke
+              : AppColors.stroke,
         ),
-        child: Icon(icon, color: Theme.of(context).colorScheme.primary),
+        boxShadow: AppShadows.soft(brightness),
       ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _CompanyInfoTabButton(
+              label: 'Fundadores',
+              selected: selectedIndex == 0,
+              onTap: () => onChanged(0),
+            ),
+          ),
+          const SizedBox(width: 6),
+          Expanded(
+            child: _CompanyInfoTabButton(
+              label: '¿Quiénes somos?',
+              selected: selectedIndex == 1,
+              onTap: () => onChanged(1),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CompanyInfoTabButton extends StatelessWidget {
+  const _CompanyInfoTabButton({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final selectedColor = scheme.primary;
+    final textColor = selected ? scheme.onPrimary : scheme.primary;
+
+    return Semantics(
+      button: true,
+      selected: selected,
+      child: AppInteractive(
+        borderRadius: AppRadius.full,
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOut,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: selected ? selectedColor : Colors.transparent,
+            borderRadius: AppRadius.full,
+            border: Border.all(
+              color: selected
+                  ? selectedColor
+                  : scheme.primary.withValues(alpha: 0.08),
+            ),
+          ),
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              color: textColor,
+              fontFamily: AppTypography.displayFont,
+              fontFamilyFallback: AppTypography.fallbackFonts,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CompanyFoundersTab extends StatelessWidget {
+  const _CompanyFoundersTab({
+    super.key,
+    required this.info,
+    required this.resolveImageUrl,
+  });
+
+  final AppCompanyInfo info;
+  final Future<String?> Function(String imagePath) resolveImageUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!info.hasMensajeFundadores) {
+      return _CompanyPlainSectionCard(
+        title: 'Fundadores',
+        body: info.textoEntrada,
+      );
+    }
+
+    return _CompanyFoundersSectionCard(
+      title: info.mensajeFundadoresTitulo,
+      body: info.mensajeFundadoresTexto,
+      imagePaths: info.mensajeFundadoresImagePaths,
+      resolveImageUrl: resolveImageUrl,
+    );
+  }
+}
+
+class _CompanyAboutTab extends StatelessWidget {
+  const _CompanyAboutTab({super.key, required this.info});
+
+  final AppCompanyInfo info;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _CompanyIntro(text: info.textoEntrada),
+        const SizedBox(height: AppSpacing.lg),
+        _CompanyPlainSectionCard(
+          title: '¿Quiénes somos?',
+          body: info.quienesSomos,
+        ),
+        const SizedBox(height: AppSpacing.xl),
+        _CompanyFeaturedSectionCard(
+          title: '¿Y qué significa Aiki?',
+          body: info.significadoAiki,
+          icon: Icons.self_improvement_outlined,
+        ),
+        const SizedBox(height: AppSpacing.md),
+        _CompanyFeaturedSectionCard(
+          title: 'MISIÓN',
+          body: info.mision,
+          imageAsset: AppAssets.companyMission,
+        ),
+        const SizedBox(height: AppSpacing.md),
+        _CompanyFeaturedSectionCard(
+          title: 'VISIÓN',
+          body: info.vision,
+          imageAsset: AppAssets.companyVision,
+        ),
+        const SizedBox(height: AppSpacing.md),
+        _CompanyFeaturedSectionCard(
+          title: 'FILOSOFÍA',
+          body: info.filosofia,
+          imageAsset: AppAssets.companyPhilosophy,
+        ),
+      ],
+    );
+  }
+}
+
+class _CompanyHeader extends StatelessWidget {
+  const _CompanyHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        AppBackButton(onTap: () => Navigator.of(context).pop()),
+        const SizedBox(width: AppSpacing.md),
+        const Expanded(child: AppLogo(width: 132)),
+        const SizedBox(width: AppSpacing.md),
+        const SizedBox(width: 56),
+      ],
     );
   }
 }
@@ -255,6 +425,132 @@ class _CompanyPlainSectionCard extends StatelessWidget {
             ).textTheme.bodyMedium?.copyWith(height: 1.42),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _CompanyFoundersSectionCard extends StatelessWidget {
+  const _CompanyFoundersSectionCard({
+    required this.title,
+    required this.body,
+    required this.imagePaths,
+    required this.resolveImageUrl,
+  });
+
+  final String title;
+  final String body;
+  final List<String> imagePaths;
+  final Future<String?> Function(String imagePath) resolveImageUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    final surface = brightness == Brightness.dark
+        ? AppColors.darkSurface
+        : AppColors.background;
+    final cleanTitle = title.trim();
+    final cleanBody = body.trim();
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(22),
+      decoration: BoxDecoration(
+        color: surface.withValues(alpha: 0.9),
+        borderRadius: AppRadius.large,
+        border: Border.all(
+          color: brightness == Brightness.dark
+              ? AppColors.darkStroke
+              : AppColors.stroke,
+        ),
+        boxShadow: AppShadows.soft(brightness),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          if (cleanTitle.isNotEmpty) ...[
+            Text(
+              cleanTitle,
+              textAlign: TextAlign.center,
+              style: _companyTitleStyle(context),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+          ],
+          if (cleanBody.isNotEmpty)
+            Text(
+              cleanBody,
+              textAlign: TextAlign.center,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(height: 1.5),
+            ),
+          if (imagePaths.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.md),
+            _CompanyFoundersGallery(
+              imagePaths: imagePaths,
+              resolveImageUrl: resolveImageUrl,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _CompanyFoundersGallery extends StatelessWidget {
+  const _CompanyFoundersGallery({
+    required this.imagePaths,
+    required this.resolveImageUrl,
+  });
+
+  final List<String> imagePaths;
+  final Future<String?> Function(String imagePath) resolveImageUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isSingle = imagePaths.length == 1;
+        final isWide = constraints.maxWidth >= 620;
+        final tileWidth = isSingle
+            ? constraints.maxWidth
+            : isWide
+            ? (constraints.maxWidth - AppSpacing.md) / 2
+            : constraints.maxWidth;
+
+        return Wrap(
+          spacing: AppSpacing.md,
+          runSpacing: AppSpacing.md,
+          alignment: WrapAlignment.center,
+          children: [
+            for (final imagePath in imagePaths)
+              SizedBox(
+                width: tileWidth,
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: ClipRRect(
+                    borderRadius: AppRadius.medium,
+                    child: AppCoverImage(
+                      imagePath: imagePath,
+                      resolveImageUrl: resolveImageUrl,
+                      fallback: _founderImageFallback(context),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _founderImageFallback(BuildContext context) {
+    return Container(
+      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
+      alignment: Alignment.center,
+      child: Icon(
+        Icons.image_outlined,
+        color: Theme.of(context).colorScheme.primary,
       ),
     );
   }
@@ -346,7 +642,7 @@ class _CompanyFeaturedSectionCard extends StatelessWidget {
               child: _CompanySectionVisual(
                 icon: icon,
                 imageAsset: imageAsset,
-                color: scheme.primary,
+                color: scheme.onSurface,
               ),
             ),
           ),

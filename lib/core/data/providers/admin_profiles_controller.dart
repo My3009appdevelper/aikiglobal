@@ -6,8 +6,10 @@ import '../local/daos/profiles_dao.dart';
 import '../local/daos/wellness_profile_stats_dao.dart';
 import '../local/app_database.dart';
 import '../models/app_profile.dart';
+import '../models/app_subscription.dart';
 import '../models/app_wellness_profile_stats.dart';
 import '../remote/services/profiles_remote_service.dart';
+import '../remote/services/subscription_remote_service.dart';
 import '../remote/services/wellness_profile_stats_remote_service.dart';
 import '../sync/profiles_sync_service.dart';
 import '../sync/sync_mappers.dart';
@@ -19,30 +21,39 @@ class AdminProfilesController extends ChangeNotifier {
     WellnessProfileStatsDao? wellnessProfileStatsDao,
     WellnessProfileStatsRemoteService? wellnessProfileStatsRemoteService,
     ProfilesSyncService? profilesSyncService,
+    SubscriptionRemoteService? subscriptionRemoteService,
   }) : _profilesDao = profilesDao,
        _profilesRemoteService = profilesRemoteService,
        _wellnessProfileStatsDao = wellnessProfileStatsDao,
        _wellnessProfileStatsRemoteService = wellnessProfileStatsRemoteService,
-       _profilesSyncService = profilesSyncService;
+       _profilesSyncService = profilesSyncService,
+       _subscriptionRemoteService = subscriptionRemoteService;
 
   final ProfilesDao? _profilesDao;
   final ProfilesRemoteService? _profilesRemoteService;
   final WellnessProfileStatsDao? _wellnessProfileStatsDao;
   final WellnessProfileStatsRemoteService? _wellnessProfileStatsRemoteService;
   final ProfilesSyncService? _profilesSyncService;
+  final SubscriptionRemoteService? _subscriptionRemoteService;
 
   StreamSubscription<List<LocalProfile>>? _profilesSubscription;
 
   List<AppProfile> _profiles = const [];
   Map<String, int> _currentStreakByProfileUuid = const {};
+  List<AppSubscriptionProduct> _subscriptionProducts = const [];
+  Map<String, AppUserSubscription> _subscriptionByProfileUuid = const {};
   bool _isLoading = false;
   bool _isSyncing = false;
   Object? _error;
+  Object? _subscriptionError;
 
   List<AppProfile> get profiles => _profiles;
   bool get isLoading => _isLoading;
   bool get isSyncing => _isSyncing;
   Object? get error => _error;
+  Object? get subscriptionError => _subscriptionError;
+  List<AppSubscriptionProduct> get subscriptionProducts =>
+      _subscriptionProducts;
   bool get hasRemote =>
       _profilesRemoteService != null ||
       _wellnessProfileStatsRemoteService != null;
@@ -54,10 +65,35 @@ class AdminProfilesController extends ChangeNotifier {
     return _currentStreakByProfileUuid[_cleanUuid(uuidProfile)] ?? 0;
   }
 
-  void watchProfiles() {
+  AppUserSubscription? subscriptionForProfile(String uuidProfile) {
+    return _subscriptionByProfileUuid[_cleanUuid(uuidProfile)];
+  }
+
+  bool hasActiveSubscriptionForProfile(String uuidProfile) {
+    return subscriptionForProfile(uuidProfile)?.hasPremiumAccess ?? false;
+  }
+
+  String? subscriptionProductCodeForProfile(String uuidProfile) {
+    final subscription = subscriptionForProfile(uuidProfile);
+    if (subscription == null || !subscription.hasPremiumAccess) {
+      return null;
+    }
+
+    for (final product in _subscriptionProducts) {
+      if (product.uuidSubscriptionProduct ==
+          subscription.uuidSubscriptionProduct) {
+        return product.codigo;
+      }
+    }
+    return null;
+  }
+
+  void watchProfiles({bool pullRemote = true}) {
     final dao = _profilesDao;
     if (dao == null) {
-      unawaited(loadFromRemote());
+      if (pullRemote) {
+        unawaited(loadFromRemote());
+      }
       return;
     }
 
@@ -80,11 +116,14 @@ class AdminProfilesController extends ChangeNotifier {
       },
     );
 
-    unawaited(pullFromRemote());
+    if (pullRemote) {
+      unawaited(pullFromRemote());
+    }
   }
 
   Future<void> loadFromRemote() async {
     await _loadAllProfilesFromRemote();
+    await _loadSubscriptionData();
   }
 
   Future<void> pullFromRemote() async {
@@ -97,6 +136,7 @@ class AdminProfilesController extends ChangeNotifier {
     final syncService = _profilesSyncService;
     if (syncService == null) {
       await _loadFromLocal(dao.getAllNotDeleted);
+      await _loadSubscriptionData();
       return;
     }
 
@@ -107,6 +147,7 @@ class AdminProfilesController extends ChangeNotifier {
       if (_profilesSubscription == null) {
         await _loadFromLocal(dao.getAllNotDeleted);
       }
+      await _loadSubscriptionData();
     } catch (error) {
       _error = error;
       notifyListeners();
@@ -119,10 +160,73 @@ class AdminProfilesController extends ChangeNotifier {
     await pullFromRemote();
   }
 
+  Future<void> syncWithRemote() async {
+    await pullFromRemote();
+  }
+
+  Future<void> grantSubscription({
+    required String uuidProfile,
+    required AppSubscriptionProduct product,
+    DateTime? currentPeriodEnd,
+  }) async {
+    final service = _subscriptionRemoteService;
+    if (service == null) {
+      _subscriptionError = StateError(
+        'No hay servicio remoto para suscripciones.',
+      );
+      notifyListeners();
+      return;
+    }
+
+    _setSyncing(true);
+    _subscriptionError = null;
+    try {
+      await service.grantManualSubscription(
+        uuidProfile: uuidProfile,
+        uuidSubscriptionProduct: product.uuidSubscriptionProduct,
+        currentPeriodEnd: currentPeriodEnd,
+      );
+      await _loadSubscriptionData();
+    } catch (error) {
+      _subscriptionError = error;
+      notifyListeners();
+      rethrow;
+    } finally {
+      _setSyncing(false);
+    }
+  }
+
+  Future<void> revokeSubscription(String uuidUserSubscription) async {
+    final service = _subscriptionRemoteService;
+    if (service == null) {
+      _subscriptionError = StateError(
+        'No hay servicio remoto para suscripciones.',
+      );
+      notifyListeners();
+      return;
+    }
+
+    _setSyncing(true);
+    _subscriptionError = null;
+    try {
+      await service.revokeSubscription(uuidUserSubscription);
+      await _loadSubscriptionData();
+    } catch (error) {
+      _subscriptionError = error;
+      notifyListeners();
+      rethrow;
+    } finally {
+      _setSyncing(false);
+    }
+  }
+
   void clear() {
     _profiles = const [];
     _currentStreakByProfileUuid = const {};
+    _subscriptionProducts = const [];
+    _subscriptionByProfileUuid = const {};
     _error = null;
+    _subscriptionError = null;
     _isLoading = false;
     _isSyncing = false;
     notifyListeners();
@@ -141,6 +245,65 @@ class AdminProfilesController extends ChangeNotifier {
       final nextProfiles = rows.map(profileRemoteToApp).toList();
       await _setProfiles(nextProfiles);
     });
+  }
+
+  Future<void> _loadSubscriptionData() async {
+    final service = _subscriptionRemoteService;
+    if (service == null) {
+      return;
+    }
+
+    try {
+      final results = await Future.wait([
+        service.getAvailableProductsOnline(),
+        service.getAllSubscriptionsOnline(),
+      ]);
+      final products = results[0] as List<AppSubscriptionProduct>;
+      final subscriptions = results[1] as List<AppUserSubscription>;
+      final byProfile = <String, AppUserSubscription>{};
+
+      for (final subscription in subscriptions) {
+        final profileUuid = _cleanUuid(subscription.uuidProfile);
+        final current = byProfile[profileUuid];
+        if (current == null ||
+            _isPreferredSubscription(subscription, current)) {
+          byProfile[profileUuid] = subscription;
+        }
+      }
+
+      _subscriptionProducts = List.unmodifiable(products);
+      _subscriptionByProfileUuid = Map.unmodifiable(byProfile);
+      _subscriptionError = null;
+      notifyListeners();
+    } catch (error) {
+      _subscriptionError = error;
+      notifyListeners();
+    }
+  }
+
+  bool _isPreferredSubscription(
+    AppUserSubscription candidate,
+    AppUserSubscription current,
+  ) {
+    if (candidate.hasPremiumAccess != current.hasPremiumAccess) {
+      return candidate.hasPremiumAccess;
+    }
+
+    final candidateEnd = candidate.currentPeriodEnd;
+    final currentEnd = current.currentPeriodEnd;
+    if (candidateEnd == null && currentEnd != null) {
+      return true;
+    }
+    if (candidateEnd != null && currentEnd == null) {
+      return false;
+    }
+    if (candidateEnd != null && currentEnd != null) {
+      final byEnd = candidateEnd.compareTo(currentEnd);
+      if (byEnd != 0) {
+        return byEnd > 0;
+      }
+    }
+    return candidate.updatedAt.isAfter(current.updatedAt);
   }
 
   Future<void> _loadFromLocal(
@@ -178,10 +341,38 @@ class AdminProfilesController extends ChangeNotifier {
       return;
     }
 
+    final profileUuids = profiles
+        .map((profile) => _cleanUuid(profile.uuidProfile))
+        .where((uuid) => uuid.isNotEmpty)
+        .toList(growable: false);
+    final remoteStatsService = _wellnessProfileStatsRemoteService;
+    final remoteStatsByProfile = <String, AppWellnessProfileStats>{};
+    var remoteStatsLoaded = false;
+
+    if (remoteStatsService != null) {
+      try {
+        final remoteRows = await remoteStatsService.getForProfilesOnline(
+          profileUuids,
+        );
+        for (final row in remoteRows) {
+          final stats = wellnessProfileStatsRemoteToApp(row);
+          remoteStatsByProfile[stats.uuidProfile] = stats;
+        }
+        remoteStatsLoaded = true;
+      } catch (_) {
+        // En modo offline se conserva el ultimo valor local disponible.
+      }
+    }
+
     final rows = await Future.wait(
       profiles.map((profile) async {
         final uuid = _cleanUuid(profile.uuidProfile);
-        final streak = await _loadCurrentStreakForProfile(uuid);
+        final remoteStats = remoteStatsByProfile[uuid];
+        final streak = remoteStatsLoaded
+            ? remoteStats == null
+                  ? 0
+                  : _effectiveCurrentStreak(remoteStats)
+            : await _loadCurrentStreakForProfile(uuid);
         return MapEntry(uuid, streak);
       }),
     );
@@ -211,7 +402,9 @@ class AdminProfilesController extends ChangeNotifier {
       return 0;
     }
 
-    final remoteStats = await remoteStatsService.getByProfileOnline(uuidProfile);
+    final remoteStats = await remoteStatsService.getByProfileOnline(
+      uuidProfile,
+    );
     if (remoteStats == null) {
       return 0;
     }
@@ -238,7 +431,9 @@ class AdminProfilesController extends ChangeNotifier {
     }
 
     final today = _dateKey(DateTime.now());
-    final yesterday = _dateKey(DateTime.now().subtract(const Duration(days: 1)));
+    final yesterday = _dateKey(
+      DateTime.now().subtract(const Duration(days: 1)),
+    );
 
     if (last == today || last == yesterday) {
       return true;

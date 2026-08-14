@@ -7,6 +7,8 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_shadows.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_typography.dart';
+import '../../shared/widgets/app_back_button.dart';
 import '../../shared/widgets/app_background.dart';
 import '../../shared/widgets/app_interactive.dart';
 import '../../shared/widgets/app_primary_button.dart';
@@ -276,34 +278,32 @@ class _PersonalDataHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        AppInteractive(
-          tooltip: 'Regresar',
-          borderRadius: AppRadius.full,
-          onTap: onBack,
-          child: Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: Theme.of(
-                context,
-              ).colorScheme.surface.withValues(alpha: 0.82),
-              shape: BoxShape.circle,
+    final scheme = Theme.of(context).colorScheme;
+
+    return SizedBox(
+      height: 56,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: AppBackButton(onTap: onBack),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 58),
+            child: Text(
+              'Datos personales',
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                color: scheme.onSurface,
+                fontFamily: AppTypography.displayFont,
+              ),
             ),
-            child: const Icon(Icons.arrow_back_rounded),
           ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            'Datos personales',
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -336,18 +336,15 @@ class _AvatarSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
-    final surface = brightness == Brightness.dark
-        ? AppColors.darkSurface
-        : AppColors.background;
-    final stroke = brightness == Brightness.dark
-        ? AppColors.darkStroke
-        : AppColors.stroke;
+    final scheme = Theme.of(context).colorScheme;
+    final surface = scheme.surface;
+    final stroke = scheme.onSurface.withValues(alpha: 0.12);
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: surface.withValues(alpha: 0.92),
+        color: surface,
         borderRadius: AppRadius.large,
         border: Border.all(color: stroke),
         boxShadow: AppShadows.soft(brightness),
@@ -403,11 +400,15 @@ class _AvatarSection extends StatelessWidget {
               textAlign: TextAlign.center,
               textInputAction: TextInputAction.done,
               onSubmitted: (_) => onSaveName(),
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: scheme.onSurface,
+                fontWeight: FontWeight.w800,
+              ),
               decoration: InputDecoration(
                 hintText: 'Tu nombre',
+                hintStyle: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: scheme.onSurface.withValues(alpha: 0.56),
+                ),
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
@@ -419,7 +420,7 @@ class _AvatarSection extends StatelessWidget {
                 ),
                 suffixIcon: Icon(
                   Icons.edit_outlined,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: scheme.primary,
                   size: 18,
                 ),
                 suffixIconConstraints: const BoxConstraints(
@@ -446,6 +447,12 @@ class _AvatarSection extends StatelessWidget {
             icon: Icons.check_rounded,
             expand: false,
             height: 42,
+            backgroundColor: scheme.primary,
+            foregroundColor: scheme.onPrimary,
+            labelStyle: const TextStyle(
+              fontFamily: AppTypography.displayFont,
+              fontWeight: FontWeight.w700,
+            ),
             onPressed: isSaving || !hasNameChanges ? null : onSaveName,
           ),
         ],
@@ -504,19 +511,15 @@ class _EmailInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
-    final surface = brightness == Brightness.dark
-        ? AppColors.darkSurface
-        : AppColors.background;
-    final stroke = brightness == Brightness.dark
-        ? AppColors.darkStroke
-        : AppColors.stroke;
+    final scheme = Theme.of(context).colorScheme;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: surface.withValues(alpha: 0.92),
+        color: scheme.surface,
         borderRadius: AppRadius.large,
-        border: Border.all(color: stroke),
+        border: Border.all(color: scheme.onSurface.withValues(alpha: 0.12)),
         boxShadow: AppShadows.soft(brightness),
       ),
       child: Row(
@@ -530,14 +533,17 @@ class _EmailInfoCard extends StatelessWidget {
                   child: Icon(
                     Icons.mail_outline_rounded,
                     size: 18,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: scheme.primary,
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 28),
                   child: Text(
                     'Correo',
-                    style: Theme.of(context).textTheme.labelLarge,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: scheme.onSurface,
+                      fontFamily: AppTypography.displayFont,
+                    ),
                   ),
                 ),
                 Padding(
@@ -547,6 +553,7 @@ class _EmailInfoCard extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: scheme.onSurface,
                       fontWeight: FontWeight.w800,
                     ),
                   ),

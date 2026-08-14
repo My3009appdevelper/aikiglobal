@@ -1,17 +1,29 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_assets.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_shadows.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../shared/widgets/app_cover_image.dart';
+import '../../../shared/widgets/app_hero_image_overlay.dart';
 import '../../../shared/widgets/app_interactive.dart';
 import '../../../shared/widgets/app_primary_button.dart';
 
 class ExploreHeroCard extends StatelessWidget {
-  const ExploreHeroCard({super.key, this.onTap});
+  const ExploreHeroCard({
+    super.key,
+    this.onTap,
+    this.title = 'Bienvenido a tu espacio de paz interior',
+    this.subtitle = 'Explora, aprende y conecta contigo.',
+    this.imagePath,
+    this.resolveImageUrl,
+  });
 
   final VoidCallback? onTap;
+  final String title;
+  final String subtitle;
+  final String? imagePath;
+  final Future<String?> Function(String imagePath)? resolveImageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -34,30 +46,17 @@ class ExploreHeroCard extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Image.asset(
-              AppAssets.backgroundArchitecture,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: [scheme.surface, gold31]),
-                  ),
-                );
-              },
-            ),
-            DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [
-                    scheme.surface.withValues(alpha: 0.96),
-                    scheme.surface.withValues(alpha: 0.72),
-                    AppColors.transparent,
-                  ],
+            AppCoverImage(
+              imagePath: imagePath,
+              fallbackAsset: AppAssets.backgroundArchitecture,
+              resolveImageUrl: resolveImageUrl,
+              fallback: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [scheme.surface, gold31]),
                 ),
               ),
             ),
+            const AppHeroImageOverlay(),
             Padding(
               padding: const EdgeInsets.all(22),
               child: Align(
@@ -69,7 +68,10 @@ class ExploreHeroCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Bienvenido a tu espacio de paz interior',
+                        _cleanText(
+                          title,
+                          'Bienvenido a tu espacio de paz interior',
+                        ),
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.headlineLarge
@@ -81,7 +83,10 @@ class ExploreHeroCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Explora, aprende y conecta contigo.',
+                        _cleanText(
+                          subtitle,
+                          'Explora, aprende y conecta contigo.',
+                        ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -111,4 +116,9 @@ class ExploreHeroCard extends StatelessWidget {
       ),
     );
   }
+}
+
+String _cleanText(String value, String fallback) {
+  final clean = value.trim();
+  return clean.isEmpty ? fallback : clean;
 }

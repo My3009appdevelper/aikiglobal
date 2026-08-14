@@ -7,12 +7,14 @@ class AppRefreshIndicator extends StatelessWidget {
     required this.child,
     this.displacement = 48,
     this.edgeOffset = 0,
+    this.notificationPredicate,
   });
 
   final RefreshCallback onRefresh;
   final Widget child;
   final double displacement;
   final double edgeOffset;
+  final ScrollNotificationPredicate? notificationPredicate;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +25,8 @@ class AppRefreshIndicator extends StatelessWidget {
       backgroundColor: scheme.surface,
       displacement: displacement,
       edgeOffset: edgeOffset,
+      notificationPredicate:
+          notificationPredicate ?? defaultScrollNotificationPredicate,
       onRefresh: onRefresh,
       child: child,
     );

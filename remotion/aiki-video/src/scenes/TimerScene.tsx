@@ -2,13 +2,16 @@ import type { AikiVideoProps } from "../types";
 import { useVideoConfig } from "remotion";
 import { SceneCanvas } from "../components/SceneCanvas";
 import { PhoneMockup } from "../components/PhoneMockup";
-import { phoneMockupSize } from "../phoneSpec";
+import { getPhoneMockupFrameSize } from "../phoneSpec";
 import { introDurationInFrames, timerFadeOutEndAtSeconds, timerZoomEndAtSeconds } from "../timeline";
 
 export const TimerScene: React.FC<AikiVideoProps> = (props) => {
   const { fps } = useVideoConfig();
-  const phoneWidth = Math.round((phoneMockupSize.width + 50) * props.phoneScale);
-  const phoneHeight = Math.round((phoneWidth / phoneMockupSize.width) * phoneMockupSize.height);
+  const { width: phoneWidth, height: phoneHeight } = getPhoneMockupFrameSize(
+    props.phoneScale,
+    props.phoneWidthScale,
+    props.phoneHeightScale,
+  );
   const timerStartAtSeconds = introDurationInFrames / fps;
   const timerLocalZoomEndAtSeconds = timerZoomEndAtSeconds - timerStartAtSeconds;
   const timerLocalFadeOutEndAtSeconds = timerFadeOutEndAtSeconds - timerStartAtSeconds;
@@ -28,7 +31,9 @@ export const TimerScene: React.FC<AikiVideoProps> = (props) => {
           width={phoneWidth}
           height={phoneHeight}
           accentColor={props.accentColor}
-          objectFit="cover"
+          objectFit={props.phoneContentFit}
+          contentScale={props.phoneContentScale}
+          contentTranslateY={props.phoneContentOffsetY}
           centerVertically
         />
       </div>

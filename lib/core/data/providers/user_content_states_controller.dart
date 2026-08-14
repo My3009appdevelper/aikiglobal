@@ -66,7 +66,7 @@ class UserContentStatesController extends ChangeNotifier {
     return stateForContent(uuidContentItem)?.favorito ?? false;
   }
 
-  void watchForProfile(String uuidProfile) {
+  void watchForProfile(String uuidProfile, {bool pullRemote = true}) {
     final cleanProfile = uuidProfile.trim();
     if (cleanProfile.isEmpty) {
       clear();
@@ -96,7 +96,9 @@ class UserContentStatesController extends ChangeNotifier {
           },
         );
 
-    unawaited(pullFromRemote(uuidProfile: cleanProfile));
+    if (pullRemote) {
+      unawaited(pullFromRemote(uuidProfile: cleanProfile));
+    }
   }
 
   Future<void> loadForProfile(String uuidProfile) async {
@@ -233,11 +235,10 @@ class UserContentStatesController extends ChangeNotifier {
     final now = DateTime.now().toUtc();
     final cleanProgress = _clampProgress(progresoPorcentaje);
     final cleanPosition = math.max(0, ultimaPosicionSegundos);
-    final nextCompleted =
-        (current?.completado ?? false) || cleanProgress >= 100;
+    final nextCompleted = cleanProgress >= 100;
     final nextCompletedAt = nextCompleted
         ? (current?.completedAt ?? now)
-        : current?.completedAt;
+        : null;
 
     await _upsertState(
       uuidProfile: cleanProfile,
@@ -253,7 +254,11 @@ class UserContentStatesController extends ChangeNotifier {
     );
   }
 
-  Future<void> markCompleted(String uuidProfile, String uuidContentItem) async {
+  Future<void> markCompleted(
+    String uuidProfile,
+    String uuidContentItem, {
+    int? ultimaPosicionSegundos,
+  }) async {
     final cleanProfile = uuidProfile.trim();
     final cleanContent = uuidContentItem.trim();
     if (cleanProfile.isEmpty || cleanContent.isEmpty) {
@@ -268,7 +273,10 @@ class UserContentStatesController extends ChangeNotifier {
       uuidContentItem: cleanContent,
       favorito: current?.favorito ?? false,
       progresoPorcentaje: 100,
-      ultimaPosicionSegundos: current?.ultimaPosicionSegundos ?? 0,
+      ultimaPosicionSegundos: math.max(
+        0,
+        ultimaPosicionSegundos ?? current?.ultimaPosicionSegundos ?? 0,
+      ),
       completado: true,
       startedAt: current?.startedAt ?? now,
       completedAt: now,

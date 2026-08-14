@@ -7,10 +7,11 @@ import '../../core/constants/app_assets.dart';
 import '../../core/data/models/app_content_media.dart';
 import '../../core/data/models/app_content_item.dart';
 import '../../core/data/providers/app_data_scope.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_shadows.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_typography.dart';
+import '../../shared/widgets/app_back_button.dart';
 import '../../shared/widgets/app_background.dart';
 import '../../shared/widgets/app_cover_image.dart';
 import '../../shared/widgets/app_interactive.dart';
@@ -316,6 +317,15 @@ class _MeditationTimerPageState extends State<MeditationTimerPage> {
                                       icon: Icons.stop_rounded,
                                       expand: true,
                                       height: 56,
+                                      backgroundColor: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                      foregroundColor: Theme.of(
+                                        context,
+                                      ).colorScheme.onPrimary,
+                                      labelStyle: _timerActionLabelStyle(
+                                        context,
+                                      ),
                                       onPressed: _stopTimerAndRecordPartial,
                                     ),
                                   ),
@@ -498,12 +508,29 @@ class _MeditationTimerPageState extends State<MeditationTimerPage> {
   }
 
   Widget _buildPrimaryTimerAction() {
+    final scheme = Theme.of(context).colorScheme;
+
     return AppPrimaryButton(
       label: _primaryLabel,
       icon: _isRunning ? Icons.pause_rounded : Icons.play_arrow_rounded,
+      backgroundColor: scheme.primary,
+      foregroundColor: scheme.onPrimary,
+      labelStyle: _timerActionLabelStyle(context),
       onPressed: _toggleTimer,
       height: 56,
     );
+  }
+
+  TextStyle _timerActionLabelStyle(BuildContext context) {
+    return Theme.of(context).textTheme.labelLarge?.copyWith(
+          fontFamily: AppTypography.displayFont,
+          fontWeight: FontWeight.w700,
+        ) ??
+        const TextStyle(
+          fontFamily: AppTypography.displayFont,
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+        );
   }
 
   void _stopTimerAndRecordPartial() {
@@ -556,7 +583,7 @@ class _MeditationTimerPageState extends State<MeditationTimerPage> {
           : () {
               _showProgressCelebration(
                 AppProgressCelebrationData(
-                  title: 'Racha actualizada',
+                  title: 'Progreso actualizado',
                   body:
                       'Ya llevas ${_streakDaysLabel(streakEvent.streak)} cuidando de ti.',
                   icon: Icons.local_fire_department_rounded,
@@ -607,47 +634,48 @@ class _TimerHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        AppInteractive(
-          borderRadius: AppRadius.full,
-          onTap: onBack,
-          child: Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: Theme.of(
-                context,
-              ).colorScheme.surface.withValues(alpha: 0.8),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(Icons.arrow_back_rounded),
+    final scheme = Theme.of(context).colorScheme;
+
+    return SizedBox(
+      height: 56,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: AppBackButton(onTap: onBack),
           ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Timer de meditación',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              const SizedBox(height: 3),
-              Text(
-                'Respira, suelta y vuelve a tu centro.',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 58),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Timer de meditación',
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: scheme.onSurface,
+                    fontFamily: AppTypography.displayFont,
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 3),
+                Text(
+                  'Respira y vuelve a tu centro.',
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: scheme.onSurface),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -668,6 +696,7 @@ class _TimerRing extends StatelessWidget {
         : 1 - (remainingSeconds / durationSeconds).clamp(0.0, 1.0);
     final time = _formatTime(remainingSeconds);
     final brightness = Theme.of(context).brightness;
+    final scheme = Theme.of(context).colorScheme;
 
     return Container(
       width: 236,
@@ -675,9 +704,7 @@ class _TimerRing extends StatelessWidget {
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: brightness == Brightness.dark
-            ? AppColors.darkSurface
-            : AppColors.background.withValues(alpha: 0.88),
+        color: scheme.surface,
         boxShadow: AppShadows.soft(brightness),
       ),
       child: Stack(
@@ -687,10 +714,8 @@ class _TimerRing extends StatelessWidget {
             value: progress,
             strokeWidth: 9,
             strokeCap: StrokeCap.round,
-            backgroundColor: Theme.of(
-              context,
-            ).colorScheme.primary.withValues(alpha: 0.12),
-            color: Theme.of(context).colorScheme.primary,
+            backgroundColor: scheme.primary.withValues(alpha: 0.12),
+            color: scheme.primary,
           ),
           Center(
             child: Column(
@@ -698,19 +723,26 @@ class _TimerRing extends StatelessWidget {
               children: [
                 Icon(
                   Icons.self_improvement_rounded,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: scheme.primary,
                   size: 32,
                 ),
                 const SizedBox(height: 12),
                 Text(
                   time,
                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                    color: scheme.onSurface,
+                    fontFamily: AppTypography.displayFont,
                     fontSize: 42,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text('minutos', style: Theme.of(context).textTheme.bodySmall),
+                Text(
+                  'minutos',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: scheme.onSurface),
+                ),
               ],
             ),
           ),
@@ -733,34 +765,43 @@ class _DurationSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return _TimerSection(
       title: 'Duración',
       child: Column(
         children: [
           Row(
             children: [
-              Icon(
-                Icons.schedule_rounded,
-                color: Theme.of(context).colorScheme.primary,
-              ),
+              Icon(Icons.schedule_rounded, color: scheme.primary),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   '$minutes minutos',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: scheme.onSurface,
+                    fontFamily: AppTypography.displayFont,
+                    fontWeight: FontWeight.w300,
+                  ),
                 ),
               ),
             ],
           ),
-          Slider(
-            value: minutes.toDouble(),
-            min: 5,
-            max: 60,
-            divisions: 11,
-            label: '$minutes min',
-            onChanged: enabled ? onChanged : null,
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              activeTrackColor: scheme.primary,
+              inactiveTrackColor: scheme.primary.withValues(alpha: 0.22),
+              thumbColor: scheme.primary,
+              overlayColor: scheme.primary.withValues(alpha: 0.14),
+            ),
+            child: Slider(
+              value: minutes.toDouble(),
+              min: 5,
+              max: 60,
+              divisions: 11,
+              label: '$minutes min',
+              onChanged: enabled ? onChanged : null,
+            ),
           ),
         ],
       ),
@@ -823,35 +864,29 @@ class _EmptySoundState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final muted = brightness == Brightness.dark
-        ? AppColors.darkTextMuted
-        : AppColors.textSecondary;
+    final scheme = Theme.of(context).colorScheme;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: brightness == Brightness.dark
-            ? AppColors.darkSurfaceSoft
-            : AppColors.sandLight,
+        color: scheme.surface,
         borderRadius: AppRadius.medium,
+        border: Border.all(color: scheme.onSurface.withValues(alpha: 0.14)),
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.graphic_eq_rounded,
-            color: Theme.of(context).colorScheme.primary,
-          ),
+          Icon(Icons.graphic_eq_rounded, color: scheme.primary),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               isLoading
                   ? 'Cargando sonidos de ambiente...'
                   : 'Todavía no hay sonidos de ambiente publicados.',
-              style: Theme.of(
-                context,
-              ).textTheme.bodySmall?.copyWith(color: muted),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: scheme.onSurface,
+                fontFamily: AppTypography.displayFont,
+              ),
             ),
           ),
         ],
@@ -877,19 +912,10 @@ class _SoundCoverCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
     final scheme = Theme.of(context).colorScheme;
-    final surface = brightness == Brightness.dark
-        ? AppColors.darkSurfaceSoft
-        : AppColors.background;
     final stroke = selected
         ? scheme.primary
-        : brightness == Brightness.dark
-        ? AppColors.darkStroke
-        : AppColors.stroke;
-    final muted = brightness == Brightness.dark
-        ? AppColors.darkTextMuted
-        : AppColors.textSecondary;
+        : scheme.onSurface.withValues(alpha: 0.14);
     final coverPath = _coverPathForSound(sound);
 
     return AppInteractive(
@@ -907,7 +933,7 @@ class _SoundCoverCard extends StatelessWidget {
           height: 150,
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: surface.withValues(alpha: 0.94),
+            color: scheme.surface,
             borderRadius: AppRadius.large,
             border: Border.all(color: stroke, width: selected ? 1.6 : 1),
           ),
@@ -924,10 +950,7 @@ class _SoundCoverCard extends StatelessWidget {
                       child: AppCoverImage(
                         imagePath: coverPath,
                         resolveImageUrl: resolveCoverImageUrl,
-                        fallback: _SoundCoverFallback(
-                          brightness: brightness,
-                          color: scheme.primary,
-                        ),
+                        fallback: _SoundCoverFallback(color: scheme.primary),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -954,25 +977,35 @@ class _SoundCoverCard extends StatelessWidget {
               ),
               const SizedBox(height: 7),
               SizedBox(
+                width: double.infinity,
                 height: 31,
                 child: Text(
                   sound.titulo,
+                  textAlign: TextAlign.center,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w800,
+                    color: scheme.onSurface,
+                    fontFamily: AppTypography.displayFont,
+                    fontWeight: FontWeight.w300,
                     height: 1.12,
                   ),
                 ),
               ),
               const SizedBox(height: 3),
-              Text(
-                _formatSoundDuration(sound.duracionSegundos),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodySmall?.copyWith(color: muted, height: 1),
+              SizedBox(
+                width: double.infinity,
+                child: Text(
+                  _formatSoundDuration(sound.duracionSegundos),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: scheme.onSurface,
+                    fontFamily: AppTypography.displayFont,
+                    height: 1,
+                  ),
+                ),
               ),
             ],
           ),
@@ -983,17 +1016,16 @@ class _SoundCoverCard extends StatelessWidget {
 }
 
 class _SoundCoverFallback extends StatelessWidget {
-  const _SoundCoverFallback({required this.brightness, required this.color});
+  const _SoundCoverFallback({required this.color});
 
-  final Brightness brightness;
   final Color color;
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Container(
-      color: brightness == Brightness.dark
-          ? AppColors.darkSurface
-          : AppColors.sandLight,
+      color: scheme.surface,
       alignment: Alignment.center,
       child: Image.asset(
         Theme.of(context).brightness == Brightness.dark
@@ -1018,20 +1050,15 @@ class _TimerSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
-    final surface = brightness == Brightness.dark
-        ? AppColors.darkSurface
-        : AppColors.background;
-    final stroke = brightness == Brightness.dark
-        ? AppColors.darkStroke
-        : AppColors.stroke;
+    final scheme = Theme.of(context).colorScheme;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: surface.withValues(alpha: 0.9),
+        color: scheme.surface,
         borderRadius: AppRadius.large,
-        border: Border.all(color: stroke),
+        border: Border.all(color: scheme.onSurface.withValues(alpha: 0.14)),
         boxShadow: AppShadows.soft(brightness),
       ),
       child: Column(
@@ -1039,9 +1066,11 @@ class _TimerSection extends StatelessWidget {
         children: [
           Text(
             title,
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: scheme.onSurface,
+              fontFamily: AppTypography.displayFont,
+              fontWeight: FontWeight.w300,
+            ),
           ),
           const SizedBox(height: AppSpacing.md),
           child,
@@ -1067,22 +1096,23 @@ class _SelectedSoundNote extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final selectedSound = sound;
-    final message = selectedSound == null
-        ? 'Selecciona un sonido para acompañar tu meditación.'
-        : error != null
+    final String? message = error != null
         ? 'No se pudo preparar el sonido de ambiente.'
-        : isLoading
-        ? 'Preparando sonido de ambiente...'
-        : hasAudio
-        ? 'Ambiente seleccionado: ${selectedSound.titulo}'
-        : 'Ambiente seleccionado: ${selectedSound.titulo}. Falta agregar audio.';
+        : selectedSound != null && !isLoading && !hasAudio
+        ? 'Falta agregar audio a este sonido.'
+        : null;
+
+    if (message == null) {
+      return const SizedBox.shrink();
+    }
 
     return Center(
       child: Text(
         message,
         textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
+          color: Theme.of(context).colorScheme.onSurface,
+          fontFamily: AppTypography.displayFont,
         ),
       ),
     );
@@ -1100,7 +1130,7 @@ String _wellnessMinutesLabel(int minutes) {
 }
 
 String _streakDaysLabel(int days) {
-  return days == 1 ? '1 día seguido' : '$days días seguidos';
+  return days == 1 ? '1 día de progreso' : '$days días de progreso';
 }
 
 String _formatSoundDuration(int? seconds) {

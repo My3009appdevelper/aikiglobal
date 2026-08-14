@@ -13,6 +13,10 @@ class AppSecondaryButton extends StatelessWidget {
     this.icon,
     this.expand = true,
     this.height = 58,
+    this.backgroundColor,
+    this.foregroundColor,
+    this.borderColor,
+    this.labelStyle,
   });
 
   final String label;
@@ -21,22 +25,33 @@ class AppSecondaryButton extends StatelessWidget {
   final IconData? icon;
   final bool expand;
   final double height;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
+  final Color? borderColor;
+  final TextStyle? labelStyle;
 
   @override
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
-    final borderColor = brightness == Brightness.dark
+    final defaultBorderColor = brightness == Brightness.dark
         ? AppColors.darkStroke
         : AppColors.stroke;
-    final background = brightness == Brightness.dark
+    final defaultBackground = brightness == Brightness.dark
         ? AppColors.darkSurface
         : AppColors.background;
+    final effectiveBackground = backgroundColor ?? defaultBackground;
+    final effectiveForeground = foregroundColor;
+    final effectiveBorderColor = borderColor ?? defaultBorderColor;
 
     final enabled = onPressed != null;
-    final textStyle = Theme.of(context).textTheme.labelLarge?.copyWith(
-      decoration: TextDecoration.none,
-      decorationThickness: 0,
-    );
+    final textStyle =
+        (Theme.of(context).textTheme.labelLarge?.merge(labelStyle) ??
+                labelStyle)
+            ?.copyWith(
+              color: effectiveForeground,
+              decoration: TextDecoration.none,
+              decorationThickness: 0,
+            );
     final content = AppInteractive(
       tooltip: enabled ? label : null,
       borderRadius: AppRadius.full,
@@ -46,9 +61,11 @@ class AppSecondaryButton extends StatelessWidget {
         height: height,
         padding: const EdgeInsets.symmetric(horizontal: 22),
         decoration: BoxDecoration(
-          color: background.withValues(alpha: 0.8),
+          color: backgroundColor == null
+              ? effectiveBackground.withValues(alpha: 0.8)
+              : effectiveBackground,
           borderRadius: AppRadius.full,
-          border: Border.all(color: borderColor),
+          border: Border.all(color: effectiveBorderColor),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -65,7 +82,7 @@ class AppSecondaryButton extends StatelessWidget {
             ),
             if (icon != null) ...[
               const SizedBox(width: 10),
-              Icon(icon, size: 22),
+              Icon(icon, size: 22, color: effectiveForeground),
             ],
           ],
         ),

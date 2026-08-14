@@ -1,0 +1,901 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "Cotización de desarrollo de Aiki para App Store y Google Play",
+    "generatedAt": "2026-08-06T00:00:00-06:00",
+    "cards": [
+      {
+        "id": "code_size",
+        "dataset": "headline_metrics",
+        "sourceId": "code_audit",
+        "metrics": [
+          {
+            "label": "Archivos Dart no generados",
+            "field": "non_generated_dart_files",
+            "format": "number",
+            "unit": " archivos"
+          }
+        ]
+      },
+      {
+        "id": "recommended_fee",
+        "dataset": "headline_metrics",
+        "sourceId": "scenario_model",
+        "metrics": [
+          {
+            "label": "Cotización recomendada",
+            "field": "recommended_one_time_mxn",
+            "format": "currency",
+            "unit": " MXN IVA incluido"
+          }
+        ]
+      },
+      {
+        "id": "warranty",
+        "dataset": "headline_metrics",
+        "sourceId": "scenario_model",
+        "metrics": [
+          {
+            "label": "Garantía incluida",
+            "field": "warranty_days",
+            "format": "number",
+            "unit": " días"
+          }
+        ]
+      }
+    ],
+    "charts": [
+      {
+        "id": "monthly_net_revenue_chart",
+        "title": "Ingreso mensual neto estimado después de 15% de tienda",
+        "type": "bar",
+        "dataset": "monthly_subscription_scenarios",
+        "sourceId": "scenario_model",
+        "encodings": {
+          "x": {
+            "field": "scenario",
+            "type": "nominal"
+          },
+          "y": {
+            "field": "net_monthly_mxn",
+            "type": "quantitative",
+            "aggregate": "sum",
+            "unit": "MXN"
+          }
+        }
+      }
+    ],
+    "tables": [
+      {
+        "id": "scope_table",
+        "title": "Alcance actual y trabajo necesario para vender en tiendas",
+        "dataset": "scope",
+        "sourceId": "code_audit",
+        "defaultSort": {
+          "field": "order",
+          "direction": "asc"
+        },
+        "columns": [
+          {
+            "field": "area",
+            "label": "Área"
+          },
+          {
+            "field": "current_state",
+            "label": "Estado observado"
+          },
+          {
+            "field": "delivery",
+            "label": "Qué debe quedar entregado"
+          },
+          {
+            "field": "priority",
+            "label": "Prioridad"
+          },
+          {
+            "field": "order",
+            "label": "Orden",
+            "format": "number"
+          }
+        ]
+      },
+      {
+        "id": "competitors_table",
+        "title": "Comparación con apps de bienestar",
+        "dataset": "competitors",
+        "sourceId": "consumer_comparables",
+        "defaultSort": {
+          "field": "order",
+          "direction": "asc"
+        },
+        "columns": [
+          {
+            "field": "product",
+            "label": "Producto"
+          },
+          {
+            "field": "published_price",
+            "label": "Precio publicado"
+          },
+          {
+            "field": "strength",
+            "label": "Fortaleza comercial"
+          },
+          {
+            "field": "implication_for_aiki",
+            "label": "Implicación para Aiki"
+          },
+          {
+            "field": "order",
+            "label": "Orden",
+            "format": "number"
+          }
+        ]
+      },
+      {
+        "id": "monthly_scenarios_table",
+        "title": "Escenarios con suscripción mensual",
+        "dataset": "monthly_subscription_scenarios",
+        "sourceId": "scenario_model",
+        "defaultSort": {
+          "field": "users",
+          "direction": "asc"
+        },
+        "columns": [
+          {
+            "field": "plan",
+            "label": "Plan"
+          },
+          {
+            "field": "users",
+            "label": "Usuarios",
+            "format": "number"
+          },
+          {
+            "field": "gross_monthly_mxn",
+            "label": "Bruto mensual",
+            "format": "currency"
+          },
+          {
+            "field": "net_monthly_mxn",
+            "label": "Neto mensual estimado",
+            "format": "currency"
+          },
+          {
+            "field": "gross_annual_mxn",
+            "label": "Bruto anual",
+            "format": "currency"
+          },
+          {
+            "field": "net_annual_mxn",
+            "label": "Neto anual estimado",
+            "format": "currency"
+          },
+          {
+            "field": "payback_months",
+            "label": "Meses para recuperar MXN 220k",
+            "format": "number"
+          }
+        ]
+      },
+      {
+        "id": "annual_scenarios_table",
+        "title": "Escenarios con suscripción anual",
+        "dataset": "annual_subscription_scenarios",
+        "sourceId": "scenario_model",
+        "defaultSort": {
+          "field": "users",
+          "direction": "asc"
+        },
+        "columns": [
+          {
+            "field": "plan",
+            "label": "Plan"
+          },
+          {
+            "field": "users",
+            "label": "Usuarios",
+            "format": "number"
+          },
+          {
+            "field": "gross_annual_mxn",
+            "label": "Cobro bruto anual",
+            "format": "currency"
+          },
+          {
+            "field": "net_annual_mxn",
+            "label": "Neto estimado tras tienda",
+            "format": "currency"
+          },
+          {
+            "field": "net_monthly_equivalent_mxn",
+            "label": "Neto mensual equivalente",
+            "format": "currency"
+          },
+          {
+            "field": "payback_annual_cycles",
+            "label": "Años para recuperar MXN 220k",
+            "format": "number"
+          }
+        ]
+      },
+      {
+        "id": "quote_options_table",
+        "title": "Opciones para cotizarle a Aiki",
+        "dataset": "quote_options",
+        "sourceId": "scenario_model",
+        "defaultSort": {
+          "field": "order",
+          "direction": "asc"
+        },
+        "columns": [
+          {
+            "field": "option",
+            "label": "Opción"
+          },
+          {
+            "field": "one_time_mxn",
+            "label": "Pago único",
+            "format": "currency"
+          },
+          {
+            "field": "maintenance_mxn",
+            "label": "Mantenimiento opcional mensual",
+            "format": "currency"
+          },
+          {
+            "field": "scope",
+            "label": "Incluye"
+          },
+          {
+            "field": "tradeoff",
+            "label": "Trade-off"
+          },
+          {
+            "field": "order",
+            "label": "Orden",
+            "format": "number"
+          }
+        ]
+      },
+      {
+        "id": "quote_breakdown_table",
+        "title": "Desglose de la cotización recomendada",
+        "dataset": "quote_breakdown",
+        "sourceId": "scenario_model",
+        "defaultSort": {
+          "field": "order",
+          "direction": "asc"
+        },
+        "columns": [
+          {
+            "field": "line",
+            "label": "Partida"
+          },
+          {
+            "field": "amount_mxn",
+            "label": "Importe",
+            "format": "currency"
+          },
+          {
+            "field": "deliverable",
+            "label": "Entregable"
+          },
+          {
+            "field": "order",
+            "label": "Orden",
+            "format": "number"
+          }
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "id": "code_audit",
+        "label": "Auditoría del checkout de Aiki",
+        "path": "pubspec.yaml, lib/ y supabase/functions/"
+      },
+      {
+        "id": "consumer_comparables",
+        "label": "Precios oficiales de comparables",
+        "path": "Páginas oficiales de Calm, Headspace e Insight Timer"
+      },
+      {
+        "id": "developer_rates",
+        "label": "Benchmarks de desarrollo móvil",
+        "path": "Guías de precios de Upwork y Clutch"
+      },
+      {
+        "id": "store_fees",
+        "label": "Comisiones y reglas de las tiendas",
+        "path": "Páginas oficiales de Apple y Google Play"
+      },
+      {
+        "id": "supabase_pricing",
+        "label": "Precios oficiales de Supabase",
+        "path": "Supabase Pricing y documentación de cómputo"
+      },
+      {
+        "id": "openai_billing",
+        "label": "Facturación oficial de OpenAI",
+        "path": "OpenAI Help Center"
+      },
+      {
+        "id": "scenario_model",
+        "label": "Modelo de escenarios de la cotización",
+        "path": "Modelo analítico con supuestos explícitos"
+      }
+    ],
+    "blocks": [
+      {
+        "id": "title",
+        "type": "markdown",
+        "body": "# Cotización de desarrollo de Aiki para App Store y Google Play\n\nCorte del análisis: 6 de agosto de 2026. Esta cotización responde a una pregunta concreta: cuánto cobrarle a Aiki por el desarrollo total de su aplicación, incluyendo el cierre técnico necesario para vender suscripciones en App Store y Google Play."
+      },
+      {
+        "id": "executive_summary",
+        "type": "markdown",
+        "body": "## Recomendación directa\n\nYo cotizaría **MXN 220,000 IVA incluido**, con pagos 50/50, por el valor total de la aplicación y su preparación comercial en ambas tiendas. Incluye la integración de compras dentro de la aplicación, sincronización de derechos con Supabase, pruebas de compra/restauración/renovación, publicación, documentación básica y **60 días de garantía** para defectos del alcance.\n\nEl rango defendible es MXN 180,000–280,000 según el estado real de QA, el retrabajo de publicación y el nivel de acompañamiento. Si quieres aplicar un precio especial por ser un conocido, consideraría MXN 140,000–160,000 como límite razonable, pero con alcance muy cerrado y sin soporte indefinido. MXN 50,000 no representa de forma justa una app de este tamaño con propiedad total para Aiki, dos tiendas, billing y garantía; solo sería defendible para una entrega reducida o como descuento extraordinario.\n\nEl mantenimiento es opcional: propongo MXN 12,000 mensuales por hasta 8 horas de soporte y correcciones menores. Infraestructura, cuentas de desarrollador, comisiones, contenido, impuestos, legal y uso futuro de GPT se pagan aparte por Aiki."
+      },
+      {
+        "id": "headline_metrics",
+        "type": "metric-strip",
+        "cardIds": [
+          "code_size",
+          "recommended_fee",
+          "warranty"
+        ]
+      },
+      {
+        "id": "scope_intro",
+        "type": "markdown",
+        "body": "## Qué se está cotizando realmente\n\nLa cifra no se calcula solo por número de pantallas. Incluye el producto que ya existe, la arquitectura offline-first y de sincronización, el panel administrativo, la operación de contenido, el cierre de monetización y la responsabilidad de dejar un paquete razonablemente entregable a las tiendas. Aiki será propietaria del código, la aplicación y los derechos según el contrato."
+      },
+      {
+        "id": "scope_audit",
+        "type": "markdown",
+        "sourceId": "code_audit",
+        "body": "La auditoría del checkout encontró 234 archivos Dart, 233 no generados y aproximadamente 45,315 líneas Dart. La aplicación tiene autenticación y onboarding; exploración, favoritos, detalle, audio y video; progreso y reanudación; descargas offline; check-in emocional; temporizador de meditación; rachas y estadísticas; perfil y empresa; CMS de contenido y multimedia; administración de usuarios; suscripciones manuales; notificaciones push e inbox; y sincronización local con Drift y Supabase.\n\nLa parte crítica para esta cotización es que la suscripción actual está preparada principalmente para habilitación manual desde administración. No se detectó integración de compras de App Store o Google Play ni una dependencia de billing móvil. Por ello, la publicación comercial no es únicamente subir el proyecto: todavía hay trabajo de monetización, pruebas, cuentas, configuración y revisión de tienda."
+      },
+      {
+        "id": "scope_table_block",
+        "type": "table",
+        "tableId": "scope_table"
+      },
+      {
+        "id": "store_fees",
+        "type": "markdown",
+        "sourceId": "store_fees",
+        "body": "## Comisiones actuales de las tiendas\n\nPara el escenario base uso **15% de comisión** y, por tanto, 85% antes de impuestos u otras retenciones. Google publica una comisión de 15% para suscripciones auto-renovables en los mercados restantes mientras se despliegan cambios regionales; la página oficial indica que México pertenece a ese grupo en la fecha de corte. Apple permite 15% para quienes califican al Small Business Program y también publica 15% después del primer año de una suscripción estándar; fuera de ese programa, Apple puede retener 30% durante el primer año.\n\nPor eso las tablas son una referencia de planificación, no el depósito bancario final. Si Aiki no califica a 15% en Apple, el primer año de las compras de iOS debe modelarse con 70% neto, no 85%. La cuota anual de Apple Developer, impuestos, retenciones y cualquier costo de cuenta son independientes de tu honorario."
+      },
+      {
+        "id": "competitor_intro",
+        "type": "markdown",
+        "sourceId": "consumer_comparables",
+        "body": "## Comparación con apps parecidas\n\nCalm publica USD 69.99 al año y una oferta de acceso vitalicio; Headspace publica USD 69.99 al año después de prueba; Insight Timer publica USD 59.99 al año o USD 9.99 al mes. Esos productos ganan por marca, catálogo y producción continua. Aiki no debe intentar justificar su precio por cantidad de contenido frente a ellos.\n\nAiki puede diferenciarse por contenido propio, experiencia en español, operación de una organización, seguimiento de hábitos y comunicaciones. Con MXN 20–50 mensuales quedaría como una alternativa de entrada de precio bajo; eso facilita la prueba, pero exige muchos usuarios o costos operativos muy controlados."
+      },
+      {
+        "id": "competitors_table_block",
+        "type": "table",
+        "tableId": "competitors_table"
+      },
+      {
+        "id": "monthly_intro",
+        "type": "markdown",
+        "sourceId": "scenario_model",
+        "body": "## Ingresos con suscripción mensual de MXN 20 o MXN 50\n\nFórmula: usuarios que pagan × precio × 85%. No se descuenta adquisición de usuarios, contenido, soporte, impuestos ni infraestructura. Los usuarios son pagadores activos, no instalaciones ni registros."
+      },
+      {
+        "id": "monthly_chart_block",
+        "type": "chart",
+        "chartId": "monthly_net_revenue_chart"
+      },
+      {
+        "id": "monthly_table_block",
+        "type": "table",
+        "tableId": "monthly_scenarios_table"
+      },
+      {
+        "id": "annual_intro",
+        "type": "markdown",
+        "sourceId": "scenario_model",
+        "body": "## Ingresos con suscripción anual de MXN 200 o MXN 500\n\nLa tabla muestra el efectivo cobrado por una cohorte anual y su equivalente mensual para no confundir facturación anticipada con ingreso recurrente mensual. La anualidad de MXN 200 equivale a MXN 16.67 al mes antes de tienda; MXN 500 equivale a MXN 41.67 al mes antes de tienda."
+      },
+      {
+        "id": "annual_table_block",
+        "type": "table",
+        "tableId": "annual_scenarios_table"
+      },
+      {
+        "id": "quote_method",
+        "type": "markdown",
+        "sourceId": "developer_rates",
+        "body": "## Por qué la cotización no debe ser MXN 50,000\n\nLos benchmarks públicos de desarrollo móvil de Upwork y Clutch son globales y no fijan una tarifa mexicana, pero sí sirven como control de realidad: proyectos móviles publicados por Clutch suelen aparecer en el rango de USD 10,000–49,999 y las tarifas de empresas móviles suelen publicarse alrededor de USD 25–49 por hora. Aiki no debe cobrar como una agencia grande si tú eres un desarrollador independiente, pero tampoco como si fuera una landing page.\n\nLa cifra recomendada es una decisión comercial para un desarrollador independiente: reconoce trabajo ya construido, propiedad total para Aiki, monetización de dos tiendas, riesgo de release y garantía, sin trasladar a Aiki el precio de reemplazo de una agencia completa."
+      },
+      {
+        "id": "quote_options_block",
+        "type": "table",
+        "tableId": "quote_options_table"
+      },
+      {
+        "id": "quote_breakdown_block",
+        "type": "table",
+        "tableId": "quote_breakdown_table"
+      },
+      {
+        "id": "commercial_terms",
+        "type": "markdown",
+        "sourceId": "scenario_model",
+        "body": "## Términos que dejaría por escrito\n\n- **Pago:** 50% al iniciar la etapa formal de cierre y 50% contra entrega del paquete store-ready y envío a revisión. La aprobación final de Apple o Google depende de sus revisores y de la información que Aiki entregue.\n- **Garantía:** 60 días, únicamente para defectos reproducibles dentro del alcance aceptado. No cubre nuevas funciones, cambios de contenido, cambios de políticas de tienda, servicios externos ni modificaciones de terceros.\n- **Propiedad:** Aiki recibe el código y los derechos acordados en el contrato una vez liquidado el proyecto. Conviene identificar por escrito cualquier librería, recurso, cuenta o componente de terceros que conserve sus propias licencias.\n- **Cuentas:** Aiki debe ser titular de Apple Developer, Google Play Console, Supabase y Firebase. Tú configuras y entregas documentación; las cuentas no deben quedar a tu nombre.\n- **Responsabilidades de Aiki:** contenido, derechos de uso, textos de privacidad y términos, datos fiscales, cuentas de tienda, aprobación legal y costos de terceros.\n- **Fuera de alcance:** rediseño completo, nuevas funciones no inventariadas, campañas de marketing, producción de contenido, traducciones, soporte 24/7, SLA, asesoría legal, moderación y costo de infraestructura."
+      },
+      {
+        "id": "operating_costs",
+        "type": "markdown",
+        "sourceId": "supabase_pricing",
+        "body": "## Costos que no deben mezclarse con tu precio\n\nSupabase publica un plan Pro de USD 25 al mes y cobra o limita recursos adicionales según almacenamiento, egress, cómputo y usuarios. Audio y video pueden hacer crecer el egress y Storage, así que Aiki debe asumir esa cuenta y sus alertas de uso. El programa de Apple Developer cuesta USD 99 al año según Apple.\n\nEn el checkout revisado no se encontró integración de OpenAI/GPT, por lo que el costo actual de GPT para Aiki es MXN 0. Si más adelante se agrega un asistente, el API de OpenAI se factura por separado y según consumo; no debe regalarse dentro de la garantía ni del mantenimiento estándar."
+      },
+      {
+        "id": "risks",
+        "type": "markdown",
+        "sourceId": "code_audit",
+        "body": "## Riesgos que pueden cambiar el importe\n\nAntes de firmar conviene cerrar el identificador de iOS, porque el proyecto todavía muestra `com.example.aikiglobal` mientras Android usa `com.aikiwellnesscenter.app`; revisar el bundle ID y certificados es parte del release. También deben validarse manualmente compras sandbox/TestFlight/Play, restauración, renovación, cancelación, vencimiento, transacciones duplicadas, modo offline y sincronización de derechos.\n\nLas notificaciones todavía requieren validación E2E y pruebas manuales en primer plano, segundo plano y app terminada. También conviene hacer QA de textos, porque se observaron cadenas que pueden presentar problemas de codificación. Si esas tareas se convierten en rediseño, migración de backend o nueva funcionalidad, deben cotizarse como cambio de alcance."
+      },
+      {
+        "id": "final_recommendation",
+        "type": "markdown",
+        "body": "## Mi recomendación final\n\nPresentaría a Aiki una cotización de **MXN 220,000 IVA incluido**, 50/50, con 60 días de garantía y mantenimiento opcional de **MXN 12,000 al mes**. Le mostraría el rango de MXN 180,000–280,000 como contexto, pero no le entregaría tres precios ambiguos.\n\nEl mensaje comercial sería: “La aplicación ya tiene una base funcional amplia. El precio incluye cerrar la monetización, preparar y publicar ambas tiendas, entregar el código a Aiki y responder por defectos del alcance durante 60 días. Las cuentas, contenido, legal, comisiones e infraestructura son de Aiki.”\n\nEl precio de MXN 20–50 decide cuánto puede ingresar Aiki; no decide cuánto vale tu trabajo. A MXN 20, necesitaría 1,000 usuarios pagadores para generar aproximadamente MXN 17,000 netos al mes; a MXN 50, 1,000 usuarios generarían aproximadamente MXN 42,500 netos al mes. Eso es el ingreso de Aiki después de tienda, no tu salario ni una garantía de recuperación."
+      },
+      {
+        "id": "scope_note",
+        "type": "markdown",
+        "body": "## Alcance y cautelas\n\nEstimación comercial basada en el checkout revisado y en precios públicos consultados el 6 de agosto de 2026. No es una valuación financiera, legal ni una garantía de ingresos. No se modificó código, esquema ni datos de Supabase para elaborar esta cotización. Las comisiones pueden cambiar por programa, región, impuestos y políticas de tienda."
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-08-06T00:00:00-06:00",
+    "status": "ready",
+    "datasets": {
+      "headline_metrics": [
+        {
+          "non_generated_dart_files": 233,
+          "non_generated_dart_lines": 45315,
+          "recommended_one_time_mxn": 220000,
+          "warranty_days": 60
+        }
+      ],
+      "scope": [
+        {
+          "area": "Aplicación de usuario",
+          "current_state": "Autenticación, onboarding, exploración, favoritos, detalle, audio/video, progreso, descargas y perfil.",
+          "delivery": "Regresión de flujos, correcciones críticas y paquete de release en Android/iOS.",
+          "priority": "Alto",
+          "order": 1
+        },
+        {
+          "area": "Bienestar y retención",
+          "current_state": "Check-in emocional, meditación, minutos, rachas y estadísticas.",
+          "delivery": "Validación funcional y corrección de defectos del alcance; no nuevas mecánicas.",
+          "priority": "Alto",
+          "order": 2
+        },
+        {
+          "area": "Administración",
+          "current_state": "CMS de contenido, multimedia, usuarios, empresa, notificaciones y suscripciones manuales.",
+          "delivery": "Entrega operable y documentación básica para Aiki.",
+          "priority": "Alto",
+          "order": 3
+        },
+        {
+          "area": "Offline-first",
+          "current_state": "Persistencia Drift y sincronización con Supabase.",
+          "delivery": "Pruebas de recuperación, sincronización y estados sin conexión.",
+          "priority": "Alto",
+          "order": 4
+        },
+        {
+          "area": "Monetización",
+          "current_state": "Alta y revocación manual; sin billing de App Store/Google Play detectado.",
+          "delivery": "Productos, compra, restauración, renovación, vencimiento y reconciliación de derechos con Supabase.",
+          "priority": "Bloqueador de tiendas",
+          "order": 5
+        },
+        {
+          "area": "Publicación",
+          "current_state": "Android tiene applicationId de Aiki; iOS requiere revisar bundle ID y configuración de release.",
+          "delivery": "Builds firmados, metadatos entregados por Aiki, pruebas sandbox y envío a revisión.",
+          "priority": "Bloqueador de tiendas",
+          "order": 6
+        },
+        {
+          "area": "GPT",
+          "current_state": "No se encontró integración de OpenAI/GPT en dependencias, código o backend revisado.",
+          "delivery": "No incluido; cualquier asistente se cotiza como fase posterior.",
+          "priority": "Fuera de alcance",
+          "order": 7
+        }
+      ],
+      "competitors": [
+        {
+          "product": "Calm",
+          "published_price": "USD 69.99/año; oferta vitalicia publicada",
+          "strength": "Marca, catálogo grande, audio, sueño y programas.",
+          "implication_for_aiki": "Aiki no debe competir por volumen de contenido.",
+          "order": 1
+        },
+        {
+          "product": "Headspace",
+          "published_price": "USD 69.99/año después de prueba",
+          "strength": "Contenido guiado, sueño, cursos y producción continua.",
+          "implication_for_aiki": "El precio se sostiene con contenido y retención.",
+          "order": 2
+        },
+        {
+          "product": "Insight Timer",
+          "published_price": "USD 59.99/año o USD 9.99/mes",
+          "strength": "Freemium, biblioteca masiva, cursos, journal y offline.",
+          "implication_for_aiki": "El precio bajo necesita una propuesta local clara.",
+          "order": 3
+        },
+        {
+          "product": "Aiki",
+          "published_price": "Propuesta: MXN 20 o MXN 50/mes; MXN 200 o MXN 500/año",
+          "strength": "Contenido propio, español, hábitos, administración y comunicación.",
+          "implication_for_aiki": "Puede entrar barato, pero necesita suficientes pagadores y uso recurrente.",
+          "order": 4
+        }
+      ],
+      "monthly_subscription_scenarios": [
+        {
+          "scenario": "MXN 20 · 100 usuarios",
+          "plan": "Mensual MXN 20",
+          "users": 100,
+          "gross_monthly_mxn": 2000,
+          "net_monthly_mxn": 1700,
+          "gross_annual_mxn": 24000,
+          "net_annual_mxn": 20400,
+          "payback_months": 129.41
+        },
+        {
+          "scenario": "MXN 20 · 500 usuarios",
+          "plan": "Mensual MXN 20",
+          "users": 500,
+          "gross_monthly_mxn": 10000,
+          "net_monthly_mxn": 8500,
+          "gross_annual_mxn": 120000,
+          "net_annual_mxn": 102000,
+          "payback_months": 25.88
+        },
+        {
+          "scenario": "MXN 20 · 1,000 usuarios",
+          "plan": "Mensual MXN 20",
+          "users": 1000,
+          "gross_monthly_mxn": 20000,
+          "net_monthly_mxn": 17000,
+          "gross_annual_mxn": 240000,
+          "net_annual_mxn": 204000,
+          "payback_months": 12.94
+        },
+        {
+          "scenario": "MXN 20 · 5,000 usuarios",
+          "plan": "Mensual MXN 20",
+          "users": 5000,
+          "gross_monthly_mxn": 100000,
+          "net_monthly_mxn": 85000,
+          "gross_annual_mxn": 1200000,
+          "net_annual_mxn": 1020000,
+          "payback_months": 2.59
+        },
+        {
+          "scenario": "MXN 50 · 100 usuarios",
+          "plan": "Mensual MXN 50",
+          "users": 100,
+          "gross_monthly_mxn": 5000,
+          "net_monthly_mxn": 4250,
+          "gross_annual_mxn": 60000,
+          "net_annual_mxn": 51000,
+          "payback_months": 51.76
+        },
+        {
+          "scenario": "MXN 50 · 500 usuarios",
+          "plan": "Mensual MXN 50",
+          "users": 500,
+          "gross_monthly_mxn": 25000,
+          "net_monthly_mxn": 21250,
+          "gross_annual_mxn": 300000,
+          "net_annual_mxn": 255000,
+          "payback_months": 10.35
+        },
+        {
+          "scenario": "MXN 50 · 1,000 usuarios",
+          "plan": "Mensual MXN 50",
+          "users": 1000,
+          "gross_monthly_mxn": 50000,
+          "net_monthly_mxn": 42500,
+          "gross_annual_mxn": 600000,
+          "net_annual_mxn": 510000,
+          "payback_months": 5.18
+        },
+        {
+          "scenario": "MXN 50 · 5,000 usuarios",
+          "plan": "Mensual MXN 50",
+          "users": 5000,
+          "gross_monthly_mxn": 250000,
+          "net_monthly_mxn": 212500,
+          "gross_annual_mxn": 3000000,
+          "net_annual_mxn": 2550000,
+          "payback_months": 1.04
+        }
+      ],
+      "annual_subscription_scenarios": [
+        {
+          "scenario": "MXN 200 anual · 100 usuarios",
+          "plan": "Anual MXN 200",
+          "users": 100,
+          "gross_annual_mxn": 20000,
+          "net_annual_mxn": 17000,
+          "net_monthly_equivalent_mxn": 1416.67,
+          "payback_annual_cycles": 12.94
+        },
+        {
+          "scenario": "MXN 200 anual · 500 usuarios",
+          "plan": "Anual MXN 200",
+          "users": 500,
+          "gross_annual_mxn": 100000,
+          "net_annual_mxn": 85000,
+          "net_monthly_equivalent_mxn": 7083.33,
+          "payback_annual_cycles": 2.59
+        },
+        {
+          "scenario": "MXN 200 anual · 1,000 usuarios",
+          "plan": "Anual MXN 200",
+          "users": 1000,
+          "gross_annual_mxn": 200000,
+          "net_annual_mxn": 170000,
+          "net_monthly_equivalent_mxn": 14166.67,
+          "payback_annual_cycles": 1.29
+        },
+        {
+          "scenario": "MXN 200 anual · 5,000 usuarios",
+          "plan": "Anual MXN 200",
+          "users": 5000,
+          "gross_annual_mxn": 1000000,
+          "net_annual_mxn": 850000,
+          "net_monthly_equivalent_mxn": 70833.33,
+          "payback_annual_cycles": 0.26
+        },
+        {
+          "scenario": "MXN 500 anual · 100 usuarios",
+          "plan": "Anual MXN 500",
+          "users": 100,
+          "gross_annual_mxn": 50000,
+          "net_annual_mxn": 42500,
+          "net_monthly_equivalent_mxn": 3541.67,
+          "payback_annual_cycles": 5.18
+        },
+        {
+          "scenario": "MXN 500 anual · 500 usuarios",
+          "plan": "Anual MXN 500",
+          "users": 500,
+          "gross_annual_mxn": 250000,
+          "net_annual_mxn": 212500,
+          "net_monthly_equivalent_mxn": 17708.33,
+          "payback_annual_cycles": 1.04
+        },
+        {
+          "scenario": "MXN 500 anual · 1,000 usuarios",
+          "plan": "Anual MXN 500",
+          "users": 1000,
+          "gross_annual_mxn": 500000,
+          "net_annual_mxn": 425000,
+          "net_monthly_equivalent_mxn": 35416.67,
+          "payback_annual_cycles": 0.52
+        },
+        {
+          "scenario": "MXN 500 anual · 5,000 usuarios",
+          "plan": "Anual MXN 500",
+          "users": 5000,
+          "gross_annual_mxn": 2500000,
+          "net_annual_mxn": 2125000,
+          "net_monthly_equivalent_mxn": 177083.33,
+          "payback_annual_cycles": 0.1
+        }
+      ],
+      "quote_options": [
+        {
+          "option": "Precio de confianza con alcance cerrado",
+          "one_time_mxn": 150000,
+          "maintenance_mxn": 8000,
+          "scope": "Código actual, defectos críticos, billing de ambas tiendas, publicación y handoff básico.",
+          "tradeoff": "Poco margen para retrabajo, cambios visuales o acompañamiento de lanzamiento.",
+          "order": 1
+        },
+        {
+          "option": "Precio profesional recomendado",
+          "one_time_mxn": 220000,
+          "maintenance_mxn": 12000,
+          "scope": "Aplicación completa, billing, entitlements Supabase, pruebas, publicación, documentación y 60 días de garantía.",
+          "tradeoff": "Nuevas funciones, contenido, legal e infraestructura quedan fuera.",
+          "order": 2
+        },
+        {
+          "option": "Lanzamiento acompañado",
+          "one_time_mxn": 280000,
+          "maintenance_mxn": 18000,
+          "scope": "Alcance recomendado más hardening de release, analítica básica de suscripción y acompañamiento inicial.",
+          "tradeoff": "Solo conviene si Aiki necesita más soporte y acepta ese presupuesto.",
+          "order": 3
+        }
+      ],
+      "quote_breakdown": [
+        {
+          "line": "Cierre y entrega del producto existente",
+          "amount_mxn": 145000,
+          "deliverable": "Regresión, correcciones del alcance, consolidación y entrega del código.",
+          "order": 1
+        },
+        {
+          "line": "Compras dentro de la aplicación",
+          "amount_mxn": 40000,
+          "deliverable": "Productos mensuales/anuales, compra, restauración, renovación, vencimiento y sincronización de entitlements.",
+          "order": 2
+        },
+        {
+          "line": "Preparación y publicación en tiendas",
+          "amount_mxn": 20000,
+          "deliverable": "Configuración de release, builds firmados, pruebas sandbox y envío a App Store/Google Play.",
+          "order": 3
+        },
+        {
+          "line": "Documentación y garantía",
+          "amount_mxn": 15000,
+          "deliverable": "Handoff básico, criterios de aceptación y 60 días de garantía.",
+          "order": 4
+        }
+      ]
+    }
+  },
+  "sources": [
+    {
+      "id": "code_audit",
+      "label": "Auditoría del checkout de Aiki",
+      "query": {
+        "engine": "local_code_review",
+        "description": "Inventario revisado de pubspec.yaml, lib, capas de datos, sincronización, notificaciones, features y supabase/functions; incluye conteo de Dart y lectura de flujos.",
+        "sql": "SELECT area, current_state, delivery, priority FROM reviewed_aiki_scope",
+        "language": "sql",
+        "tables_used": [
+          "pubspec.yaml",
+          "lib/",
+          "supabase/functions/"
+        ],
+        "executed_at": "2026-08-06T00:00:00-06:00"
+      }
+    },
+    {
+      "id": "consumer_comparables",
+      "label": "Precios oficiales de comparables",
+      "query": {
+        "engine": "web",
+        "description": "Precios y características publicados por Calm, Headspace e Insight Timer.",
+        "sql": "SELECT product, published_price, strength FROM published_consumer_wellness_prices",
+        "language": "sql",
+        "tables_used": [
+          "published_consumer_wellness_prices"
+        ],
+        "url": "https://www.calm.com/freetrial/plans",
+        "urls": [
+          "https://www.calm.com/freetrial/plans",
+          "https://www.headspace.com/sleep-app?origin=sleep",
+          "https://help.insighttimer.com/support/solutions/articles/67000664579-how-much-does-insight-timer-cost-"
+        ],
+        "executed_at": "2026-08-06T00:00:00-06:00"
+      }
+    },
+    {
+      "id": "developer_rates",
+      "label": "Benchmarks de desarrollo móvil",
+      "query": {
+        "engine": "web",
+        "description": "Benchmarks globales de Upwork y Clutch; se usan como control de realidad y no como tarifa mexicana vinculante.",
+        "sql": "SELECT source, published_range FROM mobile_development_benchmarks",
+        "language": "sql",
+        "tables_used": [
+          "mobile_development_benchmarks"
+        ],
+        "url": "https://www.upwork.com/hire/mobile-app-developers/cost/",
+        "urls": [
+          "https://www.upwork.com/hire/mobile-app-developers/cost/",
+          "https://clutch.co/directory/mobile-application-developers/pricing"
+        ],
+        "executed_at": "2026-08-06T00:00:00-06:00"
+      }
+    },
+    {
+      "id": "store_fees",
+      "label": "Comisiones y reglas de tiendas",
+      "query": {
+        "engine": "web",
+        "description": "Comisiones de Apple y Google Play, programa Small Business, facturación de productos digitales y reglas de suscripciones.",
+        "sql": "SELECT store, program, published_fee FROM official_store_fee_rules",
+        "language": "sql",
+        "tables_used": [
+          "official_store_fee_rules"
+        ],
+        "url": "https://support.google.com/googleplay/android-developer/answer/112622?hl=en",
+        "urls": [
+          "https://developer.apple.com/app-store/subscriptions/",
+          "https://developer.apple.com/go/?id=app-store-small-business-program",
+          "https://developer.apple.com/programs/whats-included/",
+          "https://support.google.com/googleplay/android-developer/answer/112622?hl=en",
+          "https://support.google.com/googleplay/android-developer/answer/9858738?hl=en",
+          "https://support.google.com/googleplay/android-developer/answer/9900533?hl=en"
+        ],
+        "executed_at": "2026-08-06T00:00:00-06:00"
+      }
+    },
+    {
+      "id": "supabase_pricing",
+      "label": "Precios oficiales de Supabase",
+      "query": {
+        "engine": "web",
+        "description": "Plan Pro, cuotas de almacenamiento, egress y cómputo publicados por Supabase.",
+        "sql": "SELECT plan, monthly_price, included_quotas FROM supabase_public_pricing",
+        "language": "sql",
+        "tables_used": [
+          "supabase_public_pricing"
+        ],
+        "url": "https://supabase.com/pricing",
+        "urls": [
+          "https://supabase.com/pricing",
+          "https://supabase.com/docs/guides/platform/manage-your-usage/compute"
+        ],
+        "executed_at": "2026-08-06T00:00:00-06:00"
+      }
+    },
+    {
+      "id": "openai_billing",
+      "label": "Facturación oficial de OpenAI",
+      "query": {
+        "engine": "web",
+        "description": "El API de OpenAI se factura y administra por separado de una suscripción de ChatGPT y depende del consumo.",
+        "sql": "SELECT billing_model FROM official_openai_api_billing",
+        "language": "sql",
+        "tables_used": [
+          "official_openai_api_billing"
+        ],
+        "url": "https://help.openai.com/en/articles/8156019-is-api-usage-included-in-chatgpt-subscriptions-even-if-i-have-a-paid-chatgpt-account",
+        "executed_at": "2026-08-06T00:00:00-06:00"
+      }
+    },
+    {
+      "id": "scenario_model",
+      "label": "Modelo de escenarios de la cotización",
+      "query": {
+        "engine": "analyst_model",
+        "description": "Supuestos base: comisión de tienda 15%, precios mensuales MXN 20/50, precios anuales MXN 200/500, 100/500/1,000/5,000 usuarios y cotización recomendada de MXN 220,000 IVA incluido.",
+        "sql": "SELECT scenario, net_monthly_mxn, net_annual_mxn FROM modeled_subscription_scenarios",
+        "language": "sql",
+        "tables_used": [
+          "modeled_subscription_scenarios"
+        ],
+        "metric_definitions": {
+          "net_monthly_mxn": "gross_monthly_mxn * 0.85",
+          "net_annual_mxn": "gross_annual_mxn * 0.85",
+          "net_monthly_equivalent_mxn": "net_annual_mxn / 12",
+          "payback_months": "220000 / net_monthly_mxn",
+          "payback_annual_cycles": "220000 / net_annual_mxn"
+        },
+        "executed_at": "2026-08-06T00:00:00-06:00"
+      }
+    }
+  ],
+  "package_info": {
+    "title": "Cotización de desarrollo de Aiki para App Store y Google Play",
+    "description": "Cotización objetiva para Aiki basada en auditoría del checkout, comparación con apps de bienestar, comisiones de tiendas y escenarios de suscripción.",
+    "generated_by": "Codex Data Analytics report workflow"
+  }
+}
